@@ -31,7 +31,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
             <h1>Không có quyền truy cập</h1>
             <p>Tài khoản {session.username} không phải chủ bot. Khu vực này chỉ dành cho chủ sở hữu Puni.</p>
             <form action="/api/auth/logout" method="post">
-              <button className="btn secondary" type="submit">
+              <button className="btn secondary sm" type="submit">
                 Đăng xuất
               </button>
             </form>
@@ -39,7 +39,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
         ) : (
           <div className="shell">
             <aside className="side admin-side">
-              <div className="brand">Puni Admin</div>
+              <div className="brand"><span className="brand-dot">P</span> Puni Admin</div>
               <Link href="/admin" className="item">
                 Tổng quan
               </Link>
@@ -52,7 +52,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
               <div className="who" style={{ marginTop: "auto", fontSize: 13, color: "#7e8798" }}>
                 Chủ bot: <strong>{session.username}</strong>
                 <form action="/api/auth/logout" method="post" style={{ marginTop: 8 }}>
-                  <button className="btn secondary" type="submit">
+                  <button className="btn secondary sm" type="submit">
                     Đăng xuất
                   </button>
                 </form>

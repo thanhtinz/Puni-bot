@@ -26,19 +26,11 @@ export default async function GuildLayout({
     <>
       <h1 style={{ marginBottom: 4 }}>{guild?.name || "Server"}</h1>
       <p style={{ color: "var(--muted)", marginTop: 0 }}>ID: {guildId}</p>
-      <nav style={{ display: "flex", gap: 10, marginBottom: 22, flexWrap: "wrap" }}>
-        <Link href={base} className="btn secondary">
-          Tổng quan
-        </Link>
-        <Link href={`${base}/community`} className="btn secondary">
-          Chào mừng &amp; Boost
-        </Link>
-        <Link href={`${base}/logging`} className="btn secondary">
-          Log
-        </Link>
-        <Link href={`${base}/automod`} className="btn secondary">
-          Automod
-        </Link>
+      <nav className="guild-nav">
+        <Link href={base}>Tổng quan</Link>
+        <Link href={`${base}/community`}>Chào mừng &amp; Boost</Link>
+        <Link href={`${base}/logging`}>Log</Link>
+        <Link href={`${base}/automod`}>Automod</Link>
       </nav>
       {children}
     </>

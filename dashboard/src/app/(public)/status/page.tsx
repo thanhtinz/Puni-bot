@@ -11,7 +11,7 @@ export default async function StatusPage() {
   const rows = await getHeartbeats().catch(() => null);
   const now = Date.now();
   return (
-    <>
+    <div className="wrap pub-main">
       <h1>Trạng thái hệ thống</h1>
       {!rows || rows.length === 0 ? (
         <div className="notice">
@@ -46,6 +46,6 @@ export default async function StatusPage() {
           </tbody>
         </table>
       )}
-    </>
+    </div>
   );
 }

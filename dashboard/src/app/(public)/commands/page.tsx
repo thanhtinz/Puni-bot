@@ -36,7 +36,7 @@ export default function CommandsPage() {
     groups.set(e.module, list);
   }
   return (
-    <>
+    <div className="wrap pub-main">
       <h1>Danh sách lệnh</h1>
       <p>
         Puni dùng được cả lệnh slash (<code>/lenh</code>) và lệnh tiền tố (mặc định{" "}
@@ -74,6 +74,6 @@ export default function CommandsPage() {
           </table>
         </section>
       ))}
-    </>
+    </div>
   );
 }

@@ -13,11 +13,11 @@ export default async function DashboardRootLayout({ children }: { children: Reac
   if (!session) redirect("/api/auth/login");
   return (
     <html lang="vi">
-      <body>
+      <body className="dash-body">
         <div className="shell">
           <aside className="side dash-side">
             <div className="brand">
-              Puni<span style={{ color: "var(--accent)" }}>.</span> Dashboard
+              <span className="brand-dot">P</span> Dashboard
             </div>
             <Link href="/dashboard" className="item">
               Server của tôi
@@ -31,7 +31,7 @@ export default async function DashboardRootLayout({ children }: { children: Reac
             <div className="who">
               Đăng nhập: <strong>{session.username}</strong>
               <form action="/api/auth/logout" method="post" style={{ marginTop: 8 }}>
-                <button className="btn secondary" type="submit">
+                <button className="btn secondary sm" type="submit">
                   Đăng xuất
                 </button>
               </form>
