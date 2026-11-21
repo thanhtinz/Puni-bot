@@ -59,22 +59,50 @@ export function parsePrefixMessage(content: string, prefix: string): ParsedPrefi
   return { name, args: parts.slice(1), mentions: extractMentions(content) };
 }
 
+/** Cooldown backend. In-memory per process by default; the Redis store
+ *  (services/redis-cooldown.ts) shares cooldowns across the whole cluster
+ *  so a user cannot dodge a cooldown by landing on another shard. */
+export interface CooldownStore {
+  /** Try to claim the cooldown slot. */
+  tryAcquire(key: string, ttlSec: number): Promise<{ ok: true } | { ok: false; secondsLeft: number }>;
+}
+
+export class InMemoryCooldownStore implements CooldownStore {
+  private until = new Map<string, number>();
+  constructor(private now: () => number = () => Date.now()) {}
+
+  async tryAcquire(key: string, ttlSec: number) {
+    const now = this.now();
+    const existing = this.until.get(key) ?? 0;
+    if (existing > now) {
+      return { ok: false as const, secondsLeft: Math.ceil((existing - now) / 1000) };
+    }
+    this.until.set(key, now + ttlSec * 1000);
+    return { ok: true as const };
+  }
+}
+
 export class Dispatcher {
-  private cooldowns = new Map<string, number>();
+  private cooldownStore: CooldownStore;
 
   constructor(
     private registry: CommandRegistry,
     private settings: GuildSettingsProvider,
     private permissionOf: PermissionResolver,
     private ownerDiscordId: string,
-    private now: () => number = () => Date.now(),
-  ) {}
+    opts: { cooldownStore?: CooldownStore; now?: () => number } = {},
+  ) {
+    this.cooldownStore = opts.cooldownStore ?? new InMemoryCooldownStore(opts.now);
+  }
 
   async dispatchPrefix(input: {
     content: string;
     userId: string;
     guildId: string | null;
     channelId: string;
+    /** Precomputed dispatcher rank for the caller (from Discord member
+     *  permissions); when present it replaces the resolver lookup. */
+    rank?: PermissionRank;
   }): Promise<DispatchOutcome> {
     if (!input.guildId) return { kind: "ignored" }; // prefix commands are guild-scoped
     const guild = await this.settings.get(input.guildId);
@@ -82,14 +110,18 @@ export class Dispatcher {
     if (!parsed) return { kind: "ignored" };
     const def = this.registry.resolve(parsed.name);
     if (!def || !def.prefix) return { kind: "ignored" };
-    return this.invoke(def, {
-      userId: input.userId,
-      guildId: input.guildId,
-      channelId: input.channelId,
-      args: parsed.args,
-      mentions: parsed.mentions,
-      surface: "prefix",
-    });
+    return this.invoke(
+      def,
+      {
+        userId: input.userId,
+        guildId: input.guildId,
+        channelId: input.channelId,
+        args: parsed.args,
+        mentions: parsed.mentions,
+        surface: "prefix",
+      },
+      input.rank,
+    );
   }
 
   async dispatchSlash(input: {
@@ -99,20 +131,29 @@ export class Dispatcher {
     channelId: string;
     args: string[];
     mentions: string[];
+    rank?: PermissionRank;
   }): Promise<DispatchOutcome> {
     const def = this.registry.resolve(input.name);
     if (!def || !def.slash) return { kind: "ignored" };
-    return this.invoke(def, {
-      userId: input.userId,
-      guildId: input.guildId,
-      channelId: input.channelId,
-      args: input.args,
-      mentions: input.mentions,
-      surface: "slash",
-    });
+    return this.invoke(
+      def,
+      {
+        userId: input.userId,
+        guildId: input.guildId,
+        channelId: input.channelId,
+        args: input.args,
+        mentions: input.mentions,
+        surface: "slash",
+      },
+      input.rank,
+    );
   }
 
-  private async invoke(def: CommandDef, ctx: CommandContext): Promise<DispatchOutcome> {
+  private async invoke(
+    def: CommandDef,
+    ctx: CommandContext,
+    rankOverride?: PermissionRank,
+  ): Promise<DispatchOutcome> {
     if (ctx.guildId) {
       const guild = await this.settings.get(ctx.guildId);
       // Gate 1+2: hidden-shop law and module switches.
@@ -128,20 +169,15 @@ export class Dispatcher {
     if (def.permission === "owner") {
       if (!isOwner) return { kind: "forbidden" };
     } else if (!isOwner) {
-      const rank = await this.permissionOf(ctx.userId, ctx.guildId);
+      const rank = rankOverride ?? (await this.permissionOf(ctx.userId, ctx.guildId));
       if (rank < RANK[def.permission]) return { kind: "forbidden" };
     }
 
-    // Gate 4: cooldown.
+    // Gate 4: cooldown (shared across the cluster when Redis is wired).
     const cooldownSec = def.cooldownSec ?? 0;
     if (cooldownSec > 0) {
-      const key = `${def.name}:${ctx.userId}`;
-      const now = this.now();
-      const until = this.cooldowns.get(key) ?? 0;
-      if (until > now) {
-        return { kind: "cooldown", secondsLeft: Math.ceil((until - now) / 1000) };
-      }
-      this.cooldowns.set(key, now + cooldownSec * 1000);
+      const claim = await this.cooldownStore.tryAcquire(`${def.name}:${ctx.userId}`, cooldownSec);
+      if (!claim.ok) return { kind: "cooldown", secondsLeft: claim.secondsLeft };
     }
 
     try {

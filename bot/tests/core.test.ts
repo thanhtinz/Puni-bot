@@ -138,7 +138,7 @@ test("cooldown gate: second call inside the window is throttled", async () => {
   });
   const settings = new InMemoryGuildSettings();
   let now = 1_000_000;
-  const dispatcher = new Dispatcher(registry, settings, async () => 0, "owner-1", () => now);
+  const dispatcher = new Dispatcher(registry, settings, async () => 0, "owner-1", { now: () => now });
   const first = await dispatcher.dispatchPrefix({ content: "!hug", userId: "u1", guildId: "g1", channelId: "c1" });
   assert.equal(first.kind, "ok");
   const second = await dispatcher.dispatchPrefix({ content: "!hug", userId: "u1", guildId: "g1", channelId: "c1" });

@@ -16,6 +16,7 @@ import {
 } from "discord.js";
 import { REACTIONS, type CommandRegistry } from "@puni/shared";
 import { Dispatcher, type DispatchOutcome } from "./dispatcher";
+import { rankFromMember } from "./permissions";
 import type { GuildSettingsProvider } from "./guild-settings";
 import type { BotConfig } from "./config";
 
@@ -59,6 +60,7 @@ export function createBotClient(deps: {
   config: BotConfig;
   registry: CommandRegistry;
   settings: GuildSettingsProvider;
+  cooldownStore?: import("./dispatcher").CooldownStore;
 }): Client {
   const { config, registry, settings } = deps;
   const client = new Client({
@@ -74,11 +76,12 @@ export function createBotClient(deps: {
   const dispatcher = new Dispatcher(
     registry,
     settings,
-    // Permission mapping from Discord member permissions lands with the
-    // moderation milestone; until then everyone is rank 0 and only the
-    // bot owner passes elevated gates.
+    // Fallback resolver: events carry a precomputed rank from the caller's
+    // Discord member permissions (permissions.ts), so this only runs when
+    // a caller did not provide one.
     async () => 0,
     config.ownerDiscordId,
+    { cooldownStore: deps.cooldownStore },
   );
 
   client.once(Events.ClientReady, async (c) => {
@@ -101,6 +104,10 @@ export function createBotClient(deps: {
       userId: msg.author.id,
       guildId: msg.guild.id,
       channelId: msg.channelId,
+      rank: rankFromMember({
+        isGuildOwner: msg.guild.ownerId === msg.author.id,
+        permissions: msg.member?.permissions.bitfield ?? 0n,
+      }),
     });
     if (outcome.kind === "ok") {
       const embed = outcomeEmbed(outcome);
@@ -153,6 +160,12 @@ export function createBotClient(deps: {
       channelId: cmd.channelId,
       args,
       mentions,
+      rank: cmd.guildId
+        ? rankFromMember({
+            isGuildOwner: cmd.guild?.ownerId === cmd.user.id,
+            permissions: cmd.memberPermissions?.bitfield ?? 0n,
+          })
+        : 0,
     });
     if (outcome.kind === "ok") {
       const embed = outcomeEmbed(outcome);

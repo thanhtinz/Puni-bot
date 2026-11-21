@@ -7,10 +7,13 @@
  *  will not survive a restart in that mode. */
 import * as path from "node:path";
 import { Pool } from "pg";
+import Redis from "ioredis";
 import { loadConfig } from "./config";
 import { InMemoryGuildSettings, type GuildSettingsProvider } from "./guild-settings";
 import { buildBot } from "./registry";
 import { createBotClient } from "./client";
+import { RedisCooldownStore } from "./services/redis-cooldown";
+import type { CooldownStore } from "./dispatcher";
 import { runMigrations } from "./db/migrate";
 import { PgGuildSettings } from "./db/pg-guild-settings";
 import { PgEconomyStore } from "./db/pg-economy-store";
@@ -37,8 +40,14 @@ async function main(): Promise<void> {
     settings = new InMemoryGuildSettings(config.defaultPrefix);
   }
 
+  let cooldownStore: CooldownStore | undefined;
+  if (config.redisUrl) {
+    cooldownStore = new RedisCooldownStore(new Redis(config.redisUrl));
+    console.log("[puni] cooldowns: Redis (shared across cluster)");
+  }
+
   const { registry } = buildBot({ settings, economyStore });
-  const client = createBotClient({ config, registry, settings });
+  const client = createBotClient({ config, registry, settings, cooldownStore });
   await client.login(config.token);
 }
 
