@@ -1053,6 +1053,15 @@ Module game lớn nhất của bot, thiết kế một vòng chơi trọn vẹn 
 - **Phân kỳ riêng:** ma sói là **một giai đoạn thi công riêng (GĐ8)** sau khi lõi bot + economy đã ổn định — vòng chơi dài, nhiều trạng thái, không gộp vào đợt bật tính năng đầu tiên. Đặc tả này chốt hành vi để khi làm không phải thiết kế lại.
 
 ---
+### 6.16.5 Hôn nhân — lệnh kết hôn / huỷ kết hôn (Tín bổ sung 2026-11-21 16:32, cơ chế đọc từ code social của repo OwO)
+
+- **Phạm vi:** hôn nhân là quan hệ **toàn hệ thống theo Discord ID** (như economy): cưới ở server nào cũng là một mối quan hệ duy nhất, hiện trên hồ sơ người chơi mọi server; dòng **"Mối quan hệ"** trên thẻ profile game (mục 6.17) hiện tên người bạn đời.
+- **Nhẫn cưới — mua bằng Coins (economy):** 7 bậc nhẫn theo thang hiếm chung (Common → Fabled), giá leo thang ×10 theo repo mẫu: **10 / 100 / 1.000 / 10.000 / 100.000 / 1.000.000 / 10.000.000 Coins** (chủ bot chỉnh được toàn cục như mọi thông số economy). Theo đúng repo mẫu: **mọi nhẫn cho lợi ích như nhau** — nhẫn đắt hơn chỉ là thể diện; đã cưới rồi thì cầu hôn lại bằng nhẫn bậc cao hơn là **nâng cấp nhẫn** của cuộc hôn nhân hiện tại.
+- **Cầu hôn:** người chơi chọn một chiếc nhẫn đang sở hữu + tag người kia; bot gửi lời cầu hôn công khai, người được cầu hôn bấm **Đồng ý / Từ chối bằng nút bấm** (bản mình dùng nút thay cho 2 lệnh riêng `am/dm` và reaction của OwO). Chặn: tự cầu hôn chính mình, cầu hôn bot, một trong hai đã có bạn đời, hoặc một trong hai đang có lời cầu hôn chờ xử lý (của bất kỳ ai) — lời cầu hôn chờ có hạn xử lý, hết hạn tự huỷ và nhẫn không mất (nhẫn chỉ tiêu thụ khi được đồng ý).
+- **Lợi ích cặp đôi (theo repo mẫu):** khi **cả hai vợ chồng cùng nhận daily trong cùng một ngày**, mỗi người nhận thêm **1 phần quà ngẫu nhiên: lootbox hoặc weapon crate** (vật phẩm game — phần kho đồ thuộc GĐ9; ở GĐ8 khi chưa có kho game thì ghi nhận quyền lợi này vào hồ sơ để phát khi GĐ9 mở, không đổi sang tiền).
+- **Huỷ kết hôn (ly hôn):** một trong hai dùng lệnh huỷ kết hôn bất cứ lúc nào, có **nút xác nhận** trước khi cắt; ly hôn xong quan hệ xoá khỏi hồ sơ cả hai, **nhẫn không hoàn lại**, hai bên cưới lại được ngay (kể cả cưới lại nhau).
+- **Dữ liệu:** bảng hôn nhân + bảng lời cầu hôn chờ trong DB bot (người A, người B, bậc nhẫn, ngày cưới); xem trạng thái hôn nhân (bạn đời + ngày cưới + bậc nhẫn) ngay trong hồ sơ/profile.
+
 ### 6.17 Cozy World — module game nông trại + sưu tập sinh vật dùng CHUNG economy (MỚI ở v3 — Tín chốt 2026-11-21 14:57)
 
 **Cozy World** (GDD v1.0 của Dreamtech Studio — bản đầy đủ lưu tại `GDD-COZY-WORLD-v1.md` trong thư mục dự án, là tài liệu thiết kế gốc của module này) là một **module game của Puni**: game farming + creature collection chạy trong Discord theo đúng GDD (nông trại cá nhân, trồng trọt, sinh vật 7 bậc hiếm × 9 hệ, bắt/nuôi/tiến hoá/lai tạo, khám phá 8 khu vực, crafting, marketplace, guild, quest, sự kiện mùa). Mục này chỉ ghi **điểm tích hợp vào Puni** — chi tiết gameplay theo GDD, không viết lại ở đây.
