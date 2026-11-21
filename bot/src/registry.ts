@@ -16,11 +16,13 @@ import {
   type ModCaseStore,
 } from "./services/mod-cases";
 import { LateBindingEnforcer } from "./services/enforcement";
+import { InMemoryGemsWallet, type GemsWallet } from "./services/gems";
 import type { GuildSettingsProvider } from "./guild-settings";
 
 export interface BotDeps {
   registry: CommandRegistry;
   economy: EconomyService;
+  gems: GemsWallet;
   cases: ModCaseStore;
   enforcer: LateBindingEnforcer;
   /** Register a callback fired after every case creation (moderation log). */
@@ -30,12 +32,14 @@ export interface BotDeps {
 export function buildBot(deps: {
   settings: GuildSettingsProvider;
   economyStore?: EconomyStore;
+  gemsWallet?: GemsWallet;
   caseStore?: ModCaseStore;
   botName?: string;
   version?: string;
 }): BotDeps {
   const registry = new CommandRegistry();
   const economy = new EconomyService(deps.economyStore, DEFAULT_ECONOMY_CONFIG);
+  const gems = deps.gemsWallet ?? new InMemoryGemsWallet();
   const hooks: CaseHook[] = [];
   const cases = new HookedModCaseStore(deps.caseStore ?? new InMemoryModCaseStore(), hooks);
   const enforcer = new LateBindingEnforcer();
@@ -49,7 +53,7 @@ export function buildBot(deps: {
       version: deps.version ?? "0.1.0",
     }),
     ...createReactionCommands({ settings: deps.settings, botName: deps.botName ?? "Puni" }),
-    ...createEconomyCommands({ economy, currencyName: DEFAULT_ECONOMY_CONFIG.currencyName }),
+    ...createEconomyCommands({ economy, currencyName: DEFAULT_ECONOMY_CONFIG.currencyName, gems }),
     ...createModerationCommands({ cases }),
     ...createEnforcementCommands({ cases, enforcer }),
   ];
@@ -57,6 +61,7 @@ export function buildBot(deps: {
   return {
     registry,
     economy,
+    gems,
     cases,
     enforcer,
     addCaseHook: (hook) => {

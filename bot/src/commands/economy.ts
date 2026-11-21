@@ -6,12 +6,17 @@
  */
 import type { CommandDef } from "@puni/shared";
 import { EconomyService, InsufficientFundsError } from "../services/economy";
+import { formatMoneyPair, type GemsWallet } from "../services/gems";
 
 export function createEconomyCommands(deps: {
   economy: EconomyService;
   currencyName: string;
+  gems: GemsWallet;
 }): CommandDef[] {
-  const { economy, currencyName } = deps;
+  const { economy, currencyName, gems } = deps;
+  /** Money display law: Coins and Gems ALWAYS appear together. */
+  const pair = async (userId: string) =>
+    formatMoneyPair(await economy.getBalance(userId), await gems.getBalance(userId), currencyName);
   const fmt = (n: number) => `${n.toLocaleString("vi-VN")} ${currencyName}`;
 
   const balance: CommandDef = {
@@ -24,15 +29,15 @@ export function createEconomyCommands(deps: {
     prefix: true,
     handler: async (ctx) => {
       const target = ctx.mentions[0] ?? ctx.userId;
-      const bal = await economy.getBalance(target);
-      // Balance display law (owner, 2026-11-21 16:24, OwO-style sample):
-      // money in chat is ONE simple text line — mention, bold amount —
-      // never an embed or a card.
+      // Balance display law (owner, 2026-11-21 16:24 + 16:26): money in
+      // chat is ONE simple text line, and it ALWAYS shows both
+      // currencies together — Coins and Gems — never one alone.
+      const money = await pair(target);
       return {
         text:
           target === ctx.userId
-            ? `| <@${target}>, bạn hiện có **${bal.toLocaleString("vi-VN")}** ${currencyName}!`
-            : `| <@${target}> hiện có **${bal.toLocaleString("vi-VN")}** ${currencyName}!`,
+            ? `| <@${target}>, bạn hiện có ${money}!`
+            : `| <@${target}> hiện có ${money}!`,
       };
     },
   };
@@ -49,9 +54,8 @@ export function createEconomyCommands(deps: {
       if (!claim) {
         return { text: "Bạn đã nhận daily hôm nay rồi — mai quay lại nhé!", ephemeral: true };
       }
-      const bal = await economy.getBalance(ctx.userId);
       return {
-        text: `Bạn nhận **${fmt(claim.amount)}** (chuỗi ${claim.streak} ngày). Số dư: **${fmt(bal)}**`,
+        text: `Bạn nhận **${fmt(claim.amount)}** (chuỗi ${claim.streak} ngày). Số dư: ${await pair(ctx.userId)}`,
       };
     },
   };
@@ -81,7 +85,9 @@ export function createEconomyCommands(deps: {
         }
         throw e;
       }
-      return { text: `<@${ctx.userId}> đã chuyển **${fmt(amount)}** cho <@${target}>` };
+      return {
+        text: `<@${ctx.userId}> đã chuyển **${fmt(amount)}** cho <@${target}>. Số dư của bạn: ${await pair(ctx.userId)}`,
+      };
     },
   };
 
