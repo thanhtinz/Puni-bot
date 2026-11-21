@@ -25,12 +25,14 @@ export function createEconomyCommands(deps: {
     handler: async (ctx) => {
       const target = ctx.mentions[0] ?? ctx.userId;
       const bal = await economy.getBalance(target);
+      // Balance display law (owner, 2026-11-21 16:24, OwO-style sample):
+      // money in chat is ONE simple text line — mention, bold amount —
+      // never an embed or a card.
       return {
         text:
           target === ctx.userId
-            ? `Số dư của bạn: **${fmt(bal)}**`
-            : `Số dư của <@${target}>: **${fmt(bal)}**`,
-        ephemeral: target === ctx.userId,
+            ? `| <@${target}>, bạn hiện có **${bal.toLocaleString("vi-VN")}** ${currencyName}!`
+            : `| <@${target}> hiện có **${bal.toLocaleString("vi-VN")}** ${currencyName}!`,
       };
     },
   };
