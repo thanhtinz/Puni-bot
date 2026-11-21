@@ -64,7 +64,7 @@ a:hover { text-decoration: underline; }
 .pub-nav {
   max-width: 1150px; margin: 0 auto;
   display: flex; align-items: center; gap: 26px;
-  background: rgba(16, 51, 58, 0.72);
+  background: rgba(12, 32, 64, 0.72);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -298,7 +298,7 @@ table.plain tr:last-child td { border-bottom: none; }
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; }
 .card {
   background: #fff; border: 1px solid #e2ebe9; border-radius: 18px;
-  padding: 22px; box-shadow: 0 10px 26px -18px rgba(16, 51, 58, 0.35);
+  padding: 22px; box-shadow: 0 10px 26px -18px rgba(10, 28, 56, 0.35);
 }
 .card h3 { margin: 0 0 8px; font-size: 26px; }
 .card p { color: #5b7480; line-height: 1.55; margin: 0; }
@@ -306,7 +306,7 @@ table.plain tr:last-child td { border-bottom: none; }
 .panel {
   background: #fff; border: 1px solid #e2ebe9; border-radius: 18px;
   padding: 24px; margin-bottom: 20px; max-width: 780px;
-  box-shadow: 0 10px 26px -18px rgba(16, 51, 58, 0.35);
+  box-shadow: 0 10px 26px -18px rgba(10, 28, 56, 0.35);
 }
 .panel h2 { margin-top: 0; font-size: 22px; }
 .panel p { line-height: 1.6; color: #33525c; }
@@ -318,7 +318,7 @@ table.plain tr:last-child td { border-bottom: none; }
   font-size: 15px; font-family: inherit; background: #fbfdfe; transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .field input:focus, .field textarea:focus, .field select:focus {
-  outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(42, 167, 189, 0.18);
+  outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(46, 107, 230, 0.2);
 }
 .field textarea { min-height: 84px; resize: vertical; }
 .check { display: flex; gap: 9px; align-items: flex-start; margin-bottom: 10px; }
@@ -330,11 +330,11 @@ table.plain tr:last-child td { border-bottom: none; }
 .guild-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; max-width: 940px; }
 .guild-card {
   background: #fff; border: 1px solid #e2ebe9; border-radius: 16px; padding: 18px;
-  box-shadow: 0 10px 26px -18px rgba(16, 51, 58, 0.35);
+  box-shadow: 0 10px 26px -18px rgba(10, 28, 56, 0.35);
 }
 .guild-card .gname { font-family: var(--font-display); font-weight: 800; font-size: 18px; margin-bottom: 4px; }
 .guild-card .gid { color: #71868e; font-size: 13px; margin-bottom: 10px; }
-.content .tag { background: rgba(42, 167, 189, 0.12); color: #177083; border-color: rgba(42,167,189,0.3); }
+.content .tag { background: rgba(46, 107, 230, 0.12); color: #2057c9; border-color: rgba(46,107,230,0.3); }
 .guild-nav { display: flex; gap: 9px; margin-bottom: 22px; flex-wrap: wrap; }
 .guild-nav a {
   padding: 8px 16px; border-radius: 999px; font-weight: 700; font-size: 14.5px;
