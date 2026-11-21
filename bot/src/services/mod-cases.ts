@@ -47,6 +47,45 @@ export interface ModCaseStore {
   countForTarget(guildId: string, targetId: string, action?: CaseAction): Promise<number>;
 }
 
+export type CaseHook = (created: ModCase) => void | Promise<void>;
+
+/** Store decorator that notifies hooks after each case creation (used to
+ *  feed the moderation log group). Hook failures are logged, never fatal:
+ *  a broken log hook must not block a moderation action. */
+export class HookedModCaseStore implements ModCaseStore {
+  constructor(
+    private inner: ModCaseStore,
+    private hooks: CaseHook[],
+  ) {}
+
+  async create(input: CreateCaseInput): Promise<ModCase> {
+    const created = await this.inner.create(input);
+    for (const hook of this.hooks) {
+      try {
+        await hook(created);
+      } catch (err) {
+        console.error("[puni] case hook failed", err);
+      }
+    }
+    return created;
+  }
+  get(guildId: string, caseNo: number) {
+    return this.inner.get(guildId, caseNo);
+  }
+  listForTarget(guildId: string, targetId: string, limit?: number) {
+    return this.inner.listForTarget(guildId, targetId, limit);
+  }
+  update(guildId: string, caseNo: number, patch: { reason?: string; durationSec?: number | null }) {
+    return this.inner.update(guildId, caseNo, patch);
+  }
+  setActive(guildId: string, caseNo: number, active: boolean) {
+    return this.inner.setActive(guildId, caseNo, active);
+  }
+  countForTarget(guildId: string, targetId: string, action?: CaseAction) {
+    return this.inner.countForTarget(guildId, targetId, action);
+  }
+}
+
 export class InMemoryModCaseStore implements ModCaseStore {
   private cases = new Map<string, ModCase>(); // key: guildId:caseNo
   private counters = new Map<string, number>();

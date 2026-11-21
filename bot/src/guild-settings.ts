@@ -9,6 +9,12 @@ import {
   normalizeCommunityConfig,
   type CommunityConfig,
 } from "./community-config";
+import {
+  normalizeLogConfig,
+  normalizeAutomodConfig,
+  type LogConfig,
+  type AutomodConfig,
+} from "./moderation-config";
 
 export interface ReactionOverride {
   enabled?: boolean;
@@ -29,6 +35,10 @@ export interface GuildSettings {
   reactionOverrides: Record<string, ReactionOverride>;
   /** Community features: welcome/goodbye/boost (spec 6.5). */
   community: CommunityConfig;
+  /** Event logging, 5 toggleable groups (spec 6.6). */
+  logging: LogConfig;
+  /** Automod rules (spec 6.7). */
+  automod: AutomodConfig;
 }
 
 export interface GuildSettingsProvider {
@@ -50,6 +60,8 @@ export class InMemoryGuildSettings implements GuildSettingsProvider {
         modules: {},
         reactionOverrides: {},
         community: normalizeCommunityConfig(undefined),
+        logging: normalizeLogConfig(undefined),
+        automod: normalizeAutomodConfig(undefined),
       };
       this.store.set(guildId, s);
     }

@@ -85,6 +85,21 @@ test("pg guild settings: community config round-trips through JSONB", { skip }, 
   assert.equal(read.community.goodbye.enabled, false, "untouched sections keep defaults");
 });
 
+test("pg guild settings: logging + automod configs round-trip", { skip }, async () => {
+  const a = new PgGuildSettings(pool);
+  const s = await a.get("g-logcfg");
+  await a.set("g-logcfg", {
+    logging: { ...s.logging, enabled: true, channelId: "c-log", groups: { ...s.logging.groups, server: false } },
+    automod: { ...s.automod, enabled: true, blockedWords: ["xyz"], blockLinks: true, capsRatio: 0.8 },
+  });
+  const read = await new PgGuildSettings(pool).get("g-logcfg");
+  assert.equal(read.logging.enabled, true);
+  assert.equal(read.logging.groups.server, false);
+  assert.equal(read.logging.groups.messages, true);
+  assert.deepEqual(read.automod.blockedWords, ["xyz"]);
+  assert.equal(read.automod.capsRatio, 0.8);
+});
+
 test("pg mod cases: 10 parallel creates in one guild get unique sequential numbers", { skip }, async () => {
   const store = new PgModCaseStore(pool);
   const created = await Promise.all(

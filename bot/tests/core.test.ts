@@ -18,10 +18,10 @@ test("reactions: exactly 69, kiss template matches the approved spec example", (
 test("registry: core + reactions + economy assembled without collisions", () => {
   const settings = new InMemoryGuildSettings();
   const { registry } = buildBot({ settings });
-  // slash: help, ping, info, uptime, reaction, balance, daily, pay, ecotop, warn, case, cases
-  assert.equal(registry.slashCommands().length, 12);
-  // prefix: 4 core + 69 reactions + 4 economy + 3 moderation
-  assert.equal(registry.prefixCommands().length, 80);
+  // slash: 4 core + reaction + 4 economy + 3 case commands + 5 enforcement
+  assert.equal(registry.slashCommands().length, 17);
+  // prefix: 4 core + 69 reactions + 4 economy + 3 case commands + 5 enforcement
+  assert.equal(registry.prefixCommands().length, 85);
   assert.equal(registry.resolve("bal")?.name, "balance");
   assert.equal(registry.resolve("kiss")?.module, "reaction");
 });

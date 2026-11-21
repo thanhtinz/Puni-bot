@@ -50,8 +50,16 @@ async function main(): Promise<void> {
     console.log("[puni] cooldowns: Redis (shared across cluster)");
   }
 
-  const { registry } = buildBot({ settings, economyStore, caseStore });
-  const client = createBotClient({ config, registry, settings, cooldownStore });
+  const bot = buildBot({ settings, economyStore, caseStore });
+  const client = createBotClient({
+    config,
+    registry: bot.registry,
+    settings,
+    cooldownStore,
+    enforcer: bot.enforcer,
+    cases: bot.cases,
+    addCaseHook: bot.addCaseHook,
+  });
   await client.login(config.token);
 }
 

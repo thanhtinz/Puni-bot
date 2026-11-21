@@ -18,7 +18,11 @@ import {
 import { REACTIONS, type CommandRegistry } from "@puni/shared";
 import { Dispatcher, type DispatchOutcome } from "./dispatcher";
 import { rankFromMember } from "./permissions";
-import { CommunityEvents } from "./services/community";
+import { CommunityEvents, type ChannelSender } from "./services/community";
+import { LogService } from "./services/logging";
+import { checkAutomod } from "./services/automod";
+import type { CaseHook, ModCaseStore } from "./services/mod-cases";
+import type { Enforcer, LateBindingEnforcer } from "./services/enforcement";
 import type { GuildSettingsProvider } from "./guild-settings";
 import type { BotConfig } from "./config";
 
@@ -56,6 +60,19 @@ export function buildSlashPayload(registry: CommandRegistry) {
       if (c.name === "cases") {
         b.addUserOption((o) => o.setName("nguoi").setDescription("Người cần xem").setRequired(true));
       }
+      if (c.name === "mute") {
+        b.addUserOption((o) => o.setName("nguoi").setDescription("Người bị mute").setRequired(true));
+        b.addStringOption((o) => o.setName("thoiluong").setDescription("Thời lượng: 30s/10m/2h/1d").setRequired(true));
+        b.addStringOption((o) => o.setName("lydo").setDescription("Lý do").setRequired(false));
+      }
+      if (c.name === "unmute" || c.name === "kick" || c.name === "ban") {
+        b.addUserOption((o) => o.setName("nguoi").setDescription("Người bị xử lý").setRequired(true));
+        b.addStringOption((o) => o.setName("lydo").setDescription("Lý do").setRequired(false));
+      }
+      if (c.name === "unban") {
+        b.addStringOption((o) => o.setName("userid").setDescription("User ID cần gỡ ban").setRequired(true));
+        b.addStringOption((o) => o.setName("lydo").setDescription("Lý do").setRequired(false));
+      }
       return b.toJSON();
     });
 }
@@ -73,6 +90,9 @@ export function createBotClient(deps: {
   registry: CommandRegistry;
   settings: GuildSettingsProvider;
   cooldownStore?: import("./dispatcher").CooldownStore;
+  enforcer?: LateBindingEnforcer;
+  cases?: ModCaseStore;
+  addCaseHook?: (hook: CaseHook) => void;
 }): Client {
   const { config, registry, settings } = deps;
   const client = new Client({
@@ -96,6 +116,55 @@ export function createBotClient(deps: {
     { cooldownStore: deps.cooldownStore },
   );
 
+  const sender: ChannelSender = {
+    send: async (channelId, text) => {
+      const channel = await client.channels.fetch(channelId).catch(() => null);
+      if (channel && channel.isTextBased() && "send" in channel) {
+        await (channel as { send: (t: string) => Promise<unknown> }).send(text);
+      }
+    },
+  };
+  const logService = new LogService(settings, sender);
+
+  if (deps.addCaseHook) {
+    deps.addCaseHook(async (c) => {
+      await logService.log(
+        c.guildId,
+        "moderation",
+        `**Case #${c.caseNo}** — ${c.action} • <@${c.targetId}> • bởi <@${c.moderatorId}>${c.reason ? ` • Lý do: ${c.reason}` : ""}`,
+      );
+    });
+  }
+
+  if (deps.enforcer) {
+    const backend: Enforcer = {
+      async timeout(guildId, userId, durationSec, reason) {
+        const guild = await client.guilds.fetch(guildId);
+        const member = await guild.members.fetch(userId);
+        await member.timeout(durationSec * 1000, reason || undefined);
+      },
+      async removeTimeout(guildId, userId, reason) {
+        const guild = await client.guilds.fetch(guildId);
+        const member = await guild.members.fetch(userId);
+        await member.timeout(null, reason || undefined);
+      },
+      async kick(guildId, userId, reason) {
+        const guild = await client.guilds.fetch(guildId);
+        const member = await guild.members.fetch(userId);
+        await member.kick(reason || undefined);
+      },
+      async ban(guildId, userId, reason) {
+        const guild = await client.guilds.fetch(guildId);
+        await guild.members.ban(userId, { reason: reason || undefined });
+      },
+      async unban(guildId, userId, reason) {
+        const guild = await client.guilds.fetch(guildId);
+        await guild.members.unban(userId, reason || undefined);
+      },
+    };
+    deps.enforcer.bind(backend);
+  }
+
   client.once(Events.ClientReady, async (c) => {
     console.log(
       `[puni] ready as ${c.user.tag} shard=${c.shard?.ids.join(",") ?? "-"} guilds=${c.guilds.cache.size}`,
@@ -110,16 +179,12 @@ export function createBotClient(deps: {
   });
 
   // Community greetings (welcome / goodbye / boost) — config-driven.
-  const community = new CommunityEvents(settings, {
-    send: async (channelId, text) => {
-      const channel = await client.channels.fetch(channelId).catch(() => null);
-      if (channel && channel.isTextBased() && "send" in channel) {
-        await (channel as { send: (t: string) => Promise<unknown> }).send(text);
-      }
-    },
-  });
+  const community = new CommunityEvents(settings, sender);
 
   client.on(Events.GuildMemberAdd, async (member) => {
+    await logService
+      .log(member.guild.id, "members", `<@${member.id}> (${member.user.tag}) đã tham gia server.`)
+      .catch(() => undefined);
     await community
       .onMemberJoin({
         guildId: member.guild.id,
@@ -132,6 +197,9 @@ export function createBotClient(deps: {
   });
 
   client.on(Events.GuildMemberRemove, async (member) => {
+    await logService
+      .log(member.guild.id, "members", `<@${member.id}> (${member.user?.tag ?? "?"}) đã rời server.`)
+      .catch(() => undefined);
     await community
       .onMemberLeave({
         guildId: member.guild.id,
@@ -164,15 +232,44 @@ export function createBotClient(deps: {
       return;
     }
     if (msg.author.bot || !msg.guild) return;
+    const rank = rankFromMember({
+      isGuildOwner: msg.guild.ownerId === msg.author.id,
+      permissions: msg.member?.permissions.bitfield ?? 0n,
+    });
+
+    // Automod runs before command dispatch; a deleted message never
+    // reaches the dispatcher.
+    const guildSettings = await settings.get(msg.guild.id);
+    const verdict = checkAutomod(guildSettings.automod, { content: msg.content, authorRank: rank });
+    if (verdict.action === "delete") {
+      await msg.delete().catch(() => undefined);
+      await logService
+        .log(
+          msg.guild.id,
+          "moderation",
+          `Automod đã xoá tin nhắn của <@${msg.author.id}> ở <#${msg.channelId}> — luật: ${verdict.rule} (${verdict.detail})`,
+        )
+        .catch(() => undefined);
+      if (guildSettings.automod.warnOnDelete && deps.cases && client.user) {
+        await deps.cases
+          .create({
+            guildId: msg.guild.id,
+            targetId: msg.author.id,
+            moderatorId: client.user.id,
+            action: "warn",
+            reason: `Automod: ${verdict.rule}`,
+          })
+          .catch((err) => console.error("[puni] automod warn case failed", err));
+      }
+      return;
+    }
+
     const outcome = await dispatcher.dispatchPrefix({
       content: msg.content,
       userId: msg.author.id,
       guildId: msg.guild.id,
       channelId: msg.channelId,
-      rank: rankFromMember({
-        isGuildOwner: msg.guild.ownerId === msg.author.id,
-        permissions: msg.member?.permissions.bitfield ?? 0n,
-      }),
+      rank,
     });
     if (outcome.kind === "ok") {
       const embed = outcomeEmbed(outcome);
@@ -188,6 +285,45 @@ export function createBotClient(deps: {
       console.error("[puni] command error", outcome.error);
       await msg.reply("Đã có lỗi xảy ra, thử lại sau nhé!");
     }
+  });
+
+  const truncate = (s: string, n = 300) => (s.length > n ? `${s.slice(0, n)}…` : s);
+
+  client.on(Events.MessageDelete, async (msg) => {
+    if (!msg.guild || msg.author?.bot) return;
+    await logService
+      .log(
+        msg.guild.id,
+        "messages",
+        `Tin nhắn của <@${msg.author?.id ?? "?"}> đã bị xoá ở <#${msg.channelId}>${msg.content ? `: "${truncate(msg.content)}"` : ""}`,
+      )
+      .catch(() => undefined);
+  });
+
+  client.on(Events.MessageUpdate, async (oldMsg, newMsg) => {
+    if (!newMsg.guild || newMsg.author?.bot) return;
+    if (!oldMsg.content || oldMsg.content === newMsg.content) return;
+    await logService
+      .log(
+        newMsg.guild.id,
+        "messages",
+        `<@${newMsg.author?.id ?? "?"}> đã sửa tin nhắn ở <#${newMsg.channelId}>\nTrước: "${truncate(oldMsg.content)}"\nSau: "${truncate(newMsg.content ?? "")}"`,
+      )
+      .catch(() => undefined);
+  });
+
+  client.on(Events.ChannelCreate, async (channel) => {
+    if (!("guild" in channel) || !channel.guild) return;
+    await logService
+      .log(channel.guild.id, "channels", `Kênh mới được tạo: <#${channel.id}> (${channel.name})`)
+      .catch(() => undefined);
+  });
+
+  client.on(Events.ChannelDelete, async (channel) => {
+    if (!("guild" in channel) || !channel.guild) return;
+    await logService
+      .log(channel.guild.id, "channels", `Kênh đã bị xoá: #${channel.name}`)
+      .catch(() => undefined);
   });
 
   client.on(Events.InteractionCreate, async (interaction) => {
@@ -225,6 +361,22 @@ export function createBotClient(deps: {
     } else if (cmd.commandName === "case") {
       const no = cmd.options.getInteger("so");
       if (no != null) args.push(String(no));
+    } else if (cmd.commandName === "mute") {
+      const user = cmd.options.getUser("nguoi");
+      if (user) mentions.push(user.id);
+      args.push(cmd.options.getString("thoiluong") ?? "");
+      const reason = cmd.options.getString("lydo");
+      if (reason) args.push(reason);
+    } else if (cmd.commandName === "unmute" || cmd.commandName === "kick" || cmd.commandName === "ban") {
+      const user = cmd.options.getUser("nguoi");
+      if (user) mentions.push(user.id);
+      const reason = cmd.options.getString("lydo");
+      if (reason) args.push(reason);
+    } else if (cmd.commandName === "unban") {
+      const id = cmd.options.getString("userid");
+      if (id) args.push(id);
+      const reason = cmd.options.getString("lydo");
+      if (reason) args.push(reason);
     }
     const outcome = await dispatcher.dispatchSlash({
       name: cmd.commandName,
