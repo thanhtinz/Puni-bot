@@ -1,0 +1,188 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { CommandRegistry, REACTIONS, getReaction } from "@puni/shared";
+import { parsePrefixMessage, Dispatcher } from "../src/dispatcher";
+import { InMemoryGuildSettings } from "../src/guild-settings";
+import { EconomyService, InsufficientFundsError } from "../src/services/economy";
+import { buildBot } from "../src/registry";
+import { buildSlashPayload } from "../src/client";
+
+test("reactions: exactly 69, kiss template matches the approved spec example", () => {
+  assert.equal(REACTIONS.length, 69);
+  const kiss = getReaction("kiss");
+  assert.ok(kiss);
+  assert.equal(kiss.tagText, "{người gửi} đã gửi nụ hôn đến {người nhận}");
+  assert.ok(getReaction("KISS"), "lookup is case-insensitive");
+});
+
+test("registry: core + reactions + economy assembled without collisions", () => {
+  const settings = new InMemoryGuildSettings();
+  const { registry } = buildBot({ settings });
+  // slash: help, ping, info, uptime, reaction, balance, daily, pay, ecotop
+  assert.equal(registry.slashCommands().length, 9);
+  // prefix: 4 core + 69 reactions + 4 economy
+  assert.equal(registry.prefixCommands().length, 77);
+  assert.equal(registry.resolve("bal")?.name, "balance");
+  assert.equal(registry.resolve("kiss")?.module, "reaction");
+});
+
+test("parsePrefixMessage: prefix required, mentions extracted", () => {
+  assert.deepEqual(parsePrefixMessage("!kiss <@123>", "!"), {
+    name: "kiss",
+    args: ["<@123>"],
+    mentions: ["123"],
+  });
+  assert.equal(parsePrefixMessage("kiss <@123>", "!"), null);
+  assert.equal(parsePrefixMessage("!", "!"), null);
+  assert.equal(parsePrefixMessage("?ping", "!"), null);
+  assert.equal(parsePrefixMessage("?ping", "?")?.name, "ping");
+});
+
+test("hidden-shop law: shop command behaves as nonexistent until Shop is enabled", async () => {
+  const registry = new CommandRegistry();
+  registry.register({
+    name: "buy",
+    description: "fake shop command",
+    module: "shop",
+    permission: "everyone",
+    slash: true,
+    prefix: true,
+    handler: async () => ({ text: "ok" }),
+  });
+  const settings = new InMemoryGuildSettings();
+  const dispatcher = new Dispatcher(registry, settings, async () => 0, "owner-1");
+  const before = await dispatcher.dispatchPrefix({
+    content: "!buy",
+    userId: "u1",
+    guildId: "g1",
+    channelId: "c1",
+  });
+  assert.equal(before.kind, "ignored");
+  await settings.set("g1", { shopEnabled: true });
+  const after = await dispatcher.dispatchPrefix({
+    content: "!buy",
+    userId: "u1",
+    guildId: "g1",
+    channelId: "c1",
+  });
+  assert.equal(after.kind, "ok");
+});
+
+test("public command list hides shop commands by default (commands page law)", () => {
+  const registry = new CommandRegistry();
+  registry.register({
+    name: "buy",
+    description: "fake shop command",
+    module: "shop",
+    permission: "everyone",
+    slash: true,
+    prefix: true,
+    handler: async () => ({ text: "ok" }),
+  });
+  registry.register({
+    name: "ping",
+    description: "core",
+    module: "core",
+    permission: "everyone",
+    slash: true,
+    prefix: true,
+    handler: async () => ({ text: "pong" }),
+  });
+  assert.deepEqual(registry.publicCommands().map((c) => c.name), ["ping"]);
+  assert.deepEqual(
+    registry.publicCommands({ includeShop: true }).map((c) => c.name).sort(),
+    ["buy", "ping"],
+  );
+});
+
+test("permission gate: owner-only command rejects members, accepts the bot owner", async () => {
+  const registry = new CommandRegistry();
+  registry.register({
+    name: "infra",
+    description: "owner infra",
+    module: "core",
+    permission: "owner",
+    slash: true,
+    prefix: true,
+    handler: async () => ({ text: "secret" }),
+  });
+  const settings = new InMemoryGuildSettings();
+  const dispatcher = new Dispatcher(registry, settings, async () => 0, "owner-1");
+  const member = await dispatcher.dispatchPrefix({
+    content: "!infra",
+    userId: "u9",
+    guildId: "g1",
+    channelId: "c1",
+  });
+  assert.equal(member.kind, "forbidden");
+  const owner = await dispatcher.dispatchPrefix({
+    content: "!infra",
+    userId: "owner-1",
+    guildId: "g1",
+    channelId: "c1",
+  });
+  assert.equal(owner.kind, "ok");
+});
+
+test("cooldown gate: second call inside the window is throttled", async () => {
+  const registry = new CommandRegistry();
+  registry.register({
+    name: "hug",
+    description: "reaction-like",
+    module: "reaction",
+    permission: "everyone",
+    slash: false,
+    prefix: true,
+    cooldownSec: 3,
+    handler: async () => ({ text: "hug" }),
+  });
+  const settings = new InMemoryGuildSettings();
+  let now = 1_000_000;
+  const dispatcher = new Dispatcher(registry, settings, async () => 0, "owner-1", () => now);
+  const first = await dispatcher.dispatchPrefix({ content: "!hug", userId: "u1", guildId: "g1", channelId: "c1" });
+  assert.equal(first.kind, "ok");
+  const second = await dispatcher.dispatchPrefix({ content: "!hug", userId: "u1", guildId: "g1", channelId: "c1" });
+  assert.equal(second.kind, "cooldown");
+  now += 3001;
+  const third = await dispatcher.dispatchPrefix({ content: "!hug", userId: "u1", guildId: "g1", channelId: "c1" });
+  assert.equal(third.kind, "ok");
+});
+
+test("economy: debit fails closed, transfer is atomic", async () => {
+  const eco = new EconomyService();
+  await eco.credit("u1", 100, "test");
+  assert.equal(await eco.getBalance("u1"), 100);
+  await assert.rejects(() => eco.debit("u1", 150, "test"), InsufficientFundsError);
+  assert.equal(await eco.getBalance("u1"), 100, "failed debit must not change the balance");
+  await assert.rejects(() => eco.transfer("u1", "u2", 150), InsufficientFundsError);
+  assert.equal(await eco.getBalance("u2"), 0, "failed transfer must not credit the receiver");
+  await eco.transfer("u1", "u2", 40);
+  assert.equal(await eco.getBalance("u1"), 60);
+  assert.equal(await eco.getBalance("u2"), 40);
+  // u1 ledger: the credit + the successful transfer-out = 2 entries.
+  // The failed debit and failed transfer wrote NOTHING (fail-closed).
+  assert.equal(eco.ledgerFor("u1").length, 2, "only successful mutations reach the ledger");
+  assert.equal(eco.ledgerFor("u2").length, 1);
+});
+
+test("economy daily: once per global day, streak grows then resets", async () => {
+  const eco = new EconomyService();
+  const d1 = new Date("2026-01-01T12:00:00Z");
+  const first = await eco.claimDaily("u1", d1);
+  assert.deepEqual(first, { amount: 100, streak: 1 });
+  const again = await eco.claimDaily("u1", new Date("2026-01-01T23:59:00Z"));
+  assert.equal(again, null, "second claim on the same global day is refused");
+  const d2 = await eco.claimDaily("u1", new Date("2026-01-02T00:01:00Z"));
+  assert.deepEqual(d2, { amount: 110, streak: 2 });
+  const d4 = await eco.claimDaily("u1", new Date("2026-01-04T00:01:00Z"));
+  assert.deepEqual(d4, { amount: 100, streak: 1 }, "a skipped day resets the streak");
+});
+
+test("slash payload: no shop commands leak into global registration", () => {
+  const settings = new InMemoryGuildSettings();
+  const { registry } = buildBot({ settings });
+  const payload = buildSlashPayload(registry);
+  assert.equal(payload.length, registry.slashCommands().length);
+  const reaction = payload.find((p) => p.name === "reaction");
+  assert.ok(reaction, "grouped /reaction exists");
+});

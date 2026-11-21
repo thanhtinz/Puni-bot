@@ -1,0 +1,347 @@
+[
+ {
+  "name": "airkiss",
+  "tagText": "{người gửi} đã gửi một nụ hôn gió đến {người nhận}",
+  "soloText": "{người gửi} vừa hôn gió vào hư không kìa, gió thổi đi đâu mất rồi (⁄ ⁄•⁄ω⁄•⁄ ⁄)"
+ },
+ {
+  "name": "angrystare",
+  "tagText": "{người gửi} đang lườm {người nhận} cháy mặt",
+  "soloText": "{người gửi} đang lườm vào khoảng không kìa, ai chọc giận vậy nè (¬_¬)"
+ },
+ {
+  "name": "bite",
+  "tagText": "{người gửi} đã cắn {người nhận} một cái",
+  "soloText": "{người gửi} vừa cắn gió một cái, đói đến vậy sao (¬‿¬)"
+ },
+ {
+  "name": "bleh",
+  "tagText": "{người gửi} lè lưỡi trêu {người nhận}",
+  "soloText": "{người gửi} lè lưỡi một mình kìa, trêu ai vậy không biết (๑>؂•̀๑)"
+ },
+ {
+  "name": "blush",
+  "tagText": "{người gửi} đỏ mặt khi nhìn {người nhận}",
+  "soloText": "{người gửi} tự nhiên đỏ mặt một mình kìa, đang nghĩ tới ai đó (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)"
+ },
+ {
+  "name": "brofist",
+  "tagText": "{người gửi} đã đập tay anh em với {người nhận}",
+  "soloText": "{người gửi} giơ nắm đấm lên một mình kìa, tìm anh em đập tay đi (•̀ᴗ•́)و"
+ },
+ {
+  "name": "celebrate",
+  "tagText": "{người gửi} cùng {người nhận} ăn mừng tưng bừng",
+  "soloText": "{người gửi} đang ăn mừng một mình, có tin vui gì kể nghe với (≧▽≦)"
+ },
+ {
+  "name": "cheers",
+  "tagText": "{người gửi} nâng ly chúc mừng {người nhận}",
+  "soloText": "{người gửi} nâng ly với không khí kìa, cạn ly một mình luôn (•̀ᴗ•́)و"
+ },
+ {
+  "name": "clap",
+  "tagText": "{người gửi} vỗ tay tán thưởng {người nhận}",
+  "soloText": "{người gửi} vỗ tay một mình, hay quá nên không kìm được (≧▽≦)"
+ },
+ {
+  "name": "confused",
+  "tagText": "{người gửi} nhìn {người nhận} đầy bối rối",
+  "soloText": "{người gửi} đang bối rối một mình, ai giải thích giùm đi (・_・?)"
+ },
+ {
+  "name": "cool",
+  "tagText": "{người gửi} tạo dáng ngầu trước mặt {người nhận}",
+  "soloText": "{người gửi} đang tự thấy mình ngầu, ngầu một mình luôn (¬‿¬)"
+ },
+ {
+  "name": "cry",
+  "tagText": "{người gửi} khóc nức nở trước mặt {người nhận}",
+  "soloText": "{người gửi} đang khóc một mình kìa, ai dỗ đi (╥﹏╥)"
+ },
+ {
+  "name": "cuddle",
+  "tagText": "{người gửi} ôm chầm lấy {người nhận} thật chặt",
+  "soloText": "{người gửi} ôm lấy chính mình, tự sưởi ấm luôn (˶ᵔᵕᵔ˶)"
+ },
+ {
+  "name": "dance",
+  "tagText": "{người gửi} kéo {người nhận} ra nhảy cùng",
+  "soloText": "{người gửi} đang nhảy múa một mình, nhạc đâu mà sung vậy (≧▽≦)"
+ },
+ {
+  "name": "drool",
+  "tagText": "{người gửi} chảy nước miếng khi nhìn {người nhận}",
+  "soloText": "{người gửi} đang chảy nước miếng một mình kìa, thấy món gì ngon vậy (¬‿¬)"
+ },
+ {
+  "name": "evillaugh",
+  "tagText": "{người gửi} cười gian xảo với {người nhận}",
+  "soloText": "{người gửi} cười gian một mình, chắc đang ủ mưu gì đây (¬‿¬)"
+ },
+ {
+  "name": "facepalm",
+  "tagText": "{người gửi} ôm mặt bất lực vì {người nhận}",
+  "soloText": "{người gửi} tự ôm mặt bất lực, chuyện gì vừa xảy ra vậy (¬_¬)"
+ },
+ {
+  "name": "handhold",
+  "tagText": "{người gửi} nắm tay {người nhận} thật chặt",
+  "soloText": "{người gửi} giơ tay ra mà không ai nắm, nắm tay mình luôn (˶ᵔᵕᵔ˶)"
+ },
+ {
+  "name": "happy",
+  "tagText": "{người gửi} cười thật tươi với {người nhận}",
+  "soloText": "{người gửi} đang vui một mình, niềm vui tự đến (≧▽≦)"
+ },
+ {
+  "name": "headbang",
+  "tagText": "{người gửi} lắc đầu quẩy nhạc cùng {người nhận}",
+  "soloText": "{người gửi} đang quẩy nhạc một mình, sung quá đi (≧▽≦)"
+ },
+ {
+  "name": "hug",
+  "tagText": "{người gửi} đã ôm {người nhận} một cái thật ấm",
+  "soloText": "{người gửi} dang tay ôm không khí kìa, ai ôm lại đi (˶ᵔᵕᵔ˶)"
+ },
+ {
+  "name": "huh",
+  "tagText": "{người gửi} ngơ ngác nhìn {người nhận}: \"Hả?\"",
+  "soloText": "{người gửi} đang \"hả?\" một mình, chưa hiểu chuyện gì (・_・?)"
+ },
+ {
+  "name": "kiss",
+  "tagText": "{người gửi} đã gửi nụ hôn đến {người nhận}",
+  "soloText": "{người gửi} vừa hôn vào không khí kìa, mau chóng kiếm một người để hôn đi (´꒳`)"
+ },
+ {
+  "name": "laugh",
+  "tagText": "{người gửi} cười phá lên với {người nhận}",
+  "soloText": "{người gửi} cười một mình như được mùa (≧▽≦)"
+ },
+ {
+  "name": "lick",
+  "tagText": "{người gửi} liếm {người nhận} một cái trêu chọc",
+  "soloText": "{người gửi} liếm môi một mình, tính ăn gì đó hả (¬‿¬)"
+ },
+ {
+  "name": "love",
+  "tagText": "{người gửi} gửi trọn trái tim cho {người nhận}",
+  "soloText": "{người gửi} đang yêu đời một mình, tim bay khắp nơi (´꒳`)"
+ },
+ {
+  "name": "mad",
+  "tagText": "{người gửi} đang nổi giận với {người nhận}",
+  "soloText": "{người gửi} đang giận một mình kìa, bình tĩnh nào (¬_¬)"
+ },
+ {
+  "name": "nervous",
+  "tagText": "{người gửi} hồi hộp khi đứng trước {người nhận}",
+  "soloText": "{người gửi} đang hồi hộp một mình, sắp có chuyện lớn à (・_・;)"
+ },
+ {
+  "name": "no",
+  "tagText": "{người gửi} lắc đầu từ chối {người nhận}: \"Không!\"",
+  "soloText": "{người gửi} lắc đầu nguầy nguậy một mình: không là không (¬_¬)"
+ },
+ {
+  "name": "nom",
+  "tagText": "{người gửi} cắn yêu {người nhận} một miếng",
+  "soloText": "{người gửi} đang nhai nhóp nhép một mình, ăn gì ngon vậy (¬‿¬)"
+ },
+ {
+  "name": "nosebleed",
+  "tagText": "{người gửi} chảy máu mũi khi thấy {người nhận}",
+  "soloText": "{người gửi} tự chảy máu mũi một mình kìa, vừa thấy gì vậy (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)"
+ },
+ {
+  "name": "nuzzle",
+  "tagText": "{người gửi} dụi mặt vào {người nhận} nũng nịu",
+  "soloText": "{người gửi} dụi dụi một mình, muốn được cưng chiều (˶ᵔᵕᵔ˶)"
+ },
+ {
+  "name": "nyah",
+  "tagText": "{người gửi} kêu \"nyah\" trêu {người nhận} như mèo",
+  "soloText": "{người gửi} tự kêu nyah một mình, hóa mèo rồi (´꒳`)"
+ },
+ {
+  "name": "pat",
+  "tagText": "{người gửi} đã vỗ về {người nhận} nhẹ nhàng",
+  "soloText": "{người gửi} tự vỗ vai mình an ủi, ngoan nào (˶ᵔᵕᵔ˶)"
+ },
+ {
+  "name": "peek",
+  "tagText": "{người gửi} lén nhìn trộm {người nhận}",
+  "soloText": "{người gửi} đang lén lút ngó nghiêng một mình, nhìn gì đó (¬‿¬)"
+ },
+ {
+  "name": "pinch",
+  "tagText": "{người gửi} đã véo má {người nhận} một cái",
+  "soloText": "{người gửi} tự véo má mình cho tỉnh ngủ (•̀ᴗ•́)"
+ },
+ {
+  "name": "poke",
+  "tagText": "{người gửi} đã chọc {người nhận} một cái",
+  "soloText": "{người gửi} chọc chọc vào không khí kìa, chọc ai vậy (¬‿¬)"
+ },
+ {
+  "name": "pout",
+  "tagText": "{người gửi} chu môi dỗi {người nhận}",
+  "soloText": "{người gửi} chu môi giận dỗi một mình, ai làm gì phật ý vậy (¬_¬)"
+ },
+ {
+  "name": "punch",
+  "tagText": "{người gửi} đã đấm {người nhận} một cú",
+  "soloText": "{người gửi} đấm vào không khí kìa, tập boxing một mình à (•̀ᴗ•́)و"
+ },
+ {
+  "name": "roll",
+  "tagText": "{người gửi} lăn qua lăn lại trước mặt {người nhận}",
+  "soloText": "{người gửi} đang lăn lộn một mình, vui hay buồn vậy (≧▽≦)"
+ },
+ {
+  "name": "run",
+  "tagText": "{người gửi} chạy trốn khỏi {người nhận}",
+  "soloText": "{người gửi} bỗng chạy biến đi một mình, có chuyện gấp à (•̀ᴗ•́)"
+ },
+ {
+  "name": "sad",
+  "tagText": "{người gửi} buồn bã nhìn {người nhận}",
+  "soloText": "{người gửi} đang buồn một mình kìa, tâm sự đi (╥﹏╥)"
+ },
+ {
+  "name": "scared",
+  "tagText": "{người gửi} sợ hãi nấp sau {người nhận}",
+  "soloText": "{người gửi} đang sợ một mình, thấy ma à (・_・;)"
+ },
+ {
+  "name": "shout",
+  "tagText": "{người gửi} hét lớn vào {người nhận}",
+  "soloText": "{người gửi} hét một mình cho đã, xả stress à (•̀ᴗ•́)"
+ },
+ {
+  "name": "shrug",
+  "tagText": "{người gửi} nhún vai với {người nhận}: \"Chịu thôi\"",
+  "soloText": "{người gửi} nhún vai một mình, bó tay rồi (¬_¬)"
+ },
+ {
+  "name": "shy",
+  "tagText": "{người gửi} ngại ngùng khi gặp {người nhận}",
+  "soloText": "{người gửi} tự nhiên ngại một mình kìa, sao vậy (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)"
+ },
+ {
+  "name": "sigh",
+  "tagText": "{người gửi} thở dài trước mặt {người nhận}",
+  "soloText": "{người gửi} thở dài một mình, mệt mỏi rồi à (¬_¬)"
+ },
+ {
+  "name": "sip",
+  "tagText": "{người gửi} nhấp một ngụm trà ngắm {người nhận}",
+  "soloText": "{người gửi} đang nhâm nhi một mình, chill quá (¬‿¬)"
+ },
+ {
+  "name": "slap",
+  "tagText": "{người gửi} đã tát {người nhận} một cái",
+  "soloText": "{người gửi} vung tay tát gió một cái, tát ai hụt vậy (¬‿¬)"
+ },
+ {
+  "name": "sleep",
+  "tagText": "{người gửi} ngủ gật ngay cạnh {người nhận}",
+  "soloText": "{người gửi} đã buồn ngủ rũ mắt, chúc ngủ ngon (˶ᵔᵕᵔ˶)"
+ },
+ {
+  "name": "slowclap",
+  "tagText": "{người gửi} vỗ tay chậm rãi đầy mỉa mai với {người nhận}",
+  "soloText": "{người gửi} vỗ tay chậm một mình, mỉa mai ai vậy (¬_¬)"
+ },
+ {
+  "name": "smack",
+  "tagText": "{người gửi} đã tét {người nhận} một cái",
+  "soloText": "{người gửi} tét vào không khí một cái, hụt rồi (¬‿¬)"
+ },
+ {
+  "name": "smile",
+  "tagText": "{người gửi} mỉm cười với {người nhận}",
+  "soloText": "{người gửi} đang cười một mình, có gì vui kể nghe (≧▽≦)"
+ },
+ {
+  "name": "smug",
+  "tagText": "{người gửi} cười đắc ý trước mặt {người nhận}",
+  "soloText": "{người gửi} đang tự đắc một mình, vừa thắng gì à (¬‿¬)"
+ },
+ {
+  "name": "sneeze",
+  "tagText": "{người gửi} hắt hơi ngay trước mặt {người nhận}",
+  "soloText": "{người gửi} hắt hơi một cái thật to, có ai nhắc tên à (・_・;)"
+ },
+ {
+  "name": "sorry",
+  "tagText": "{người gửi} cúi đầu xin lỗi {người nhận}",
+  "soloText": "{người gửi} đang xin lỗi một mình, ai tha lỗi cho nè (╥﹏╥)"
+ },
+ {
+  "name": "stare",
+  "tagText": "{người gửi} nhìn chằm chằm vào {người nhận}",
+  "soloText": "{người gửi} đang nhìn chằm chằm vào hư không, thấy gì lạ à (¬_¬)"
+ },
+ {
+  "name": "stop",
+  "tagText": "{người gửi} giơ tay chặn {người nhận} lại: \"Dừng lại!\"",
+  "soloText": "{người gửi} giơ tay hô dừng một mình, dừng cái gì vậy (•̀ᴗ•́)"
+ },
+ {
+  "name": "surprised",
+  "tagText": "{người gửi} giật mình ngạc nhiên vì {người nhận}",
+  "soloText": "{người gửi} tự giật mình một mình, bị gì vậy (・_・;)"
+ },
+ {
+  "name": "sweat",
+  "tagText": "{người gửi} toát mồ hôi khi đứng cạnh {người nhận}",
+  "soloText": "{người gửi} đang toát mồ hôi một mình, căng thẳng quá (・_・;)"
+ },
+ {
+  "name": "thumbsup",
+  "tagText": "{người gửi} giơ ngón cái khen {người nhận}",
+  "soloText": "{người gửi} tự giơ ngón cái khen mình, tự tin ghê (•̀ᴗ•́)و"
+ },
+ {
+  "name": "tickle",
+  "tagText": "{người gửi} cù lét {người nhận} không ngừng",
+  "soloText": "{người gửi} tự cù mình cười khúc khích, buồn cười ghê (≧▽≦)"
+ },
+ {
+  "name": "tired",
+  "tagText": "{người gửi} mệt mỏi tựa vào {người nhận}",
+  "soloText": "{người gửi} đang mệt rã rời một mình, nghỉ ngơi đi (¬_¬)"
+ },
+ {
+  "name": "wave",
+  "tagText": "{người gửi} vẫy tay chào {người nhận}",
+  "soloText": "{người gửi} vẫy tay chào không khí kìa, chào ai vậy (≧▽≦)"
+ },
+ {
+  "name": "wink",
+  "tagText": "{người gửi} nháy mắt với {người nhận}",
+  "soloText": "{người gửi} nháy mắt một mình, ra hiệu cho ai đó (¬‿¬)"
+ },
+ {
+  "name": "woah",
+  "tagText": "{người gửi} trầm trồ trước {người nhận}: \"Woah!\"",
+  "soloText": "{người gửi} đang \"woah\" một mình, thấy gì đỉnh vậy (・_・?)"
+ },
+ {
+  "name": "yawn",
+  "tagText": "{người gửi} ngáp dài trước mặt {người nhận}",
+  "soloText": "{người gửi} ngáp một cái thật dài, buồn ngủ rồi à (¬_¬)"
+ },
+ {
+  "name": "yay",
+  "tagText": "{người gửi} reo mừng cùng {người nhận}: \"Yay!\"",
+  "soloText": "{người gửi} reo \"yay\" một mình, trúng số à (≧▽≦)"
+ },
+ {
+  "name": "yes",
+  "tagText": "{người gửi} gật đầu đồng ý với {người nhận}",
+  "soloText": "{người gửi} gật gù đồng ý một mình, đồng ý với ai vậy (•̀ᴗ•́)"
+ }
+]
