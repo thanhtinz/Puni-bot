@@ -1,1 +1,1 @@
-{"dependencies":{"@puni/shared":"0.1.0","discord.js":"^14.16.3"},"devDependencies":{"tsx":"^4.19.2"},"name":"@puni/bot","private":true,"scripts":{"build":"tsc -p tsconfig.json","start":"node dist/index.js","test":"tsx --test tests/*.test.ts"},"version":"0.1.0"}
+{"dependencies":{"@puni/shared":"0.1.0","discord.js":"^14.16.3","pg":"^8.23.1"},"devDependencies":{"@types/pg":"^8.23.1","tsx":"^4.19.2"},"name":"@puni/bot","private":true,"scripts":{"build":"tsc -p tsconfig.json","start":"node dist/index.js","test":"tsx --test tests/*.test.ts"},"version":"0.1.0"}

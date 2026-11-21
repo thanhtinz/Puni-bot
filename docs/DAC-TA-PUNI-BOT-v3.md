@@ -153,7 +153,7 @@ Puni-bot/                     (repo thanhtinz/Puni-bot — MỚI, đang trống)
 ├─ bot/                       tiến trình gateway Discord (tsx): lệnh, board, poller, sự kiện cộng đồng
 │   ├─ assets/                template thẻ thành viên, mascot Mochi, fonts (chuyển nguyên từ bot/assets cũ ở Shop)
 │   └─ lib/                   lib chỉ-bot (board sync, verify/pull, log, role, embed...)
-├─ dashboard/                 web Next.js cho discord.bntshop.com (cổng 3002) — gồm cả khu Hạ tầng của chủ bot (mục 4.4)
+├─ dashboard/                 web Next.js cho discord.bntshop.com (cổng 3002) — dashboard cho admin server/khách; Admin panel của chủ bot là bề mặt RIÊNG (mục 4.4), không nằm trong dashboard
 ├─ shared/                    type + hằng số + client gọi API nội bộ Shop — dùng chung bot + dashboard
 └─ db/                        schema DB riêng của bot (token verify mã hoá, snapshot role, cấu hình theo guild, hạ tầng mã hoá)
 ```
@@ -304,7 +304,7 @@ Những việc phải làm thay vì di trú:
 
 Nguyên tắc v3: **mọi cấu hình của bot nằm ở phía bot** (DB riêng của bot trong repo Puni-bot), tách hẳn khỏi DB/setting của Shop. Shop chỉ giữ dữ liệu bán hàng/tiền (mục 4.1) và bề mặt API `/api/bot/v1/`. Không còn kho cấu hình bot nào ở Shop sau giai đoạn cắt (mục 7, GĐ5).
 
-- **Admin panel riêng của chủ bot (chỉ Tín) — gồm khu Hạ tầng + trang Reseller:** nằm trong dashboard bot tại đường dẫn riêng (đề xuất `/owner/*`), khoá bằng **hai lớp**: (1) Discord ID đăng nhập phải khớp Discord ID chủ bot khai trong cấu hình service (biến môi trường, không sửa được từ giao diện), (2) mật khẩu/2FA riêng của khu hạ tầng (khác phiên đăng nhập dashboard thường). Admin/mod của từng server, reseller và khách đều không thấy menu này, gọi thẳng URL cũng bị chặn ở phía server. Nội dung khu Hạ tầng:
+- **Admin panel riêng của chủ bot — gồm khu Hạ tầng + trang Reseller:** là **một bề mặt web TÁCH BIỆT RIÊNG khỏi dashboard** (Tín chốt 2026-11-21 15:13): **menu, header, footer và layout riêng hoàn toàn**, không dùng chung khung (chrome) với dashboard, không phải một mục nằm trong menu dashboard — người dùng dashboard không hề biết bề mặt này tồn tại. **Chỉ đúng một Discord ID được vào: `847746890808164383` (ID của Tín, Tín cấp 2026-11-21 15:13)** — khoá bằng **hai lớp**: (1) Discord ID đăng nhập phải khớp đúng ID này (khai trong cấu hình service/biến môi trường, không sửa được từ giao diện), (2) mật khẩu/2FA riêng của admin panel (khác phiên đăng nhập dashboard thường). Admin/mod của từng server, reseller và khách đều không thấy menu này, gọi thẳng URL cũng bị chặn ở phía server. Nội dung khu Hạ tầng:
   - **Token bot:** ô nhập token (ghi-đè, không hiển thị lại — chỉ hiện trạng thái "đã cấu hình / chưa cấu hình" + 4 ký tự cuối dạng che), lưu mã hoá trong DB bot (secret-box, khoá chỉ ở service bot) hoặc biến môi trường service; đổi token xong bot tự khởi động lại gateway bằng token mới.
   - **Công tắc BẬT/TẮT BOT toàn cục + theo từng server:** cờ `bot_enabled` lưu ở DB bot; tiến trình bot tự đọc cờ trong poller của chính nó (tối đa ~30 giây có hiệu lực): TẮT → ngắt gateway, dừng handler, vẫn sống để chờ bật lại. Không tiến trình web nào được điều khiển systemd (chặn leo thang đặc quyền); dừng/khởi động hẳn service vẫn là thao tác VPS.
   - **Cấu hình OAuth:** client id + client secret của app Discord (dùng chung cho đăng nhập dashboard + verify, mục 5.1) — secret ghi-đè, không hiển thị lại.

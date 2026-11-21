@@ -3,7 +3,11 @@ import { CommandRegistry } from "@puni/shared";
 import { createCoreCommands } from "./commands/core";
 import { createReactionCommands } from "./commands/reactions";
 import { createEconomyCommands } from "./commands/economy";
-import { EconomyService, DEFAULT_ECONOMY_CONFIG } from "./services/economy";
+import {
+  EconomyService,
+  DEFAULT_ECONOMY_CONFIG,
+  type EconomyStore,
+} from "./services/economy";
 import type { GuildSettingsProvider } from "./guild-settings";
 
 export interface BotDeps {
@@ -13,11 +17,12 @@ export interface BotDeps {
 
 export function buildBot(deps: {
   settings: GuildSettingsProvider;
+  economyStore?: EconomyStore;
   botName?: string;
   version?: string;
 }): BotDeps {
   const registry = new CommandRegistry();
-  const economy = new EconomyService(DEFAULT_ECONOMY_CONFIG);
+  const economy = new EconomyService(deps.economyStore, DEFAULT_ECONOMY_CONFIG);
   const startedAt = Date.now();
 
   const defs = [

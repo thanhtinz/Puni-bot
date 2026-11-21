@@ -1,12 +1,16 @@
 /**
  * Global economy — spec 6.16.1.
  * ONE balance per Discord user, valid in every guild (and every white-label
- * instance). This is community money only: it is fully separate from the
- * Shop wallet (real money, per guild) and from Cozy World Gems.
+ * instance). This is community money only: fully separate from the Shop
+ * wallet (real money, per guild) and from Cozy World Gems.
  *
- * Invariants enforced here:
- * - Every mutation is serialized (in-memory mutex now; the PostgreSQL store
- *   will use a transaction + row lock behind the same interface).
+ * Storage sits behind the EconomyStore interface:
+ * - InMemoryEconomyStore — tests and token-less local runs.
+ * - PgEconomyStore (db/pg-economy-store.ts) — production; every mutation is
+ *   a real PostgreSQL transaction so multiple shards/clusters can never
+ *   double-spend (spec 2.5).
+ *
+ * Invariants enforced at BOTH layers:
  * - A debit that would overdraw FAILS CLOSED: nothing is written.
  * - Every successful mutation appends a ledger entry for reconciliation.
  * - Daily can be claimed once per global day across the whole system.
@@ -58,21 +62,44 @@ export function globalDayKey(at: Date = new Date()): string {
   return at.toISOString().slice(0, 10);
 }
 
-function previousDayKey(dayKey: string): string {
+export function previousDayKey(dayKey: string): string {
   const d = new Date(`${dayKey}T00:00:00.000Z`);
   d.setUTCDate(d.getUTCDate() - 1);
   return d.toISOString().slice(0, 10);
 }
 
-export class EconomyService {
+export interface EconomyStore {
+  getBalance(userId: string): Promise<number>;
+  /** Apply a signed delta atomically. When `requireFunds` is set, a result
+   *  below zero throws InsufficientFundsError and writes nothing. */
+  applyDelta(input: {
+    userId: string;
+    delta: number;
+    source: string;
+    note: string;
+    requireFunds?: boolean;
+  }): Promise<LedgerEntry>;
+  /** Both sides land or neither does. Throws InsufficientFundsError. */
+  transfer(fromId: string, toId: string, amount: number, note: string): Promise<void>;
+  /** Atomically claim today's daily. `rewardFor` maps the NEW streak to the
+   *  reward amount, computed inside the atomic operation. Returns null when
+   *  today was already claimed. */
+  claimDaily(input: {
+    userId: string;
+    today: string;
+    yesterday: string;
+    rewardFor: (streak: number) => number;
+  }): Promise<{ amount: number; streak: number } | null>;
+  top(limit: number): Promise<EconomyAccount[]>;
+  ledgerFor(userId: string): Promise<LedgerEntry[]>;
+}
+
+/** In-memory store: a promise-chain mutex serializes mutations in-process. */
+export class InMemoryEconomyStore implements EconomyStore {
   private accounts = new Map<string, EconomyAccount>();
   private ledger: LedgerEntry[] = [];
   private nextLedgerId = 1;
-  /** Promise-chain mutex: serializes every mutation in this process.
-   *  Cross-process atomicity comes from the DB store (spec 2.5). */
   private chain: Promise<void> = Promise.resolve();
-
-  constructor(private config: EconomyConfig = DEFAULT_ECONOMY_CONFIG) {}
 
   private runExclusive<T>(fn: () => T): Promise<T> {
     let result!: T;
@@ -114,24 +141,23 @@ export class EconomyService {
     return this.accounts.get(userId)?.balance ?? 0;
   }
 
-  async credit(userId: string, amount: number, source: string, note = ""): Promise<LedgerEntry> {
-    if (!Number.isInteger(amount) || amount <= 0) throw new Error("credit amount must be a positive integer");
-    return this.runExclusive(() => this.apply(this.account(userId), amount, source, note));
-  }
-
-  async debit(userId: string, amount: number, source: string, note = ""): Promise<LedgerEntry> {
-    if (!Number.isInteger(amount) || amount <= 0) throw new Error("debit amount must be a positive integer");
+  async applyDelta(input: {
+    userId: string;
+    delta: number;
+    source: string;
+    note: string;
+    requireFunds?: boolean;
+  }): Promise<LedgerEntry> {
     return this.runExclusive(() => {
-      const acc = this.account(userId);
-      if (acc.balance < amount) throw new InsufficientFundsError(userId, acc.balance, amount);
-      return this.apply(acc, -amount, source, note);
+      const acc = this.account(input.userId);
+      if (input.requireFunds && acc.balance + input.delta < 0) {
+        throw new InsufficientFundsError(input.userId, acc.balance, -input.delta);
+      }
+      return this.apply(acc, input.delta, input.source, input.note);
     });
   }
 
-  /** Transfer between two users atomically: either both sides land or neither. */
-  async transfer(fromId: string, toId: string, amount: number, note = ""): Promise<void> {
-    if (fromId === toId) throw new Error("Cannot transfer to self");
-    if (!Number.isInteger(amount) || amount <= 0) throw new Error("transfer amount must be a positive integer");
+  async transfer(fromId: string, toId: string, amount: number, note: string): Promise<void> {
     await this.runExclusive(() => {
       const from = this.account(fromId);
       if (from.balance < amount) throw new InsufficientFundsError(fromId, from.balance, amount);
@@ -140,22 +166,23 @@ export class EconomyService {
     });
   }
 
-  /** Claim the global daily reward. Returns null when already claimed today. */
-  async claimDaily(userId: string, at: Date = new Date()): Promise<{ amount: number; streak: number } | null> {
-    const today = globalDayKey(at);
+  async claimDaily(input: {
+    userId: string;
+    today: string;
+    yesterday: string;
+    rewardFor: (streak: number) => number;
+  }): Promise<{ amount: number; streak: number } | null> {
     return this.runExclusive(() => {
-      const acc = this.account(userId);
-      if (acc.lastDailyDay === today) return null;
-      acc.dailyStreak = acc.lastDailyDay === previousDayKey(today) ? acc.dailyStreak + 1 : 1;
-      acc.lastDailyDay = today;
-      const bonus = Math.min((acc.dailyStreak - 1) * this.config.dailyStreakBonus, this.config.dailyStreakBonusCap);
-      const amount = this.config.dailyBase + bonus;
+      const acc = this.account(input.userId);
+      if (acc.lastDailyDay === input.today) return null;
+      acc.dailyStreak = acc.lastDailyDay === input.yesterday ? acc.dailyStreak + 1 : 1;
+      acc.lastDailyDay = input.today;
+      const amount = input.rewardFor(acc.dailyStreak);
       this.apply(acc, amount, "daily", `streak ${acc.dailyStreak}`);
       return { amount, streak: acc.dailyStreak };
     });
   }
 
-  /** Leaderboard snapshot (global). */
   async top(limit = 10): Promise<EconomyAccount[]> {
     return [...this.accounts.values()]
       .sort((a, b) => b.balance - a.balance)
@@ -163,7 +190,59 @@ export class EconomyService {
       .map((a) => ({ ...a }));
   }
 
-  ledgerFor(userId: string): LedgerEntry[] {
+  async ledgerFor(userId: string): Promise<LedgerEntry[]> {
     return this.ledger.filter((e) => e.userId === userId);
+  }
+}
+
+/** Business-logic layer used by commands: validates amounts, owns the
+ *  daily reward formula, delegates atomicity to the store. */
+export class EconomyService {
+  constructor(
+    private store: EconomyStore = new InMemoryEconomyStore(),
+    private config: EconomyConfig = DEFAULT_ECONOMY_CONFIG,
+  ) {}
+
+  getBalance(userId: string): Promise<number> {
+    return this.store.getBalance(userId);
+  }
+
+  async credit(userId: string, amount: number, source: string, note = ""): Promise<LedgerEntry> {
+    if (!Number.isInteger(amount) || amount <= 0)
+      throw new Error("credit amount must be a positive integer");
+    return this.store.applyDelta({ userId, delta: amount, source, note });
+  }
+
+  async debit(userId: string, amount: number, source: string, note = ""): Promise<LedgerEntry> {
+    if (!Number.isInteger(amount) || amount <= 0)
+      throw new Error("debit amount must be a positive integer");
+    return this.store.applyDelta({ userId, delta: -amount, source, note, requireFunds: true });
+  }
+
+  async transfer(fromId: string, toId: string, amount: number, note = ""): Promise<void> {
+    if (fromId === toId) throw new Error("Cannot transfer to self");
+    if (!Number.isInteger(amount) || amount <= 0)
+      throw new Error("transfer amount must be a positive integer");
+    return this.store.transfer(fromId, toId, amount, note);
+  }
+
+  claimDaily(userId: string, at: Date = new Date()): Promise<{ amount: number; streak: number } | null> {
+    const today = globalDayKey(at);
+    return this.store.claimDaily({
+      userId,
+      today,
+      yesterday: previousDayKey(today),
+      rewardFor: (streak) =>
+        this.config.dailyBase +
+        Math.min((streak - 1) * this.config.dailyStreakBonus, this.config.dailyStreakBonusCap),
+    });
+  }
+
+  top(limit = 10): Promise<EconomyAccount[]> {
+    return this.store.top(limit);
+  }
+
+  ledgerFor(userId: string): Promise<LedgerEntry[]> {
+    return this.store.ledgerFor(userId);
   }
 }

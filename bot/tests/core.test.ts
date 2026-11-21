@@ -161,8 +161,8 @@ test("economy: debit fails closed, transfer is atomic", async () => {
   assert.equal(await eco.getBalance("u2"), 40);
   // u1 ledger: the credit + the successful transfer-out = 2 entries.
   // The failed debit and failed transfer wrote NOTHING (fail-closed).
-  assert.equal(eco.ledgerFor("u1").length, 2, "only successful mutations reach the ledger");
-  assert.equal(eco.ledgerFor("u2").length, 1);
+  assert.equal((await eco.ledgerFor("u1")).length, 2, "only successful mutations reach the ledger");
+  assert.equal((await eco.ledgerFor("u2")).length, 1);
 });
 
 test("economy daily: once per global day, streak grows then resets", async () => {
