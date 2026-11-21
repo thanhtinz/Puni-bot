@@ -13,6 +13,7 @@ import {
   type LogConfig,
   type AutomodConfig,
 } from "../moderation-config";
+import { normalizeAiChatConfig, type AiChatConfig } from "../ai-config";
 
 interface Row {
   guild_id: string;
@@ -23,6 +24,7 @@ interface Row {
   community: unknown;
   logging: unknown;
   automod: unknown;
+  ai_chat: unknown;
 }
 
 export class PgGuildSettings implements GuildSettingsProvider {
@@ -33,7 +35,7 @@ export class PgGuildSettings implements GuildSettingsProvider {
 
   async get(guildId: string): Promise<GuildSettings> {
     const res = await this.pool.query<Row>(
-      `SELECT guild_id, prefix, shop_enabled, modules, reaction_overrides, community, logging, automod
+      `SELECT guild_id, prefix, shop_enabled, modules, reaction_overrides, community, logging, automod, ai_chat
        FROM guild_settings WHERE guild_id = $1`,
       [guildId],
     );
@@ -47,6 +49,7 @@ export class PgGuildSettings implements GuildSettingsProvider {
         community: normalizeCommunityConfig(undefined),
         logging: normalizeLogConfig(undefined),
         automod: normalizeAutomodConfig(undefined),
+        aiChat: normalizeAiChatConfig(undefined),
       };
     }
     const row = res.rows[0];
@@ -59,6 +62,7 @@ export class PgGuildSettings implements GuildSettingsProvider {
       community: normalizeCommunityConfig(row.community),
       logging: normalizeLogConfig(row.logging),
       automod: normalizeAutomodConfig(row.automod),
+      aiChat: normalizeAiChatConfig(row.ai_chat),
     };
   }
 
@@ -66,8 +70,8 @@ export class PgGuildSettings implements GuildSettingsProvider {
     const current = await this.get(guildId);
     const next: GuildSettings = { ...current, ...patch, guildId };
     await this.pool.query(
-      `INSERT INTO guild_settings (guild_id, prefix, shop_enabled, modules, reaction_overrides, community, logging, automod, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, now())
+      `INSERT INTO guild_settings (guild_id, prefix, shop_enabled, modules, reaction_overrides, community, logging, automod, ai_chat, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, now())
        ON CONFLICT (guild_id) DO UPDATE SET
          prefix = EXCLUDED.prefix,
          shop_enabled = EXCLUDED.shop_enabled,
@@ -76,6 +80,7 @@ export class PgGuildSettings implements GuildSettingsProvider {
          community = EXCLUDED.community,
          logging = EXCLUDED.logging,
          automod = EXCLUDED.automod,
+         ai_chat = EXCLUDED.ai_chat,
          updated_at = now()`,
       [
         guildId,
@@ -86,6 +91,7 @@ export class PgGuildSettings implements GuildSettingsProvider {
         JSON.stringify(next.community satisfies CommunityConfig),
         JSON.stringify(next.logging satisfies LogConfig),
         JSON.stringify(next.automod satisfies AutomodConfig),
+        JSON.stringify(next.aiChat satisfies AiChatConfig),
       ],
     );
     return next;

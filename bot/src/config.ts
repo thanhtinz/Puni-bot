@@ -13,6 +13,8 @@ export interface BotConfig {
   totalShards: number | "auto";
   /** Default prefix for a guild that has not configured one (spec 6.3). */
   defaultPrefix: string;
+  /** AI chat provider (OpenAI-compatible). Empty apiKey = feature off. */
+  ai: { apiKey: string; baseUrl: string; model: string };
 }
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): BotConfig {
@@ -32,5 +34,10 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): BotConfig {
     redisUrl: env.REDIS_URL ?? "",
     totalShards,
     defaultPrefix: "!",
+    ai: {
+      apiKey: env.AI_API_KEY ?? "",
+      baseUrl: env.AI_API_BASE_URL ?? "https://api.openai.com/v1",
+      model: env.AI_MODEL ?? "gpt-4o-mini",
+    },
   };
 }

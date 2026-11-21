@@ -15,6 +15,7 @@ import {
   type LogConfig,
   type AutomodConfig,
 } from "./moderation-config";
+import { normalizeAiChatConfig, type AiChatConfig } from "./ai-config";
 
 export interface ReactionOverride {
   enabled?: boolean;
@@ -39,6 +40,8 @@ export interface GuildSettings {
   logging: LogConfig;
   /** Automod rules (spec 6.7). */
   automod: AutomodConfig;
+  /** AI chat: cute @mention replies (spec: AI chat). */
+  aiChat: AiChatConfig;
 }
 
 export interface GuildSettingsProvider {
@@ -62,6 +65,7 @@ export class InMemoryGuildSettings implements GuildSettingsProvider {
         community: normalizeCommunityConfig(undefined),
         logging: normalizeLogConfig(undefined),
         automod: normalizeAutomodConfig(undefined),
+        aiChat: normalizeAiChatConfig(undefined),
       };
       this.store.set(guildId, s);
     }

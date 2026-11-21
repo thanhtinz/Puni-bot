@@ -141,3 +141,16 @@ export function formChannelId(form: FormData, name: string): string | null {
 export function formText(form: FormData, name: string, max = 1000): string {
   return String(form.get(name) ?? "").slice(0, max);
 }
+
+export interface AiChatConfig {
+  enabled: boolean;
+}
+
+export const DEFAULT_AI_CHAT_CONFIG: AiChatConfig = { enabled: true };
+
+/** Mirror of the bot's normalizeAiChatConfig — same JSONB contract. */
+export function normalizeAiChatConfig(raw: unknown): AiChatConfig {
+  if (!raw || typeof raw !== "object") return { ...DEFAULT_AI_CHAT_CONFIG };
+  const r = raw as Partial<AiChatConfig>;
+  return { enabled: typeof r.enabled === "boolean" ? r.enabled : DEFAULT_AI_CHAT_CONFIG.enabled };
+}

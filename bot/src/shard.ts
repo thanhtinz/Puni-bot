@@ -50,6 +50,20 @@ async function main(): Promise<void> {
     console.log("[puni] cooldowns: Redis (shared across cluster)");
   }
 
+  let aiChat: import("./services/ai-chat").AiChatService | undefined;
+  if (config.ai.apiKey) {
+    const { AiChatService, OpenAiCompatibleProvider } = await import("./services/ai-chat");
+    aiChat = new AiChatService(
+      new OpenAiCompatibleProvider({
+        baseUrl: config.ai.baseUrl,
+        apiKey: config.ai.apiKey,
+        model: config.ai.model,
+      }),
+      { cooldownStore },
+    );
+    console.log(`[puni] ai chat: on (model ${config.ai.model})`);
+  }
+
   const bot = buildBot({ settings, economyStore, caseStore });
   const client = createBotClient({
     config,
@@ -59,6 +73,7 @@ async function main(): Promise<void> {
     enforcer: bot.enforcer,
     cases: bot.cases,
     addCaseHook: bot.addCaseHook,
+    aiChat,
   });
   await client.login(config.token);
 }

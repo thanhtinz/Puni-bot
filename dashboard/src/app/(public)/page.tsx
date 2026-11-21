@@ -1,6 +1,7 @@
 import Link from "next/link";
 import catalog from "@/data/command-catalog.json";
 import Reveal from "@/components/reveal";
+import PawPrint from "@/components/paw";
 
 const MARQUEE = [
   "chào mừng",
@@ -61,8 +62,17 @@ export default function HomePage() {
         <span className="sparkle" style={{ top: 118, left: "6%" }}>
           <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 L14.6 9.4 L23 12 L14.6 14.6 L12 23 L9.4 14.6 L1 12 L9.4 9.4 Z" /></svg>
         </span>
-        <span className="sparkle" style={{ top: 210, left: "44%", animationDelay: "0.9s" }}>
+        <span className="sparkle" style={{ top: 210, left: "44%", animationDelay: "0.9s", color: "#ffb3c7" }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 L14.6 9.4 L23 12 L14.6 14.6 L12 23 L9.4 14.6 L1 12 L9.4 9.4 Z" /></svg>
+        </span>
+        <span className="paw-deco" style={{ top: 150, left: "2.5%" }}>
+          <PawPrint size={40} rotate={-18} />
+        </span>
+        <span className="paw-deco" style={{ bottom: 120, left: "47%", animationDelay: "1.3s" }}>
+          <PawPrint size={30} rotate={24} />
+        </span>
+        <span className="paw-deco" style={{ top: 128, right: "3%", animationDelay: "2.1s", color: "#ffb3c7" }}>
+          <PawPrint size={36} rotate={14} />
         </span>
         <span className="sparkle" style={{ top: 96, right: "10%", animationDelay: "1.7s" }}>
           <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 L14.6 9.4 L23 12 L14.6 14.6 L12 23 L9.4 14.6 L1 12 L9.4 9.4 Z" /></svg>
@@ -86,6 +96,14 @@ export default function HomePage() {
               </Link>
             </div>
             <p className="hero-note">Miễn phí cho server cộng đồng · Cấu hình ngay trong Discord hoặc trên web</p>
+          <div className="paw-trail" style={{ marginTop: 26 }} aria-hidden="true">
+            <span className="step" style={{ animationDelay: "0s" }}><PawPrint size={22} rotate={-16} /></span>
+            <span className="step" style={{ animationDelay: "0.4s", transform: "translateY(7px)" }}><PawPrint size={22} rotate={12} /></span>
+            <span className="step" style={{ animationDelay: "0.8s" }}><PawPrint size={22} rotate={-16} /></span>
+            <span className="step" style={{ animationDelay: "1.2s", transform: "translateY(7px)" }}><PawPrint size={22} rotate={12} /></span>
+            <span className="step" style={{ animationDelay: "1.6s" }}><PawPrint size={22} rotate={-16} /></span>
+            <span className="step" style={{ animationDelay: "2s", transform: "translateY(7px)" }}><PawPrint size={22} rotate={12} /></span>
+          </div>
           </div>
           <DiscordMockup />
         </div>
@@ -186,6 +204,11 @@ export default function HomePage() {
             <Link href="/api/auth/login" className="btn">
               Bắt đầu ngay
             </Link>
+            <span className="cta-paws" aria-hidden="true">
+              <PawPrint size={30} rotate={-14} />
+              <PawPrint size={24} rotate={16} style={{ marginTop: 14 }} />
+              <PawPrint size={28} rotate={-8} />
+            </span>
             <img src="/logo.jpg" alt="Mascot Puni" className="cta-logo" />
           </div>
           </Reveal>

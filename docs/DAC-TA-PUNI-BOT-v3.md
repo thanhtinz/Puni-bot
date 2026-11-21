@@ -1128,7 +1128,20 @@ Module game lớn nhất của bot, thiết kế một vòng chơi trọn vẹn 
 - **Thưởng hoàn thành TẤT CẢ (theo đúng dòng chữ trong ảnh mẫu):** làm xong **toàn bộ** quest của ngày thì nhận thêm **3 lootbox + 3 weapon crate** — nút Nhận thưởng trên bảng quest, nhận đúng một lần/ngày.
 - **Chống lạm dụng:** tiến độ chỉ tính từ hành động hợp lệ đã trừ phí/đã kết toán (ván cược huỷ không tính), quest xã hội (emoteBy/prayBy/cookieBy) không tính khi người tặng và người nhận là cùng một người hoặc tặng qua lại vòng tròn trong ngày vượt trần cấu hình.
 
+### 6.18 AI trò chuyện khi được @tag (MỚI — Tín chốt 2026-11-21 18:32 EST)
+
+- Kích hoạt: thành viên **@tag Puni** kèm nội dung trong kênh → bot trả lời bằng AI. Tin bắt đầu bằng prefix lệnh thì chạy lệnh, không qua AI; tin của bot khác bị bỏ qua.
+- Nhà cung cấp: bất kỳ endpoint tương thích OpenAI (chat completions), cấu hình toàn cục ở biến môi trường `AI_API_KEY` / `AI_API_BASE_URL` / `AI_MODEL` phía bot. Chưa có khoá = tính năng tắt hẳn.
+- Phong cách BẮT BUỘC (persona mèo): Puni là mèo cute, trả lời ngắn 1–3 câu, xưng Puni/mình, gọi bạn; **mỗi câu kết thúc bằng "meo meo ~"**. Prompt đã ra luật này và code còn ép ở đầu ra (`enforceMeoMeo`): câu trả lời thiếu "meo meo ~" ở cuối sẽ được tự gắn thêm — không bao giờ trả lời trần.
+- Chống lạm dụng: cooldown **8 giây/người** toàn hệ thống (store dùng chung cluster khi có Redis); đầu vào cắt 500 ký tự, đầu ra trần ~1.800 ký tự; lỗi nhà cung cấp → bot đáp một câu lỗi cute, không lộ chi tiết kỹ thuật.
+- Tag trống (chỉ @Puni không hỏi gì): đáp bằng câu chào soạn sẵn theo người dùng, **không gọi API**.
+- Bật/tắt theo từng server: cột `ai_chat` JSONB trên `guild_settings` (mặc định bật), chỉnh ở Dashboard → server → "AI trò chuyện" (luật cấu hình hai nơi). Tắt ở server thì @tag không được trả lời ở server đó.
+- Trạng thái thi công: ĐÃ LÀM ở đợt GĐ3 bổ sung 2026-11-21 (service + trigger + migration 0006 + dashboard), kiểm chứng bằng test provider giả + stub server cục bộ + round-trip PostgreSQL thật. Chạy thật cần Tín cấp AI_API_KEY khi deploy.
+
 ## 7. LỘ TRÌNH TÁCH THEO GIAI ĐOẠN
+
+> **ĐÍNH CHÍNH LỘ TRÌNH (Tín chốt 2026-11-21 18:37 EST):** Bot Discord đang chạy production của Shop (Puni#6121, repo bntshop, service bntshop-bot) **GIỮ NGUYÊN TRẠNG — KHÔNG cutover, KHÔNG gỡ khỏi repo Shop**. Puni-bot ở repo này là bot **ĐỘC LẬP SONG SONG**: app Discord riêng, token riêng, service riêng (app id phải KHÁC `1505026090534568027`). Theo đó **GĐ4 (cửa sổ chuyển đổi) và GĐ5 (gỡ bot khỏi repo Shop) BỊ HUỶ**; API `/api/bot/v1/` phía Shop giữ nguyên vì là lớp cộng thêm thuần, không ảnh hưởng bot hiện tại.
+
 
 Nguyên tắc xuyên suốt: **bot cũ chỉ tắt khi bot mới đã live và đối chiếu hành vi khớp** — đúng tiền lệ gỡ bot Telegram (852801d: bot mới/không còn nhu cầu xác nhận xong mới gỡ sạch phía cũ) và tiền lệ board (không bao giờ có hai board sống cùng lúc trong một kênh).
 

@@ -24,6 +24,12 @@ import { checkAutomod } from "./services/automod";
 import type { CaseHook, ModCaseStore } from "./services/mod-cases";
 import type { Enforcer, LateBindingEnforcer } from "./services/enforcement";
 import type { GuildSettingsProvider } from "./guild-settings";
+import {
+  AiChatService,
+  pickEmptyMentionReply,
+  shouldTriggerAiChat,
+  stripBotMention,
+} from "./services/ai-chat";
 import type { BotConfig } from "./config";
 
 /** Build the global slash payload from the registry. Guild-gated modules
@@ -93,6 +99,8 @@ export function createBotClient(deps: {
   enforcer?: LateBindingEnforcer;
   cases?: ModCaseStore;
   addCaseHook?: (hook: CaseHook) => void;
+  /** AI chat (@mention replies). Absent = provider not configured = off. */
+  aiChat?: AiChatService;
 }): Client {
   const { config, registry, settings } = deps;
   const client = new Client({
@@ -260,6 +268,55 @@ export function createBotClient(deps: {
             reason: `Automod: ${verdict.rule}`,
           })
           .catch((err) => console.error("[puni] automod warn case failed", err));
+      }
+      return;
+    }
+
+    // AI chat: a @mention that is not a command gets a cute cat reply.
+    if (
+      deps.aiChat &&
+      client.user &&
+      shouldTriggerAiChat({
+        mentionsBot: msg.mentions.has(client.user.id),
+        isCommand: msg.content.trimStart().startsWith(guildSettings.prefix),
+        guildEnabled: guildSettings.aiChat.enabled,
+        providerConfigured: true,
+      })
+    ) {
+      const text = stripBotMention(msg.content, client.user.id);
+      if (!text) {
+        await msg.reply({
+          content: pickEmptyMentionReply(msg.author.id),
+          allowedMentions: { repliedUser: false },
+        });
+        return;
+      }
+      const typing = setInterval(() => {
+        if ("sendTyping" in msg.channel) {
+          (msg.channel as { sendTyping: () => Promise<unknown> }).sendTyping().catch(() => undefined);
+        }
+      }, 8_000);
+      if ("sendTyping" in msg.channel) {
+        (msg.channel as { sendTyping: () => Promise<unknown> }).sendTyping().catch(() => undefined);
+      }
+      try {
+        const outcome = await deps.aiChat.ask({
+          guildId: msg.guild.id,
+          guildName: msg.guild.name,
+          userId: msg.author.id,
+          text,
+        });
+        if (outcome.kind === "reply") {
+          await msg.reply({ content: outcome.text, allowedMentions: { repliedUser: false } });
+        } else if (outcome.kind === "error") {
+          await msg.reply({
+            content: "Meo... Puni đang rối trí một chút, hỏi lại sau nhé meo meo ~",
+            allowedMentions: { repliedUser: false },
+          });
+        }
+        // cooldown: stay silent — a cat does not spam.
+      } finally {
+        clearInterval(typing);
       }
       return;
     }

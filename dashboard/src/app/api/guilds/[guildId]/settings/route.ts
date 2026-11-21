@@ -6,6 +6,7 @@ import {
   formBool,
   formChannelId,
   formText,
+  normalizeAiChatConfig,
   normalizeAutomodConfig,
   normalizeCommunityConfig,
   normalizeLogConfig,
@@ -59,6 +60,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ gui
     };
     await saveGuildSection(guildId, { community });
     return back("/community");
+  }
+
+  if (section === "aichat") {
+    const aiChat = normalizeAiChatConfig({ enabled: formBool(form, "enabled") });
+    await saveGuildSection(guildId, { aiChat });
+    return back("/ai-chat");
   }
 
   if (section === "logging") {

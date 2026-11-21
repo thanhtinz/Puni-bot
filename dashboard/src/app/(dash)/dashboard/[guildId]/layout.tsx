@@ -31,6 +31,7 @@ export default async function GuildLayout({
         <Link href={`${base}/community`}>Chào mừng &amp; Boost</Link>
         <Link href={`${base}/logging`}>Log</Link>
         <Link href={`${base}/automod`}>Automod</Link>
+        <Link href={`${base}/ai-chat`}>AI trò chuyện</Link>
       </nav>
       {children}
     </>

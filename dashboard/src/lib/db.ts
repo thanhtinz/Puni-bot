@@ -24,11 +24,12 @@ export interface GuildRow {
   community: unknown;
   logging: unknown;
   automod: unknown;
+  ai_chat: unknown;
 }
 
 export async function getGuildRow(guildId: string): Promise<GuildRow | null> {
   const res = await db().query<GuildRow>(
-    `SELECT guild_id, prefix, shop_enabled, modules, community, logging, automod
+    `SELECT guild_id, prefix, shop_enabled, modules, community, logging, automod, ai_chat
      FROM guild_settings WHERE guild_id = $1`,
     [guildId],
   );
@@ -44,6 +45,7 @@ export async function saveGuildSection(
     community: unknown;
     logging: unknown;
     automod: unknown;
+    aiChat: unknown;
     modules: Record<string, boolean>;
   }>,
 ): Promise<void> {
@@ -55,16 +57,18 @@ export async function saveGuildSection(
     community: patch.community ?? current?.community ?? {},
     logging: patch.logging ?? current?.logging ?? {},
     automod: patch.automod ?? current?.automod ?? {},
+    ai_chat: patch.aiChat ?? current?.ai_chat ?? {},
   };
   await db().query(
-    `INSERT INTO guild_settings (guild_id, prefix, shop_enabled, modules, reaction_overrides, community, logging, automod, updated_at)
-     VALUES ($1, $2, $3, $4, '{}'::jsonb, $5, $6, $7, now())
+    `INSERT INTO guild_settings (guild_id, prefix, shop_enabled, modules, reaction_overrides, community, logging, automod, ai_chat, updated_at)
+     VALUES ($1, $2, $3, $4, '{}'::jsonb, $5, $6, $7, $8, now())
      ON CONFLICT (guild_id) DO UPDATE SET
        prefix = EXCLUDED.prefix,
        modules = EXCLUDED.modules,
        community = EXCLUDED.community,
        logging = EXCLUDED.logging,
        automod = EXCLUDED.automod,
+       ai_chat = EXCLUDED.ai_chat,
        updated_at = now()`,
     [
       guildId,
@@ -74,6 +78,7 @@ export async function saveGuildSection(
       JSON.stringify(next.community),
       JSON.stringify(next.logging),
       JSON.stringify(next.automod),
+      JSON.stringify(next.ai_chat),
     ],
   );
 }
