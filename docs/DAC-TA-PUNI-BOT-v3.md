@@ -1061,6 +1061,15 @@ Module game lớn nhất của bot, thiết kế một vòng chơi trọn vẹn 
 - **Lợi ích cặp đôi (theo repo mẫu):** khi **cả hai vợ chồng cùng nhận daily trong cùng một ngày**, mỗi người nhận thêm **1 phần quà ngẫu nhiên: lootbox hoặc weapon crate** (vật phẩm game — phần kho đồ thuộc GĐ9; ở GĐ8 khi chưa có kho game thì ghi nhận quyền lợi này vào hồ sơ để phát khi GĐ9 mở, không đổi sang tiền).
 - **Huỷ kết hôn (ly hôn):** một trong hai dùng lệnh huỷ kết hôn bất cứ lúc nào, có **nút xác nhận** trước khi cắt; ly hôn xong quan hệ xoá khỏi hồ sơ cả hai, **nhẫn không hoàn lại**, hai bên cưới lại được ngay (kể cả cưới lại nhau).
 - **Dữ liệu:** bảng hôn nhân + bảng lời cầu hôn chờ trong DB bot (người A, người B, bậc nhẫn, ngày cưới); xem trạng thái hôn nhân (bạn đời + ngày cưới + bậc nhẫn) ngay trong hồ sơ/profile.
+- **Artwork 7 bậc nhẫn — Tín gửi bảng pixel art 7 cặp nhẫn 2026-11-21 16:42 và giao Bé tự sắp xếp** (thứ tự dưới đây do Bé xếp theo độ cầu kỳ tăng dần; vị trí tính theo bảng gốc: hàng trên 4 cặp trái→phải, hàng dưới 3 cặp trái→phải). Tên nhẫn đặt theo Cozy World:
+  1. **Common — Nhẫn Vàng Trơn** (hàng trên, cặp 1): đôi nhẫn vàng trơn không đá — đơn giản nhất.
+  2. **Uncommon — Nhẫn Bạc Lam Ngọc** (hàng trên, cặp 2): bạc gắn 2 viên đá vuông xanh nhỏ.
+  3. **Rare — Nhẫn Trái Tim Hồng** (hàng trên, cặp 3): vàng hồng, mỗi nhẫn một trái tim hồng viền vàng.
+  4. **Epic — Nhẫn Vô Cực Lam** (hàng trên, cặp 4): bạc xoắn vô cực gắn đá giọt nước xanh.
+  5. **Mythical — Nhẫn Hoa Lá** (hàng dưới, cặp 1): bạc quấn lá xanh + hoa trắng — tạo hình thiên nhiên độc nhất.
+  6. **Legendary — Nhẫn Sao Trời** (hàng dưới, cặp 2): tím vũ trụ, sao vàng lớn ở giữa + sao nhỏ — khác biệt mạnh nhất.
+  7. **Fabled — Nhẫn Kim Cương** (hàng dưới, cặp 3): bạc, một nhẫn đính viên kim cương xanh lớn kiểu solitaire — biểu tượng giá trị cao nhất.
+  Việc cắt 7 cặp thành file riêng + tách nền trong suốt làm ở đợt sản xuất asset GĐ8 (bảng gốc Tín gửi dạng ảnh trong chat; khi cắt dùng file gốc Tín cung cấp).
 
 ### 6.17 Cozy World — module game nông trại + sưu tập sinh vật dùng CHUNG economy (MỚI ở v3 — Tín chốt 2026-11-21 14:57)
 
@@ -1111,6 +1120,14 @@ Module game lớn nhất của bot, thiết kế một vòng chơi trọn vẹn 
 - **GĐ9c — Xã hội + vận hành sống:** bạn bè + thăm nông trại, guild trong game, sự kiện mùa, collection book + achievements đầy đủ, cân bằng + chống gian lận nâng cao (GDD Phase 6–7).
 
 ---
+#### Quest — nhiệm vụ ngày của game (Tín bổ sung 2026-11-21 16:42, cơ chế đọc từ data/quests.json + ảnh bảng quest của repo OwO)
+
+- **Bảng quest ngày:** mỗi ngày mỗi người chơi nhận một **bộ quest ngày** trong `/game` (ảnh mẫu Tín gửi: danh sách từng quest kèm tiến độ `đã làm/mục tiêu`, file `~/workspace/puni-bot/reference/mau-quest-owo.jpg`); **reset theo ngày** cùng mốc daily. Quest **tự ghi tiến độ từ hành động thật** (hunt/battle/gamble… cộng đúng bộ đếm của nó, nguyên tử trong cùng giao dịch của hành động).
+- **Loại quest (theo bảng dữ liệu của repo mẫu — 12 loại, bản mình ánh xạ sang hành động Puni):** hunt (đi hunt X lần), battle (đánh battle X trận), friendlyBattle (thách đấu với người khác X trận), gamble (chơi coinflip/blackjack/đua thú X ván), find (bắt được pet bậc Rare/Epic/Mythical), xp (kiếm X XP cho đội hình), emoteTo (dùng reaction tặng người khác X lần — dùng đúng 69 reaction sẵn có), emoteBy (được người khác tặng reaction X lần), cookieBy (được tặng quà X lần), prayBy/curseBy (được cầu nguyện / bị nguyền X lần — đi kèm 2 lệnh xã hội nhỏ pray/curse có cooldown, chỉ tính số liệu quest + may mắn tượng trưng, không dính tiền), marry (kết hôn — quest đặc biệt chỉ xuất hiện khi người chơi chưa có bạn đời).
+- **Bậc mục tiêu + thưởng từng quest:** mỗi loại có thang bậc (vd hunt/battle/xp: 5 bậc mục tiêu 10/50/100/500/1000; gamble/thắng bạn bè/xã hội: 3 bậc nhỏ hơn) — bộ quest ngày rút **một bậc** cho mỗi loại theo trọng số của bảng mẫu; thưởng từng quest rút từ các cột **Coins / lootbox / weapon crate / mảnh vũ khí (shards)** theo bậc. Mọi con số nằm trong cấu hình cân bằng tập trung của Admin panel chủ bot (mục 6.17), chỉnh không cần sửa code.
+- **Thưởng hoàn thành TẤT CẢ (theo đúng dòng chữ trong ảnh mẫu):** làm xong **toàn bộ** quest của ngày thì nhận thêm **3 lootbox + 3 weapon crate** — nút Nhận thưởng trên bảng quest, nhận đúng một lần/ngày.
+- **Chống lạm dụng:** tiến độ chỉ tính từ hành động hợp lệ đã trừ phí/đã kết toán (ván cược huỷ không tính), quest xã hội (emoteBy/prayBy/cookieBy) không tính khi người tặng và người nhận là cùng một người hoặc tặng qua lại vòng tròn trong ngày vượt trần cấu hình.
+
 ## 7. LỘ TRÌNH TÁCH THEO GIAI ĐOẠN
 
 Nguyên tắc xuyên suốt: **bot cũ chỉ tắt khi bot mới đã live và đối chiếu hành vi khớp** — đúng tiền lệ gỡ bot Telegram (852801d: bot mới/không còn nhu cầu xác nhận xong mới gỡ sạch phía cũ) và tiền lệ board (không bao giờ có hai board sống cùng lúc trong một kênh).
