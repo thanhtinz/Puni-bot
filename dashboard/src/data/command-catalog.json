@@ -1,0 +1,638 @@
+[
+  {
+    "name": "help",
+    "aliases": [
+      "h",
+      "commands"
+    ],
+    "description": "Xem danh sách lệnh",
+    "module": "core",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "ping",
+    "aliases": [],
+    "description": "Kiểm tra độ trễ của bot",
+    "module": "core",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "info",
+    "aliases": [
+      "botinfo"
+    ],
+    "description": "Thông tin về bot Puni",
+    "module": "core",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "uptime",
+    "aliases": [],
+    "description": "Thời gian bot đã chạy liên tục",
+    "module": "core",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "airkiss",
+    "aliases": [],
+    "description": "Reaction: airkiss",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "angrystare",
+    "aliases": [],
+    "description": "Reaction: angrystare",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "bite",
+    "aliases": [],
+    "description": "Reaction: bite",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "bleh",
+    "aliases": [],
+    "description": "Reaction: bleh",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "blush",
+    "aliases": [],
+    "description": "Reaction: blush",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "brofist",
+    "aliases": [],
+    "description": "Reaction: brofist",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "celebrate",
+    "aliases": [],
+    "description": "Reaction: celebrate",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "cheers",
+    "aliases": [],
+    "description": "Reaction: cheers",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "clap",
+    "aliases": [],
+    "description": "Reaction: clap",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "confused",
+    "aliases": [],
+    "description": "Reaction: confused",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "cool",
+    "aliases": [],
+    "description": "Reaction: cool",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "cry",
+    "aliases": [],
+    "description": "Reaction: cry",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "cuddle",
+    "aliases": [],
+    "description": "Reaction: cuddle",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "dance",
+    "aliases": [],
+    "description": "Reaction: dance",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "drool",
+    "aliases": [],
+    "description": "Reaction: drool",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "evillaugh",
+    "aliases": [],
+    "description": "Reaction: evillaugh",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "facepalm",
+    "aliases": [],
+    "description": "Reaction: facepalm",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "handhold",
+    "aliases": [],
+    "description": "Reaction: handhold",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "happy",
+    "aliases": [],
+    "description": "Reaction: happy",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "headbang",
+    "aliases": [],
+    "description": "Reaction: headbang",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "hug",
+    "aliases": [],
+    "description": "Reaction: hug",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "huh",
+    "aliases": [],
+    "description": "Reaction: huh",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "kiss",
+    "aliases": [],
+    "description": "Reaction: kiss",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "laugh",
+    "aliases": [],
+    "description": "Reaction: laugh",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "lick",
+    "aliases": [],
+    "description": "Reaction: lick",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "love",
+    "aliases": [],
+    "description": "Reaction: love",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "mad",
+    "aliases": [],
+    "description": "Reaction: mad",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "nervous",
+    "aliases": [],
+    "description": "Reaction: nervous",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "no",
+    "aliases": [],
+    "description": "Reaction: no",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "nom",
+    "aliases": [],
+    "description": "Reaction: nom",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "nosebleed",
+    "aliases": [],
+    "description": "Reaction: nosebleed",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "nuzzle",
+    "aliases": [],
+    "description": "Reaction: nuzzle",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "nyah",
+    "aliases": [],
+    "description": "Reaction: nyah",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "pat",
+    "aliases": [],
+    "description": "Reaction: pat",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "peek",
+    "aliases": [],
+    "description": "Reaction: peek",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "pinch",
+    "aliases": [],
+    "description": "Reaction: pinch",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "poke",
+    "aliases": [],
+    "description": "Reaction: poke",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "pout",
+    "aliases": [],
+    "description": "Reaction: pout",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "punch",
+    "aliases": [],
+    "description": "Reaction: punch",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "roll",
+    "aliases": [],
+    "description": "Reaction: roll",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "run",
+    "aliases": [],
+    "description": "Reaction: run",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "sad",
+    "aliases": [],
+    "description": "Reaction: sad",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "scared",
+    "aliases": [],
+    "description": "Reaction: scared",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "shout",
+    "aliases": [],
+    "description": "Reaction: shout",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "shrug",
+    "aliases": [],
+    "description": "Reaction: shrug",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "shy",
+    "aliases": [],
+    "description": "Reaction: shy",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "sigh",
+    "aliases": [],
+    "description": "Reaction: sigh",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "sip",
+    "aliases": [],
+    "description": "Reaction: sip",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "slap",
+    "aliases": [],
+    "description": "Reaction: slap",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "sleep",
+    "aliases": [],
+    "description": "Reaction: sleep",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "slowclap",
+    "aliases": [],
+    "description": "Reaction: slowclap",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "smack",
+    "aliases": [],
+    "description": "Reaction: smack",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "smile",
+    "aliases": [],
+    "description": "Reaction: smile",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "smug",
+    "aliases": [],
+    "description": "Reaction: smug",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "sneeze",
+    "aliases": [],
+    "description": "Reaction: sneeze",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "sorry",
+    "aliases": [],
+    "description": "Reaction: sorry",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "stare",
+    "aliases": [],
+    "description": "Reaction: stare",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "stop",
+    "aliases": [],
+    "description": "Reaction: stop",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "surprised",
+    "aliases": [],
+    "description": "Reaction: surprised",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "sweat",
+    "aliases": [],
+    "description": "Reaction: sweat",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "thumbsup",
+    "aliases": [],
+    "description": "Reaction: thumbsup",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "tickle",
+    "aliases": [],
+    "description": "Reaction: tickle",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "tired",
+    "aliases": [],
+    "description": "Reaction: tired",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "wave",
+    "aliases": [],
+    "description": "Reaction: wave",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "wink",
+    "aliases": [],
+    "description": "Reaction: wink",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "woah",
+    "aliases": [],
+    "description": "Reaction: woah",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "yawn",
+    "aliases": [],
+    "description": "Reaction: yawn",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "yay",
+    "aliases": [],
+    "description": "Reaction: yay",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "yes",
+    "aliases": [],
+    "description": "Reaction: yes",
+    "module": "reaction",
+    "slash": false,
+    "prefix": true
+  },
+  {
+    "name": "reaction",
+    "aliases": [],
+    "description": "Gửi một reaction GIF (gõ tên reaction, có thể tag một người)",
+    "module": "reaction",
+    "slash": true,
+    "prefix": false
+  },
+  {
+    "name": "balance",
+    "aliases": [
+      "bal",
+      "money"
+    ],
+    "description": "Xem số dư economy (dùng chung mọi server)",
+    "module": "economy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "daily",
+    "aliases": [],
+    "description": "Nhận thưởng economy hằng ngày (1 lần/ngày trên toàn hệ thống)",
+    "module": "economy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "pay",
+    "aliases": [
+      "transfer"
+    ],
+    "description": "Chuyển economy cho người khác: pay @người <số tiền>",
+    "module": "economy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "ecotop",
+    "aliases": [
+      "top"
+    ],
+    "description": "Bảng xếp hạng economy toàn hệ thống",
+    "module": "economy",
+    "slash": true,
+    "prefix": true
+  }
+]
