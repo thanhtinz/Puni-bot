@@ -1,5 +1,6 @@
 import Link from "next/link";
 import catalog from "@/data/command-catalog.json";
+import Reveal from "@/components/reveal";
 
 const MARQUEE = [
   "chào mừng",
@@ -25,7 +26,7 @@ function DiscordMockup() {
       <div className="mock-card">
         <span className="mock-badge">mới vào server</span>
         <div className="mock-msg">
-          <div className="mock-ava">P</div>
+          <img src="/logo.jpg" alt="Puni" className="mock-ava-img" />
           <div>
             <div className="mock-name">
               Puni <span className="app-tag">APP</span> <span className="mock-time">hôm nay lúc 21:51</span>
@@ -44,6 +45,7 @@ function DiscordMockup() {
           </div>
         </div>
       </div>
+      <span className="sticker" style={{ top: -8, right: 6, transform: "rotate(5deg)", zIndex: 3 }}>dễ thương quá đi</span>
       <div className="mock-mini">
         <b>puni:</b> mình là Puni, người bạn nhỏ của server này — cần gì cứ gọi mình nhé!
       </div>
@@ -56,6 +58,15 @@ export default function HomePage() {
   return (
     <>
       <section className="hero">
+        <span className="sparkle" style={{ top: 118, left: "6%" }}>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 L14.6 9.4 L23 12 L14.6 14.6 L12 23 L9.4 14.6 L1 12 L9.4 9.4 Z" /></svg>
+        </span>
+        <span className="sparkle" style={{ top: 210, left: "44%", animationDelay: "0.9s" }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 L14.6 9.4 L23 12 L14.6 14.6 L12 23 L9.4 14.6 L1 12 L9.4 9.4 Z" /></svg>
+        </span>
+        <span className="sparkle" style={{ top: 96, right: "10%", animationDelay: "1.7s" }}>
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 L14.6 9.4 L23 12 L14.6 14.6 L12 23 L9.4 14.6 L1 12 L9.4 9.4 Z" /></svg>
+        </span>
         <div className="wrap hero-grid">
           <div>
             <h1>
@@ -99,6 +110,7 @@ export default function HomePage() {
             Thay vì cài năm bảy bot rời rạc, Puni gom mọi việc của một server cộng đồng vào
             một chỗ — và mọi cấu hình đều chỉnh được ở cả Discord lẫn dashboard web.
           </p>
+          <Reveal>
           <div className="stat-grid">
             <div className="stat-card">
               <div className="num">{publicCount}+</div>
@@ -121,6 +133,7 @@ export default function HomePage() {
               <p>Không bật Shop vẫn dùng đầy đủ tính năng cộng đồng — bot là của server bạn.</p>
             </div>
           </div>
+          </Reveal>
         </div>
       </section>
 
@@ -130,6 +143,7 @@ export default function HomePage() {
             <div className="eyebrow">làm cho server là của bạn</div>
             <h2>tuỳ biến theo cách của bạn</h2>
           </div>
+          <Reveal delay={120}>
           <div className="feat-grid">
             <div className="feat-card">
               <div className="feat-ico">Aa</div>
@@ -156,11 +170,13 @@ export default function HomePage() {
               </p>
             </div>
           </div>
+          </Reveal>
         </div>
       </section>
 
       <section className="section">
         <div className="wrap">
+          <Reveal>
           <div className="cta">
             <h2>bắt đầu hôm nay, miễn phí</h2>
             <p>
@@ -170,8 +186,9 @@ export default function HomePage() {
             <Link href="/api/auth/login" className="btn">
               Bắt đầu ngay
             </Link>
-            <div className="cta-mascot">P</div>
+            <img src="/logo.jpg" alt="Mascot Puni" className="cta-logo" />
           </div>
+          </Reveal>
         </div>
       </section>
     </>

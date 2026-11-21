@@ -17,7 +17,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
         <div className="pub-nav-float">
           <header className="pub-nav">
             <Link href="/" className="brand">
-              <span className="brand-dot">P</span>
+              <img src="/logo.jpg" alt="Puni" className="logo-img brand-logo" />
               puni
             </Link>
             <nav>
@@ -47,7 +47,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
             <div className="footer-grid">
               <div className="footer-brand">
                 <Link href="/" className="brand" style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 24, color: "var(--cream)" }}>
-                  <span className="brand-dot">P</span>
+                  <img src="/logo.jpg" alt="Puni" className="logo-img brand-logo" />
                   puni
                 </Link>
                 <p className="tagline">

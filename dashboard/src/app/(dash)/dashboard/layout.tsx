@@ -17,7 +17,7 @@ export default async function DashboardRootLayout({ children }: { children: Reac
         <div className="shell">
           <aside className="side dash-side">
             <div className="brand">
-              <span className="brand-dot">P</span> Dashboard
+              <img src="/logo.jpg" alt="Puni" className="logo-img brand-logo" /> Dashboard
             </div>
             <Link href="/dashboard" className="item">
               Server của tôi

@@ -39,7 +39,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
         ) : (
           <div className="shell">
             <aside className="side admin-side">
-              <div className="brand"><span className="brand-dot">P</span> Puni Admin</div>
+              <div className="brand"><img src="/logo.jpg" alt="Puni" className="logo-img brand-logo" /> Puni Admin</div>
               <Link href="/admin" className="item">
                 Tổng quan
               </Link>

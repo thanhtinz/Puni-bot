@@ -341,3 +341,86 @@ table.plain tr:last-child td { border-bottom: none; }
   background: #fff; border: 1.5px solid #d8e4e1; color: #33525c;
 }
 .guild-nav a:hover { text-decoration: none; border-color: var(--teal); color: var(--teal); }
+
+/* ---------------- landing effects & cuteness (v2.1) ---------------- */
+.logo-img { border-radius: 50%; object-fit: cover; display: block; }
+.brand-logo { width: 38px; height: 38px; border: 2px solid rgba(255,255,255,0.65); box-shadow: var(--shadow-md); }
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(1.2deg); }
+  50% { transform: translateY(-11px) rotate(0.4deg); }
+}
+@keyframes floaty-mini {
+  0%, 100% { transform: translateY(0) rotate(-1.6deg); }
+  50% { transform: translateY(-7px) rotate(-0.6deg); }
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.7) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.15) rotate(24deg); }
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(26px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 1; }
+}
+@keyframes bounce-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(4deg); }
+}
+
+.hero h1, .hero p.sub, .hero-cta, .hero-note { animation: pop-in 0.8s cubic-bezier(0.22, 1.4, 0.36, 1) both; }
+.hero p.sub { animation-delay: 0.12s; }
+.hero-cta { animation-delay: 0.24s; }
+.hero-note { animation-delay: 0.34s; }
+.mock-card { animation: floaty 6s ease-in-out infinite; }
+.mock-mini { animation: floaty-mini 7s ease-in-out infinite; }
+.mock-glow { animation: glow-pulse 5s ease-in-out infinite; }
+.mock-badge { animation: wiggle 3.4s ease-in-out infinite; }
+
+.sparkle { position: absolute; color: var(--accent); pointer-events: none; animation: twinkle 2.8s ease-in-out infinite; }
+.sparkle svg { display: block; }
+.hero { position: relative; }
+
+.reveal { opacity: 0; transform: translateY(30px) scale(0.985); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1.3, 0.36, 1); }
+.reveal.in { opacity: 1; transform: translateY(0) scale(1); }
+
+.stat-card, .feat-card { transition: transform 0.25s cubic-bezier(0.22, 1.3, 0.36, 1), box-shadow 0.25s ease; }
+.stat-card:hover, .feat-card:hover { transform: translateY(-6px) rotate(-0.4deg); box-shadow: 0 26px 44px -16px rgba(0, 0, 0, 0.55); }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+
+.btn { position: relative; overflow: hidden; }
+.btn::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: skewX(-18deg); transition: left 0.5s ease;
+}
+.btn:hover::after { left: 130%; }
+
+.wave-divider { display: block; width: 100%; height: 54px; margin-top: 56px; color: rgba(255, 255, 255, 0.05); }
+
+.cta-logo {
+  position: absolute; right: 30px; bottom: -46px; width: 218px; height: 218px;
+  border-radius: 50%; object-fit: cover; border: 7px solid rgba(255, 255, 255, 0.65);
+  box-shadow: var(--shadow-lg); animation: bounce-soft 4.5s ease-in-out infinite;
+}
+@media (max-width: 920px) { .cta-logo { display: none; } }
+
+.mock-ava-img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex: none; border: 2px solid rgba(255, 255, 255, 0.35); }
+.sticker {
+  position: absolute; background: #fff; color: #17323a; font-family: var(--font-display);
+  font-weight: 700; font-size: 13.5px; padding: 6px 13px; border-radius: 999px;
+  box-shadow: var(--shadow-md); border: 2px solid #17323a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mock-card, .mock-mini, .mock-glow, .mock-badge, .sparkle, .cta-logo, .hero h1, .hero p.sub, .hero-cta, .hero-note { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .marquee-track { animation-duration: 0s; }
+}
