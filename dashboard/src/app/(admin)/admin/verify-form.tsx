@@ -2,7 +2,7 @@
  *  has not yet passed the password/TOTP check. */
 export default function VerifyForm({ error }: { error?: boolean }) {
   return (
-    <div className="panel" style={{ background: "#1c1f27", borderColor: "#2b2f3a", color: "#e7eaf0" }}>
+    <div className="panel">
       <h2>Xác thực lớp hai</h2>
       <p>Admin panel yêu cầu thêm mật khẩu quản trị và/hoặc mã TOTP (tuỳ cấu hình máy chủ).</p>
       {error && <div className="notice">Thông tin xác thực chưa đúng. Thử lại.</div>}

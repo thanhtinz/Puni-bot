@@ -49,7 +49,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
               <Link href="/admin/website" className="item">
                 Trang web
               </Link>
-              <div className="who" style={{ marginTop: "auto", fontSize: 13, color: "#7e8798" }}>
+              <div className="who" style={{ marginTop: "auto", fontSize: 13, color: "#8fb0e8" }}>
                 Chủ bot: <strong>{session.username}</strong>
                 <form action="/api/auth/logout" method="post" style={{ marginTop: 8 }}>
                   <button className="btn secondary sm" type="submit">

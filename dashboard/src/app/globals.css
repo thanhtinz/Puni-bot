@@ -282,18 +282,18 @@ table.plain tr:last-child td { border-bottom: none; }
 .dash-side a.item:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
 .dash-side .who { margin-top: auto; font-size: 13.5px; color: #84a3d4; padding: 0 8px; }
 
-.admin-body { background: #101218; font-family: var(--font-body); }
-.admin-side { background: #171a21; color: #dfe3ea; border-right: 1px solid #262b36; }
+.admin-body { background: #e9eef8; font-family: var(--font-body); }
+.admin-side {
+  background: linear-gradient(180deg, #20386b, #0d2148);
+  color: #e3edff; box-shadow: 4px 0 24px rgba(8, 24, 54, 0.2);
+}
 .admin-side .brand { color: #fff; }
-.admin-side a.item { color: #a7b0c0; }
-.admin-side a.item:hover { background: #20242e; color: #fff; }
-.admin-content { background: #101218; color: #e7eaf0; }
-.admin-content .card { background: #171a21; border-color: #262b36; color: #e7eaf0; box-shadow: none; }
-.admin-content .card p { color: #98a1b1; }
-.admin-content table.plain { background: #171a21; border-color: #262b36; }
-.admin-content table.plain th { background: #1d212b; }
-.admin-content table.plain th, .admin-content table.plain td { border-color: #262b36; color: #dfe3ea; }
-.admin-content .notice { background: rgba(255, 216, 61, 0.08); }
+.admin-side a.item { color: #b9cff2; }
+.admin-side a.item:hover { background: rgba(255, 255, 255, 0.09); color: #fff; }
+.admin-content { background: transparent; color: #22354f; }
+.admin-content h1 { color: #10254d; }
+.admin-content .notice { background: rgba(255, 190, 40, 0.14); border-color: rgba(217, 164, 32, 0.45); color: #6d5210; }
+.admin-content .notice.ok { background: rgba(35, 165, 89, 0.12); border-color: rgba(35, 165, 89, 0.45); color: #1e5c26; }
 
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; }
 .card {
