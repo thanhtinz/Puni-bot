@@ -1,5 +1,5 @@
 import { adminGate } from "@/lib/current-session";
-import { db, getHeartbeats, listConfiguredGuildIds } from "@/lib/db";
+import { db, getEconomyStats, getHeartbeats, listConfiguredGuildIds } from "@/lib/db";
 import VerifyForm from "./verify-form";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +27,8 @@ export default async function AdminOverviewPage({
   const alive = (heartbeats ?? []).filter(
     (h) => Date.now() - new Date(h.updated_at).getTime() < 30_000,
   ).length;
+  const ecoStats = await getEconomyStats().catch(() => null);
+  const fmt = (n: number) => n.toLocaleString("vi-VN");
   return (
     <>
       <h1>Tổng quan hệ thống</h1>
@@ -51,6 +53,24 @@ export default async function AdminOverviewPage({
           </h3>
           <p>Shard đang sống / tổng shard có nhịp tim</p>
         </div>
+        {ecoStats ? (
+          <>
+            <div className="card">
+              <h3>{fmt(ecoStats.circulating)}</h3>
+              <p>Coins đang lưu hành toàn hệ thống</p>
+            </div>
+            <div className="card">
+              <h3>
+                +{fmt(ecoStats.mintedToday)} / −{fmt(ecoStats.burnedToday)}
+              </h3>
+              <p>Phát hành / thu hồi hôm nay</p>
+            </div>
+            <div className="card">
+              <h3>{fmt(ecoStats.ledger24h)}</h3>
+              <p>Giao dịch economy trong 24 giờ qua</p>
+            </div>
+          </>
+        ) : null}
       </div>
     </>
   );

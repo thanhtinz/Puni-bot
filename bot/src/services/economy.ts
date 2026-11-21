@@ -31,6 +31,30 @@ export const DEFAULT_ECONOMY_CONFIG: EconomyConfig = {
   dailyStreakBonusCap: 100,
 };
 
+/** Normalize owner-edited economy config (Admin panel / bot_config table):
+ *  junk falls back per-field to the defaults; numbers are clamped to sane
+ *  ranges so a typo can never mint or freeze the economy. */
+export function normalizeEconomyConfig(raw: unknown): EconomyConfig {
+  const d = DEFAULT_ECONOMY_CONFIG;
+  if (!raw || typeof raw !== "object") return { ...d };
+  const r = raw as Record<string, unknown>;
+  const int = (v: unknown, fallback: number, max: number): number => {
+    const n = typeof v === "number" ? v : Number.NaN;
+    if (!Number.isFinite(n)) return fallback;
+    return Math.min(Math.max(Math.trunc(n), 0), max);
+  };
+  const name =
+    typeof r.currencyName === "string" && r.currencyName.trim() !== ""
+      ? r.currencyName.trim().slice(0, 24)
+      : d.currencyName;
+  return {
+    currencyName: name,
+    dailyBase: int(r.dailyBase, d.dailyBase, 1_000_000),
+    dailyStreakBonus: int(r.dailyStreakBonus, d.dailyStreakBonus, 100_000),
+    dailyStreakBonusCap: int(r.dailyStreakBonusCap, d.dailyStreakBonusCap, 1_000_000),
+  };
+}
+
 export interface EconomyAccount {
   userId: string;
   balance: number;
@@ -201,7 +225,19 @@ export class EconomyService {
   constructor(
     private store: EconomyStore = new InMemoryEconomyStore(),
     private config: EconomyConfig = DEFAULT_ECONOMY_CONFIG,
+    /** Live config source (Admin panel edits): consulted on every daily
+     *  claim; the provider caches, so this stays cheap. */
+    private configSource?: () => Promise<EconomyConfig>,
   ) {}
+
+  private async liveConfig(): Promise<EconomyConfig> {
+    if (!this.configSource) return this.config;
+    try {
+      return await this.configSource();
+    } catch {
+      return this.config;
+    }
+  }
 
   getBalance(userId: string): Promise<number> {
     return this.store.getBalance(userId);
@@ -226,15 +262,19 @@ export class EconomyService {
     return this.store.transfer(fromId, toId, amount, note);
   }
 
-  claimDaily(userId: string, at: Date = new Date()): Promise<{ amount: number; streak: number } | null> {
+  async claimDaily(
+    userId: string,
+    at: Date = new Date(),
+  ): Promise<{ amount: number; streak: number } | null> {
+    const cfg = await this.liveConfig();
     const today = globalDayKey(at);
     return this.store.claimDaily({
       userId,
       today,
       yesterday: previousDayKey(today),
       rewardFor: (streak) =>
-        this.config.dailyBase +
-        Math.min((streak - 1) * this.config.dailyStreakBonus, this.config.dailyStreakBonusCap),
+        cfg.dailyBase +
+        Math.min((streak - 1) * cfg.dailyStreakBonus, cfg.dailyStreakBonusCap),
     });
   }
 

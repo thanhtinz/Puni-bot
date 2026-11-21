@@ -98,6 +98,8 @@ export function createBotClient(deps: {
   addCaseHook?: (hook: CaseHook) => void;
   /** AI chat (@mention replies). Absent = provider not configured = off. */
   aiChat?: AiChatService;
+  /** Owner master switch for AI chat (Admin panel); absent = enabled. */
+  aiGloballyEnabled?: () => Promise<boolean>;
 }): Client {
   const { config, registry, settings } = deps;
   const client = new Client({
@@ -270,6 +272,10 @@ export function createBotClient(deps: {
     }
 
     // AI chat: a @mention that is not a command gets a cute cat reply.
+    let aiGlobalEnabled = true;
+    if (deps.aiChat && client.user && msg.mentions.has(client.user.id) && deps.aiGloballyEnabled) {
+      aiGlobalEnabled = await deps.aiGloballyEnabled().catch(() => true);
+    }
     if (
       deps.aiChat &&
       client.user &&
@@ -278,6 +284,7 @@ export function createBotClient(deps: {
         isCommand: msg.content.trimStart().startsWith(guildSettings.prefix),
         guildEnabled: guildSettings.aiChat.enabled,
         providerConfigured: true,
+        globalEnabled: aiGlobalEnabled,
       })
     ) {
       const text = stripBotMention(msg.content, client.user.id);

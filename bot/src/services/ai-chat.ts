@@ -127,8 +127,16 @@ export function shouldTriggerAiChat(input: {
   isCommand: boolean;
   guildEnabled: boolean;
   providerConfigured: boolean;
+  /** Owner master switch (Admin panel); absent = enabled. */
+  globalEnabled?: boolean;
 }): boolean {
-  return input.mentionsBot && !input.isCommand && input.guildEnabled && input.providerConfigured;
+  return (
+    input.mentionsBot &&
+    !input.isCommand &&
+    input.guildEnabled &&
+    input.providerConfigured &&
+    input.globalEnabled !== false
+  );
 }
 
 export type AiChatOutcome =

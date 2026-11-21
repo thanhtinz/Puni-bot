@@ -18,6 +18,7 @@ import { runMigrations } from "./db/migrate";
 import { PgGuildSettings } from "./db/pg-guild-settings";
 import { PgEconomyStore } from "./db/pg-economy-store";
 import { PgModCaseStore } from "./db/pg-mod-cases";
+import { PgBotConfig } from "./db/pg-bot-config";
 import type { EconomyStore } from "./services/economy";
 import type { ModCaseStore } from "./services/mod-cases";
 
@@ -31,6 +32,7 @@ async function main(): Promise<void> {
   let settings: GuildSettingsProvider;
   let economyStore: EconomyStore | undefined;
   let caseStore: ModCaseStore | undefined;
+  let botConfig: PgBotConfig | undefined;
   if (config.databaseUrl) {
     const pool = new Pool({ connectionString: config.databaseUrl });
     const applied = await runMigrations(pool, path.resolve(__dirname, "../../db/migrations"));
@@ -38,6 +40,7 @@ async function main(): Promise<void> {
     settings = new PgGuildSettings(pool, config.defaultPrefix);
     economyStore = new PgEconomyStore(pool);
     caseStore = new PgModCaseStore(pool);
+    botConfig = new PgBotConfig(pool);
     console.log("[puni] state: PostgreSQL");
   } else {
     console.warn("[puni] DATABASE_URL not set — IN-MEMORY state, data will NOT survive restart");
@@ -64,7 +67,13 @@ async function main(): Promise<void> {
     console.log(`[puni] ai chat: on (model ${config.ai.model})`);
   }
 
-  const bot = buildBot({ settings, economyStore, caseStore });
+  const bot = buildBot({
+    settings,
+    economyStore,
+    caseStore,
+    economyConfig: botConfig ? await botConfig.getEconomyConfig() : undefined,
+    economyConfigSource: botConfig ? () => botConfig.getEconomyConfig() : undefined,
+  });
   const client = createBotClient({
     config,
     registry: bot.registry,
@@ -74,6 +83,7 @@ async function main(): Promise<void> {
     cases: bot.cases,
     addCaseHook: bot.addCaseHook,
     aiChat,
+    aiGloballyEnabled: botConfig ? () => botConfig.getAiEnabled() : undefined,
   });
   await client.login(config.token);
 }

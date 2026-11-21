@@ -7,6 +7,7 @@ import { createEnforcementCommands, createModerationCommands } from "./commands/
 import {
   EconomyService,
   DEFAULT_ECONOMY_CONFIG,
+  type EconomyConfig,
   type EconomyStore,
 } from "./services/economy";
 import {
@@ -36,9 +37,14 @@ export function buildBot(deps: {
   caseStore?: ModCaseStore;
   botName?: string;
   version?: string;
+  /** Startup snapshot of the owner-edited economy config (Admin panel). */
+  economyConfig?: EconomyConfig;
+  /** Live economy config source; Admin edits apply without a restart. */
+  economyConfigSource?: () => Promise<EconomyConfig>;
 }): BotDeps {
   const registry = new CommandRegistry();
-  const economy = new EconomyService(deps.economyStore, DEFAULT_ECONOMY_CONFIG);
+  const economyConfig = deps.economyConfig ?? DEFAULT_ECONOMY_CONFIG;
+  const economy = new EconomyService(deps.economyStore, economyConfig, deps.economyConfigSource);
   const gems = deps.gemsWallet ?? new InMemoryGemsWallet();
   const hooks: CaseHook[] = [];
   const cases = new HookedModCaseStore(deps.caseStore ?? new InMemoryModCaseStore(), hooks);
@@ -53,7 +59,7 @@ export function buildBot(deps: {
       version: deps.version ?? "0.1.0",
     }),
     ...createReactionCommands({ settings: deps.settings, botName: deps.botName ?? "Puni" }),
-    ...createEconomyCommands({ economy, currencyName: DEFAULT_ECONOMY_CONFIG.currencyName, gems }),
+    ...createEconomyCommands({ economy, currencyName: economyConfig.currencyName, gems }),
     ...createModerationCommands({ cases }),
     ...createEnforcementCommands({ cases, enforcer }),
   ];

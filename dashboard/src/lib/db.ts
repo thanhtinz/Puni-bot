@@ -134,3 +134,84 @@ export async function setSiteSetting(key: string, value: string): Promise<void> 
     [key, value],
   );
 }
+
+/** Owner-edited global bot config (migration 0009, bot_config table).
+ *  The bot reads the same table with a short cache. */
+export async function getBotConfig<T>(key: string): Promise<T | null> {
+  try {
+    const res = await db().query<{ value: T }>(`SELECT value FROM bot_config WHERE key = $1`, [
+      key,
+    ]);
+    return res.rows[0]?.value ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function setBotConfig(key: string, value: unknown): Promise<void> {
+  await db().query(
+    `INSERT INTO bot_config (key, value, updated_at) VALUES ($1, $2::jsonb, now())
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()`,
+    [key, JSON.stringify(value)],
+  );
+}
+
+export interface GuildAdminRow {
+  guild_id: string;
+  prefix: string;
+  modules: Record<string, boolean>;
+  ai_chat: { enabled?: boolean };
+  updated_at: string;
+}
+
+export async function listGuildAdminRows(): Promise<GuildAdminRow[]> {
+  try {
+    const res = await db().query<GuildAdminRow>(
+      `SELECT guild_id, prefix, modules, ai_chat, updated_at FROM guild_settings ORDER BY updated_at DESC`,
+    );
+    return res.rows;
+  } catch {
+    return [];
+  }
+}
+
+export interface EconomyStats {
+  accounts: number;
+  circulating: number;
+  ledger24h: number;
+  mintedToday: number;
+  burnedToday: number;
+  top: { user_id: string; balance: string }[];
+}
+
+/** System-wide economy numbers for the admin overview/economy pages.
+ *  Ledger deltas: positive = minted into circulation, negative = burned
+ *  (transfers write a -/+ pair and cancel out). */
+export async function getEconomyStats(): Promise<EconomyStats | null> {
+  try {
+    const acc = await db().query<{ n: string; total: string }>(
+      `SELECT COUNT(*)::text AS n, COALESCE(SUM(balance),0)::text AS total FROM economy_accounts`,
+    );
+    const led = await db().query<{ n: string }>(
+      `SELECT COUNT(*)::text AS n FROM economy_ledger WHERE created_at > now() - interval '24 hours'`,
+    );
+    const flow = await db().query<{ minted: string; burned: string }>(
+      `SELECT COALESCE(SUM(delta) FILTER (WHERE delta > 0),0)::text AS minted,
+              COALESCE(-SUM(delta) FILTER (WHERE delta < 0),0)::text AS burned
+       FROM economy_ledger WHERE created_at >= date_trunc('day', now())`,
+    );
+    const top = await db().query<{ user_id: string; balance: string }>(
+      `SELECT user_id, balance::text AS balance FROM economy_accounts ORDER BY balance DESC LIMIT 5`,
+    );
+    return {
+      accounts: Number.parseInt(acc.rows[0]?.n || "0", 10),
+      circulating: Number.parseInt(acc.rows[0]?.total || "0", 10),
+      ledger24h: Number.parseInt(led.rows[0]?.n || "0", 10),
+      mintedToday: Number.parseInt(flow.rows[0]?.minted || "0", 10),
+      burnedToday: Number.parseInt(flow.rows[0]?.burned || "0", 10),
+      top: top.rows,
+    };
+  } catch {
+    return null;
+  }
+}
