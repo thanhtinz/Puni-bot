@@ -10,6 +10,7 @@ import { Pool } from "pg";
 import { runMigrations } from "../src/db/migrate";
 import { PgEconomyStore } from "../src/db/pg-economy-store";
 import { PgGuildSettings } from "../src/db/pg-guild-settings";
+import { PgBoardStore } from "../src/db/pg-board-store";
 import { EconomyService, InsufficientFundsError } from "../src/services/economy";
 
 const url = process.env.PUNI_TEST_DATABASE_URL;
@@ -22,7 +23,7 @@ before(async () => {
   pool = new Pool({ connectionString: url });
   await runMigrations(pool, path.resolve(__dirname, "../../db/migrations"));
   await pool.query(
-    "TRUNCATE economy_ledger, economy_accounts, guild_settings RESTART IDENTITY",
+    "TRUNCATE economy_ledger, economy_accounts, guild_settings, board_state RESTART IDENTITY",
   );
 });
 
@@ -66,6 +67,20 @@ test("pg economy: same semantics as the in-memory store", { skip }, async () => 
   assert.deepEqual(claim, { amount: 100, streak: 1 });
   const again = await eco.claimDaily("u1", new Date("2026-02-01T20:00:00Z"));
   assert.equal(again, null);
+});
+
+test("pg board store: round-trip, upsert moves the board, forget clears it", { skip }, async () => {
+  const boards = new PgBoardStore(pool);
+  assert.equal(await boards.get("g1", "premium"), null);
+  await boards.put({ guildId: "g1", boardKey: "premium", channelId: "c1", messageId: "m1", contentHash: "h1" });
+  const first = await boards.get("g1", "premium");
+  assert.equal(first?.messageId, "m1");
+  await boards.put({ guildId: "g1", boardKey: "premium", channelId: "c2", messageId: "m2", contentHash: "h2" });
+  const moved = await boards.get("g1", "premium");
+  assert.equal(moved?.channelId, "c2");
+  assert.equal(moved?.messageId, "m2");
+  await boards.forget("g1", "premium");
+  assert.equal(await boards.get("g1", "premium"), null);
 });
 
 test("pg economy race: 20 parallel debits of 10 against a balance of 100 — exactly 10 land", { skip }, async () => {
