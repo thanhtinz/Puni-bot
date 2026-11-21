@@ -8,6 +8,7 @@ import {
   EmbedBuilder,
   Events,
   GatewayIntentBits,
+  MessageType,
   REST,
   Routes,
   SlashCommandBuilder,
@@ -17,6 +18,7 @@ import {
 import { REACTIONS, type CommandRegistry } from "@puni/shared";
 import { Dispatcher, type DispatchOutcome } from "./dispatcher";
 import { rankFromMember } from "./permissions";
+import { CommunityEvents } from "./services/community";
 import type { GuildSettingsProvider } from "./guild-settings";
 import type { BotConfig } from "./config";
 
@@ -43,6 +45,16 @@ export function buildSlashPayload(registry: CommandRegistry) {
       }
       if (c.name === "balance") {
         b.addUserOption((o) => o.setName("nguoi").setDescription("Xem số dư của ai").setRequired(false));
+      }
+      if (c.name === "warn") {
+        b.addUserOption((o) => o.setName("nguoi").setDescription("Người bị cảnh cáo").setRequired(true));
+        b.addStringOption((o) => o.setName("lydo").setDescription("Lý do").setRequired(false));
+      }
+      if (c.name === "case") {
+        b.addIntegerOption((o) => o.setName("so").setDescription("Số case").setRequired(true).setMinValue(1));
+      }
+      if (c.name === "cases") {
+        b.addUserOption((o) => o.setName("nguoi").setDescription("Người cần xem").setRequired(true));
       }
       return b.toJSON();
     });
@@ -97,7 +109,60 @@ export function createBotClient(deps: {
     }
   });
 
+  // Community greetings (welcome / goodbye / boost) — config-driven.
+  const community = new CommunityEvents(settings, {
+    send: async (channelId, text) => {
+      const channel = await client.channels.fetch(channelId).catch(() => null);
+      if (channel && channel.isTextBased() && "send" in channel) {
+        await (channel as { send: (t: string) => Promise<unknown> }).send(text);
+      }
+    },
+  });
+
+  client.on(Events.GuildMemberAdd, async (member) => {
+    await community
+      .onMemberJoin({
+        guildId: member.guild.id,
+        userId: member.id,
+        username: member.user.username,
+        guildName: member.guild.name,
+        memberCount: member.guild.memberCount,
+      })
+      .catch((err) => console.error("[puni] welcome failed", err));
+  });
+
+  client.on(Events.GuildMemberRemove, async (member) => {
+    await community
+      .onMemberLeave({
+        guildId: member.guild.id,
+        userId: member.id,
+        username: member.user?.username ?? "Một thành viên",
+        guildName: member.guild.name,
+        memberCount: member.guild.memberCount,
+      })
+      .catch((err) => console.error("[puni] goodbye failed", err));
+  });
+
   client.on(Events.MessageCreate, async (msg: Message) => {
+    // Boost announcements arrive as system messages in the boost channel.
+    if (
+      msg.guild &&
+      (msg.type === MessageType.GuildBoost ||
+        msg.type === MessageType.GuildBoostTier1 ||
+        msg.type === MessageType.GuildBoostTier2 ||
+        msg.type === MessageType.GuildBoostTier3)
+    ) {
+      await community
+        .onBoost({
+          guildId: msg.guild.id,
+          userId: msg.author.id,
+          username: msg.author.username,
+          guildName: msg.guild.name,
+          memberCount: msg.guild.memberCount,
+        })
+        .catch((err) => console.error("[puni] boost greeting failed", err));
+      return;
+    }
     if (msg.author.bot || !msg.guild) return;
     const outcome = await dispatcher.dispatchPrefix({
       content: msg.content,
@@ -149,9 +214,17 @@ export function createBotClient(deps: {
       if (user) mentions.push(user.id);
       const amount = cmd.options.getInteger("sotien");
       if (amount != null) args.push(String(amount));
-    } else if (cmd.commandName === "balance") {
+    } else if (cmd.commandName === "balance" || cmd.commandName === "cases") {
       const user = cmd.options.getUser("nguoi");
       if (user) mentions.push(user.id);
+    } else if (cmd.commandName === "warn") {
+      const user = cmd.options.getUser("nguoi");
+      if (user) mentions.push(user.id);
+      const reason = cmd.options.getString("lydo");
+      if (reason) args.push(reason);
+    } else if (cmd.commandName === "case") {
+      const no = cmd.options.getInteger("so");
+      if (no != null) args.push(String(no));
     }
     const outcome = await dispatcher.dispatchSlash({
       name: cmd.commandName,

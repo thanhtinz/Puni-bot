@@ -5,6 +5,10 @@
  * exact same interface so callers never change.
  */
 import type { CommandModule } from "@puni/shared";
+import {
+  normalizeCommunityConfig,
+  type CommunityConfig,
+} from "./community-config";
 
 export interface ReactionOverride {
   enabled?: boolean;
@@ -23,6 +27,8 @@ export interface GuildSettings {
   /** Per-module switches; missing = enabled (except shop, gated above). */
   modules: Partial<Record<CommandModule, boolean>>;
   reactionOverrides: Record<string, ReactionOverride>;
+  /** Community features: welcome/goodbye/boost (spec 6.5). */
+  community: CommunityConfig;
 }
 
 export interface GuildSettingsProvider {
@@ -43,6 +49,7 @@ export class InMemoryGuildSettings implements GuildSettingsProvider {
         shopEnabled: false,
         modules: {},
         reactionOverrides: {},
+        community: normalizeCommunityConfig(undefined),
       };
       this.store.set(guildId, s);
     }

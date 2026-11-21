@@ -11,6 +11,7 @@ import { runMigrations } from "../src/db/migrate";
 import { PgEconomyStore } from "../src/db/pg-economy-store";
 import { PgGuildSettings } from "../src/db/pg-guild-settings";
 import { PgBoardStore } from "../src/db/pg-board-store";
+import { PgModCaseStore } from "../src/db/pg-mod-cases";
 import { EconomyService, InsufficientFundsError } from "../src/services/economy";
 
 const url = process.env.PUNI_TEST_DATABASE_URL;
@@ -23,7 +24,7 @@ before(async () => {
   pool = new Pool({ connectionString: url });
   await runMigrations(pool, path.resolve(__dirname, "../../db/migrations"));
   await pool.query(
-    "TRUNCATE economy_ledger, economy_accounts, guild_settings, board_state RESTART IDENTITY",
+    "TRUNCATE economy_ledger, economy_accounts, guild_settings, board_state, mod_cases, mod_case_counters RESTART IDENTITY",
   );
 });
 
@@ -67,6 +68,34 @@ test("pg economy: same semantics as the in-memory store", { skip }, async () => 
   assert.deepEqual(claim, { amount: 100, streak: 1 });
   const again = await eco.claimDaily("u1", new Date("2026-02-01T20:00:00Z"));
   assert.equal(again, null);
+});
+
+test("pg guild settings: community config round-trips through JSONB", { skip }, async () => {
+  const a = new PgGuildSettings(pool);
+  const s = await a.get("g-community");
+  await a.set("g-community", {
+    community: {
+      ...s.community,
+      welcome: { enabled: true, channelId: "c-welcome", message: "Hi {user}" },
+    },
+  });
+  const read = await new PgGuildSettings(pool).get("g-community");
+  assert.equal(read.community.welcome.enabled, true);
+  assert.equal(read.community.welcome.channelId, "c-welcome");
+  assert.equal(read.community.goodbye.enabled, false, "untouched sections keep defaults");
+});
+
+test("pg mod cases: 10 parallel creates in one guild get unique sequential numbers", { skip }, async () => {
+  const store = new PgModCaseStore(pool);
+  const created = await Promise.all(
+    Array.from({ length: 10 }, (_, i) =>
+      store.create({ guildId: "g-race", targetId: `u${i}`, moderatorId: "m1", action: "warn" }),
+    ),
+  );
+  const numbers = created.map((c) => c.caseNo).sort((x, y) => x - y);
+  assert.deepEqual(numbers, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  const other = await store.create({ guildId: "g-other", targetId: "u0", moderatorId: "m1", action: "warn" });
+  assert.equal(other.caseNo, 1, "numbering is independent per guild");
 });
 
 test("pg board store: round-trip, upsert moves the board, forget clears it", { skip }, async () => {

@@ -17,7 +17,9 @@ import type { CooldownStore } from "./dispatcher";
 import { runMigrations } from "./db/migrate";
 import { PgGuildSettings } from "./db/pg-guild-settings";
 import { PgEconomyStore } from "./db/pg-economy-store";
+import { PgModCaseStore } from "./db/pg-mod-cases";
 import type { EconomyStore } from "./services/economy";
+import type { ModCaseStore } from "./services/mod-cases";
 
 async function main(): Promise<void> {
   const config = loadConfig();
@@ -28,12 +30,14 @@ async function main(): Promise<void> {
 
   let settings: GuildSettingsProvider;
   let economyStore: EconomyStore | undefined;
+  let caseStore: ModCaseStore | undefined;
   if (config.databaseUrl) {
     const pool = new Pool({ connectionString: config.databaseUrl });
     const applied = await runMigrations(pool, path.resolve(__dirname, "../../db/migrations"));
     if (applied.length) console.log(`[puni] migrations applied: ${applied.join(", ")}`);
     settings = new PgGuildSettings(pool, config.defaultPrefix);
     economyStore = new PgEconomyStore(pool);
+    caseStore = new PgModCaseStore(pool);
     console.log("[puni] state: PostgreSQL");
   } else {
     console.warn("[puni] DATABASE_URL not set — IN-MEMORY state, data will NOT survive restart");
@@ -46,7 +50,7 @@ async function main(): Promise<void> {
     console.log("[puni] cooldowns: Redis (shared across cluster)");
   }
 
-  const { registry } = buildBot({ settings, economyStore });
+  const { registry } = buildBot({ settings, economyStore, caseStore });
   const client = createBotClient({ config, registry, settings, cooldownStore });
   await client.login(config.token);
 }
