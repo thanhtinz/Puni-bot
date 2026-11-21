@@ -3,7 +3,7 @@
  * the same invoke() path: same gates, same cooldowns, same handler.
  *
  * Gates, in order:
- * 1. Hidden-shop law (spec 6.15): a shop command in a guild without Shop
+ * 1. Module switches: a command whose module is disabled in the guild
  *    enabled is treated as a command that does not exist.
  * 2. Module switch off -> also "does not exist".
  * 3. Permission level (everyone < mod < admin < owner; bot owner bypasses).
@@ -156,11 +156,8 @@ export class Dispatcher {
   ): Promise<DispatchOutcome> {
     if (ctx.guildId) {
       const guild = await this.settings.get(ctx.guildId);
-      // Gate 1+2: hidden-shop law and module switches.
-      if (def.module === "shop" && !guild.shopEnabled) return { kind: "ignored" };
+      // Module switches.
       if (guild.modules[def.module] === false) return { kind: "ignored" };
-    } else if (def.module === "shop") {
-      return { kind: "ignored" }; // shop commands never run in DMs
     }
 
     // Gate 3: permission. "owner" commands belong to the bot owner alone;

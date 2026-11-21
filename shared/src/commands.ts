@@ -7,11 +7,10 @@
 
 export type CommandPermission = "everyone" | "mod" | "admin" | "owner";
 
-/** Module a command belongs to. "shop" commands are gated by the per-guild
- *  Shop module switch and the hidden-shop law (spec 6.15). */
+/** Module a command belongs to. Puni is a community-only bot
+ *  (owner ruling 2026-11-21 18:41): there is no shop module at all. */
 export type CommandModule =
   | "core"
-  | "shop"
   | "moderation"
   | "manager"
   | "role"
@@ -105,14 +104,8 @@ export class CommandRegistry {
   }
 
   /** Commands visible on the public /commands page (spec 6.13):
-   *  community-facing only — no admin/mod/owner commands, and NO shop
-   *  commands by default (hidden-shop law, spec 6.15). Pass
-   *  `includeShop: true` only in the context of a guild with Shop enabled. */
-  publicCommands(opts: { includeShop?: boolean } = {}): CommandDef[] {
-    return this.all().filter(
-      (c) =>
-        c.permission === "everyone" &&
-        (opts.includeShop === true || c.module !== "shop"),
-    );
+   *  community-facing only — no admin/mod/owner commands. */
+  publicCommands(): CommandDef[] {
+    return this.all().filter((c) => c.permission === "everyone");
   }
 }

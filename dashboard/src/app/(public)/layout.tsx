@@ -18,7 +18,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
           <header className="pub-nav">
             <Link href="/" className="brand">
               <img src="/logo.jpg" alt="Puni" className="logo-img brand-logo" />
-              puni
+              Puni
             </Link>
             <nav>
               <Link href="/commands">Danh sách lệnh</Link>
@@ -48,7 +48,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
               <div className="footer-brand">
                 <Link href="/" className="brand" style={{ display: "flex", alignItems: "center", gap: 10, fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 24, color: "var(--cream)" }}>
                   <img src="/logo.jpg" alt="Puni" className="logo-img brand-logo" />
-                  puni
+                  Puni
                 </Link>
                 <p className="tagline">
                   Bot cộng đồng Discord tất cả trong một — từ chào mừng, kiểm duyệt tới

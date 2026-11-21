@@ -18,7 +18,6 @@ import { normalizeAiChatConfig, type AiChatConfig } from "../ai-config";
 interface Row {
   guild_id: string;
   prefix: string;
-  shop_enabled: boolean;
   modules: Partial<Record<CommandModule, boolean>>;
   reaction_overrides: Record<string, ReactionOverride>;
   community: unknown;
@@ -35,7 +34,7 @@ export class PgGuildSettings implements GuildSettingsProvider {
 
   async get(guildId: string): Promise<GuildSettings> {
     const res = await this.pool.query<Row>(
-      `SELECT guild_id, prefix, shop_enabled, modules, reaction_overrides, community, logging, automod, ai_chat
+      `SELECT guild_id, prefix, modules, reaction_overrides, community, logging, automod, ai_chat
        FROM guild_settings WHERE guild_id = $1`,
       [guildId],
     );
@@ -43,7 +42,6 @@ export class PgGuildSettings implements GuildSettingsProvider {
       return {
         guildId,
         prefix: this.defaultPrefix,
-        shopEnabled: false,
         modules: {},
         reactionOverrides: {},
         community: normalizeCommunityConfig(undefined),
@@ -56,7 +54,6 @@ export class PgGuildSettings implements GuildSettingsProvider {
     return {
       guildId: row.guild_id,
       prefix: row.prefix,
-      shopEnabled: row.shop_enabled,
       modules: row.modules ?? {},
       reactionOverrides: row.reaction_overrides ?? {},
       community: normalizeCommunityConfig(row.community),
@@ -70,11 +67,10 @@ export class PgGuildSettings implements GuildSettingsProvider {
     const current = await this.get(guildId);
     const next: GuildSettings = { ...current, ...patch, guildId };
     await this.pool.query(
-      `INSERT INTO guild_settings (guild_id, prefix, shop_enabled, modules, reaction_overrides, community, logging, automod, ai_chat, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, now())
+      `INSERT INTO guild_settings (guild_id, prefix, modules, reaction_overrides, community, logging, automod, ai_chat, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, now())
        ON CONFLICT (guild_id) DO UPDATE SET
          prefix = EXCLUDED.prefix,
-         shop_enabled = EXCLUDED.shop_enabled,
          modules = EXCLUDED.modules,
          reaction_overrides = EXCLUDED.reaction_overrides,
          community = EXCLUDED.community,
@@ -85,7 +81,6 @@ export class PgGuildSettings implements GuildSettingsProvider {
       [
         guildId,
         next.prefix,
-        next.shopEnabled,
         JSON.stringify(next.modules),
         JSON.stringify(next.reactionOverrides),
         JSON.stringify(next.community satisfies CommunityConfig),

@@ -1,7 +1,7 @@
 /**
  * Global economy — spec 6.16.1.
  * ONE balance per Discord user, valid in every guild (and every white-label
- * instance). This is community money only: fully separate from the Shop
+ * instance). This is community money only: Puni has no shop system at all
  * wallet (real money, per guild) and from Cozy World Gems.
  *
  * Storage sits behind the EconomyStore interface:

@@ -26,10 +26,10 @@ function ok(name: string) {
 
 async function main() {
   // Persona prompt carries the style law.
-  const prompt = buildPersonaPrompt("BNT Shop");
+  const prompt = buildPersonaPrompt("Server Meo");
   assert.match(prompt, /Puni/);
   assert.match(prompt, /meo meo ~/);
-  assert.match(prompt, /BNT Shop/);
+  assert.match(prompt, /Server Meo/);
   ok("persona prompt: cat identity + meo meo law + guild name");
 
   // enforceMeoMeo: appends when missing, keeps when present, caps length.

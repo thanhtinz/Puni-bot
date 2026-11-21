@@ -48,7 +48,7 @@ function DiscordMockup() {
       </div>
       <span className="sticker" style={{ top: -8, right: 6, transform: "rotate(5deg)", zIndex: 3 }}>dễ thương quá đi</span>
       <div className="mock-mini">
-        <b>puni:</b> mình là Puni, người bạn nhỏ của server này — cần gì cứ gọi mình nhé!
+        <b>puni:</b> Mình là Puni, người bạn nhỏ của server này — cần gì cứ gọi mình nhé!
       </div>
     </div>
   );
@@ -80,7 +80,7 @@ export default function HomePage() {
         <div className="wrap hero-grid">
           <div>
             <h1>
-              tạo nên server <span className="hl">hoàn hảo</span> cùng puni
+              Tạo nên server <span className="hl">hoàn hảo</span> cùng Puni
             </h1>
             <p className="sub">
               Puni là bot cộng đồng Discord tất cả trong một: chào mừng, ghi log, kiểm duyệt
@@ -123,7 +123,7 @@ export default function HomePage() {
       <section className="section">
         <div className="wrap">
           <div className="eyebrow">vì sao chọn puni?</div>
-          <h2>một bot, lo trọn server</h2>
+          <h2>Một bot, lo trọn server</h2>
           <p className="lead">
             Thay vì cài năm bảy bot rời rạc, Puni gom mọi việc của một server cộng đồng vào
             một chỗ — và mọi cấu hình đều chỉnh được ở cả Discord lẫn dashboard web.
@@ -132,23 +132,23 @@ export default function HomePage() {
           <div className="stat-grid">
             <div className="stat-card">
               <div className="num">{publicCount}+</div>
-              <div className="cap">lệnh công khai</div>
+              <div className="cap">Lệnh công khai</div>
               <p>Slash và tiền tố dùng chung một hệ lệnh — danh sách luôn cập nhật tự động từ chính bot.</p>
             </div>
             <div className="stat-card">
               <div className="num">69</div>
-              <div className="cap">reaction GIF</div>
+              <div className="cap">Reaction GIF</div>
               <p>Ôm, vỗ về, trêu chọc… mỗi reaction là một lệnh riêng có câu thoại tiếng Việt.</p>
             </div>
             <div className="stat-card">
               <div className="num">5</div>
-              <div className="cap">nhóm log sự kiện</div>
+              <div className="cap">Nhóm log sự kiện</div>
               <p>Tin nhắn, thành viên, server, kiểm duyệt và kênh — bật tắt từng nhóm theo ý bạn.</p>
             </div>
             <div className="stat-card">
               <div className="num">100%</div>
-              <div className="cap">miễn phí cộng đồng</div>
-              <p>Không bật Shop vẫn dùng đầy đủ tính năng cộng đồng — bot là của server bạn.</p>
+              <div className="cap">Miễn phí cộng đồng</div>
+              <p>Toàn bộ tính năng cộng đồng đều miễn phí — Puni là bạn của server bạn.</p>
             </div>
           </div>
           </Reveal>
@@ -159,7 +159,7 @@ export default function HomePage() {
         <div className="wrap">
           <div className="center">
             <div className="eyebrow">làm cho server là của bạn</div>
-            <h2>tuỳ biến theo cách của bạn</h2>
+            <h2>Tuỳ biến theo cách của bạn</h2>
           </div>
           <Reveal delay={120}>
           <div className="feat-grid">
@@ -196,7 +196,7 @@ export default function HomePage() {
         <div className="wrap">
           <Reveal>
           <div className="cta">
-            <h2>bắt đầu hôm nay, miễn phí</h2>
+            <h2>Bắt đầu hôm nay, miễn phí</h2>
             <p>
               Thêm Puni vào server và cấu hình từng bước ngay trong dashboard — chào mừng,
               log và automod xong trong vài phút.

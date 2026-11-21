@@ -19,7 +19,6 @@ export function db(): Pool {
 export interface GuildRow {
   guild_id: string;
   prefix: string;
-  shop_enabled: boolean;
   modules: Record<string, boolean>;
   community: unknown;
   logging: unknown;
@@ -29,7 +28,7 @@ export interface GuildRow {
 
 export async function getGuildRow(guildId: string): Promise<GuildRow | null> {
   const res = await db().query<GuildRow>(
-    `SELECT guild_id, prefix, shop_enabled, modules, community, logging, automod, ai_chat
+    `SELECT guild_id, prefix, modules, community, logging, automod, ai_chat
      FROM guild_settings WHERE guild_id = $1`,
     [guildId],
   );
@@ -52,7 +51,6 @@ export async function saveGuildSection(
   const current = await getGuildRow(guildId);
   const next = {
     prefix: patch.prefix ?? current?.prefix ?? "!",
-    shop_enabled: current?.shop_enabled ?? false,
     modules: patch.modules ?? current?.modules ?? {},
     community: patch.community ?? current?.community ?? {},
     logging: patch.logging ?? current?.logging ?? {},
@@ -60,8 +58,8 @@ export async function saveGuildSection(
     ai_chat: patch.aiChat ?? current?.ai_chat ?? {},
   };
   await db().query(
-    `INSERT INTO guild_settings (guild_id, prefix, shop_enabled, modules, reaction_overrides, community, logging, automod, ai_chat, updated_at)
-     VALUES ($1, $2, $3, $4, '{}'::jsonb, $5, $6, $7, $8, now())
+    `INSERT INTO guild_settings (guild_id, prefix, modules, reaction_overrides, community, logging, automod, ai_chat, updated_at)
+     VALUES ($1, $2, $3, '{}'::jsonb, $4, $5, $6, $7, now())
      ON CONFLICT (guild_id) DO UPDATE SET
        prefix = EXCLUDED.prefix,
        modules = EXCLUDED.modules,
@@ -73,7 +71,6 @@ export async function saveGuildSection(
     [
       guildId,
       next.prefix,
-      next.shop_enabled,
       JSON.stringify(next.modules),
       JSON.stringify(next.community),
       JSON.stringify(next.logging),

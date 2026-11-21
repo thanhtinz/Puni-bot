@@ -10,7 +10,6 @@ import { Pool } from "pg";
 import { runMigrations } from "../src/db/migrate";
 import { PgEconomyStore } from "../src/db/pg-economy-store";
 import { PgGuildSettings } from "../src/db/pg-guild-settings";
-import { PgBoardStore } from "../src/db/pg-board-store";
 import { PgModCaseStore } from "../src/db/pg-mod-cases";
 import { EconomyService, InsufficientFundsError } from "../src/services/economy";
 
@@ -24,7 +23,7 @@ before(async () => {
   pool = new Pool({ connectionString: url });
   await runMigrations(pool, path.resolve(__dirname, "../../db/migrations"));
   await pool.query(
-    "TRUNCATE economy_ledger, economy_accounts, guild_settings, board_state, mod_cases, mod_case_counters RESTART IDENTITY",
+    "TRUNCATE economy_ledger, economy_accounts, guild_settings, mod_cases, mod_case_counters RESTART IDENTITY",
   );
 });
 
@@ -42,16 +41,13 @@ test("pg guild settings: defaults, round-trip, visible to a fresh provider", { s
   const a = new PgGuildSettings(pool);
   const dflt = await a.get("g-new");
   assert.equal(dflt.prefix, "!");
-  assert.equal(dflt.shopEnabled, false);
   await a.set("g-new", {
     prefix: "?",
-    shopEnabled: true,
     reactionOverrides: { kiss: { enabled: false } },
   });
   const b = new PgGuildSettings(pool);
   const read = await b.get("g-new");
   assert.equal(read.prefix, "?");
-  assert.equal(read.shopEnabled, true);
   assert.equal(read.reactionOverrides.kiss?.enabled, false);
 });
 
@@ -113,19 +109,6 @@ test("pg mod cases: 10 parallel creates in one guild get unique sequential numbe
   assert.equal(other.caseNo, 1, "numbering is independent per guild");
 });
 
-test("pg board store: round-trip, upsert moves the board, forget clears it", { skip }, async () => {
-  const boards = new PgBoardStore(pool);
-  assert.equal(await boards.get("g1", "premium"), null);
-  await boards.put({ guildId: "g1", boardKey: "premium", channelId: "c1", messageId: "m1", contentHash: "h1" });
-  const first = await boards.get("g1", "premium");
-  assert.equal(first?.messageId, "m1");
-  await boards.put({ guildId: "g1", boardKey: "premium", channelId: "c2", messageId: "m2", contentHash: "h2" });
-  const moved = await boards.get("g1", "premium");
-  assert.equal(moved?.channelId, "c2");
-  assert.equal(moved?.messageId, "m2");
-  await boards.forget("g1", "premium");
-  assert.equal(await boards.get("g1", "premium"), null);
-});
 
 test("pg economy race: 20 parallel debits of 10 against a balance of 100 — exactly 10 land", { skip }, async () => {
   const eco = new EconomyService(new PgEconomyStore(pool));

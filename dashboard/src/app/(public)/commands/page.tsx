@@ -23,8 +23,8 @@ const MODULE_LABELS: Record<string, string> = {
 };
 
 /**
- * Public command list (spec 6.13 + hidden-shop law 6.15): generated
- * from the bot registry itself — community commands only; shop
+ * Public command list (spec 6.13): generated
+ * from the bot registry itself — community commands only;
  * commands never appear here.
  */
 export default function CommandsPage() {

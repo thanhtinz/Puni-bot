@@ -34,17 +34,6 @@ export default async function GuildOverviewPage({
           </button>
         </form>
       </div>
-      <div className="panel">
-        <h2>Khu Shop trong server</h2>
-        <p>
-          Trạng thái hiện tại:{" "}
-          <strong>{row?.shop_enabled ? "ĐÃ BẬT Shop" : "Chưa bật Shop"}</strong>
-        </p>
-        <p>
-          Khi Shop chưa bật, server này không có bất kỳ menu hay lệnh Shop nào — đúng luật ẩn
-          Shop. Việc bật Shop cho một server do chủ bot thực hiện ở Admin panel.
-        </p>
-      </div>
     </>
   );
 }

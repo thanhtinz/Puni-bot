@@ -32,13 +32,10 @@ import {
 } from "./services/ai-chat";
 import type { BotConfig } from "./config";
 
-/** Build the global slash payload from the registry. Guild-gated modules
- *  (shop) are NOT registered globally — they are registered per guild when
- *  the module is enabled there (hidden-shop law, spec 6.15). */
+/** Build the global slash payload from the registry. */
 export function buildSlashPayload(registry: CommandRegistry) {
   return registry
     .slashCommands()
-    .filter((c) => c.module !== "shop")
     .map((c) => {
       const b = new SlashCommandBuilder().setName(c.name).setDescription(c.description);
       if (c.name === "reaction") {

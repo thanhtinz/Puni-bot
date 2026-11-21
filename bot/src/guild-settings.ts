@@ -28,10 +28,7 @@ export interface GuildSettings {
   guildId: string;
   /** Prefix for this guild (spec 6.3). Default "!". */
   prefix: string;
-  /** Shop module master switch. When false, the hidden-shop law applies:
-   *  no shop UI anywhere and shop commands behave as if they do not exist. */
-  shopEnabled: boolean;
-  /** Per-module switches; missing = enabled (except shop, gated above). */
+  /** Per-module switches; missing = enabled. */
   modules: Partial<Record<CommandModule, boolean>>;
   reactionOverrides: Record<string, ReactionOverride>;
   /** Community features: welcome/goodbye/boost (spec 6.5). */
@@ -59,7 +56,6 @@ export class InMemoryGuildSettings implements GuildSettingsProvider {
       s = {
         guildId,
         prefix: this.defaultPrefix,
-        shopEnabled: false,
         modules: {},
         reactionOverrides: {},
         community: normalizeCommunityConfig(undefined),

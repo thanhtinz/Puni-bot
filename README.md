@@ -1,7 +1,7 @@
 # Puni-bot
 
-Bot Discord cộng đồng & bán hàng của hệ BNT — tách riêng hoàn toàn khỏi BNT Shop,
-Shop chỉ còn là nguồn dữ liệu qua API nội bộ `/api/bot/v1/`.
+Bot Discord cộng đồng độc lập — dữ liệu riêng hoàn toàn, không kết nối
+hay phụ thuộc vào bất kỳ hệ thống nào khác (chốt 2026-11-21: bỏ hẳn Shop).
 
 ## Tài liệu
 
@@ -27,5 +27,5 @@ REGISTER_SLASH=1 npm start -w @puni/bot
 ## Kiểm chứng
 
 ```bash
-npm test   # 10 test: registry, luật ẩn Shop, phân quyền, cooldown, economy nguyên tử, daily/streak
+npm test   # test: registry, phân quyền, cooldown, economy nguyên tử, daily/streak, AI chat
 ```

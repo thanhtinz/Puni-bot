@@ -1140,6 +1140,8 @@ Module game lớn nhất của bot, thiết kế một vòng chơi trọn vẹn 
 
 ## 7. LỘ TRÌNH TÁCH THEO GIAI ĐOẠN
 
+> **ĐÍNH CHÍNH LỚN (Tín chốt 2026-11-21 18:41 EST): BỎ HOÀN TOÀN HỆ THỐNG SHOP.** Puni từ nay là **bot cộng đồng thuần** — dữ liệu riêng biệt hoàn toàn, **không kết nối, không gọi API, không đụng chạm BNT Shop**. Theo đó: toàn bộ nội dung về Shop trong tài liệu này (mục 4 API `/api/bot/v1/`, 6.11, 6.12, 6.14, phần Shop của 6.15, luật ẩn Shop, reseller, Pass/ví/thanh toán theo server, board bán hàng) **HẾT HIỆU LỰC** và đã bị gỡ khỏi code ở đợt 2026-11-21 (xoá ShopApiClient, module "shop", `shop_enabled`, board store; migration 0007 xoá cột `shop_enabled` + bảng `board_state`; dashboard bỏ trang Reseller + panel Shop). GĐ1 (API phía Shop) giữ nguyên bên repo Shop nhưng bot này **không dùng nữa**. GĐ7 rút còn: web công khai + tuỳ biến thương hiệu theo server. Economy vẫn là tiền cộng đồng toàn cục của riêng Puni, không liên quan ví Shop nào.
+
 > **ĐÍNH CHÍNH LỘ TRÌNH (Tín chốt 2026-11-21 18:37 EST):** Bot Discord đang chạy production của Shop (Puni#6121, repo bntshop, service bntshop-bot) **GIỮ NGUYÊN TRẠNG — KHÔNG cutover, KHÔNG gỡ khỏi repo Shop**. Puni-bot ở repo này là bot **ĐỘC LẬP SONG SONG**: app Discord riêng, token riêng, service riêng (app id phải KHÁC `1505026090534568027`). Theo đó **GĐ4 (cửa sổ chuyển đổi) và GĐ5 (gỡ bot khỏi repo Shop) BỊ HUỶ**; API `/api/bot/v1/` phía Shop giữ nguyên vì là lớp cộng thêm thuần, không ảnh hưởng bot hiện tại.
 
 

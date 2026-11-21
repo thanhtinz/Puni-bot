@@ -38,12 +38,12 @@ test("parsePrefixMessage: prefix required, mentions extracted", () => {
   assert.equal(parsePrefixMessage("?ping", "?")?.name, "ping");
 });
 
-test("hidden-shop law: shop command behaves as nonexistent until Shop is enabled", async () => {
+test("module switch: a command in a disabled module behaves as nonexistent", async () => {
   const registry = new CommandRegistry();
   registry.register({
-    name: "buy",
-    description: "fake shop command",
-    module: "shop",
+    name: "coinflip",
+    description: "fake games command",
+    module: "games",
     permission: "everyone",
     slash: true,
     prefix: true,
@@ -51,16 +51,17 @@ test("hidden-shop law: shop command behaves as nonexistent until Shop is enabled
   });
   const settings = new InMemoryGuildSettings();
   const dispatcher = new Dispatcher(registry, settings, async () => 0, "owner-1");
+  await settings.set("g1", { modules: { games: false } });
   const before = await dispatcher.dispatchPrefix({
-    content: "!buy",
+    content: "!coinflip",
     userId: "u1",
     guildId: "g1",
     channelId: "c1",
   });
   assert.equal(before.kind, "ignored");
-  await settings.set("g1", { shopEnabled: true });
+  await settings.set("g1", { modules: { games: true } });
   const after = await dispatcher.dispatchPrefix({
-    content: "!buy",
+    content: "!coinflip",
     userId: "u1",
     guildId: "g1",
     channelId: "c1",
@@ -68,13 +69,13 @@ test("hidden-shop law: shop command behaves as nonexistent until Shop is enabled
   assert.equal(after.kind, "ok");
 });
 
-test("public command list hides shop commands by default (commands page law)", () => {
+test("public command list shows only everyone-permission commands (commands page law)", () => {
   const registry = new CommandRegistry();
   registry.register({
-    name: "buy",
-    description: "fake shop command",
-    module: "shop",
-    permission: "everyone",
+    name: "ban",
+    description: "fake mod command",
+    module: "moderation",
+    permission: "mod",
     slash: true,
     prefix: true,
     handler: async () => ({ text: "ok" }),
@@ -89,10 +90,6 @@ test("public command list hides shop commands by default (commands page law)", (
     handler: async () => ({ text: "pong" }),
   });
   assert.deepEqual(registry.publicCommands().map((c) => c.name), ["ping"]);
-  assert.deepEqual(
-    registry.publicCommands({ includeShop: true }).map((c) => c.name).sort(),
-    ["buy", "ping"],
-  );
 });
 
 test("permission gate: owner-only command rejects members, accepts the bot owner", async () => {
@@ -178,7 +175,7 @@ test("economy daily: once per global day, streak grows then resets", async () =>
   assert.deepEqual(d4, { amount: 100, streak: 1 }, "a skipped day resets the streak");
 });
 
-test("slash payload: no shop commands leak into global registration", () => {
+test("slash payload: every slash command is in the global registration", () => {
   const settings = new InMemoryGuildSettings();
   const { registry } = buildBot({ settings });
   const payload = buildSlashPayload(registry);

@@ -1,7 +1,7 @@
 /**
  * Core commands — spec 6.10 (Information group): help, ping, info, uptime.
  * `help` is generated from the registry itself, so it can never drift from
- * the commands that actually exist, and it obeys the hidden-shop law.
+ * the commands that actually exist.
  */
 import type { CommandDef, CommandRegistry } from "@puni/shared";
 import type { GuildSettingsProvider } from "../guild-settings";
@@ -23,11 +23,8 @@ export function createCoreCommands(deps: {
     slash: true,
     prefix: true,
     handler: async (ctx) => {
-      const shopEnabled = ctx.guildId
-        ? (await settings.get(ctx.guildId)).shopEnabled
-        : false;
       const visible = registry
-        .publicCommands({ includeShop: shopEnabled })
+        .publicCommands()
         .filter((c) => c.name !== "help");
       const lines = visible.map(
         (c) => `• **${c.name}** — ${c.description}`,
@@ -59,7 +56,7 @@ export function createCoreCommands(deps: {
     slash: true,
     prefix: true,
     handler: async () => ({
-      text: `**Puni** — bot cộng đồng & bán hàng của BNT Shop.\nPhiên bản: ${version}\nTrang chủ: https://discord.bntshop.com`,
+      text: `**Puni** — bot cộng đồng — bạn nhỏ của mọi server.\nPhiên bản: ${version}\nTrang chủ: https://discord.bntshop.com`,
     }),
   };
 

@@ -43,9 +43,6 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
               <Link href="/admin" className="item">
                 Tổng quan
               </Link>
-              <Link href="/admin/resellers" className="item">
-                Reseller
-              </Link>
               <Link href="/admin/clusters" className="item">
                 Cluster &amp; Shard
               </Link>
