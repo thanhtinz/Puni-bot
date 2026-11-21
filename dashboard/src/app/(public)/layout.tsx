@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import "../globals.css";
 import { currentSession } from "@/lib/current-session";
+import { getSiteSetting } from "@/lib/db";
 
 export const metadata = {
   title: "Puni — Bot cộng đồng Discord",
@@ -11,6 +12,7 @@ export const metadata = {
 
 export default async function PublicLayout({ children }: { children: ReactNode }) {
   const session = await currentSession();
+  const supportUrl = await getSiteSetting("support_url").catch(() => null);
   return (
     <html lang="vi">
       <body className="pub-body">
@@ -22,17 +24,20 @@ export default async function PublicLayout({ children }: { children: ReactNode }
             </Link>
             <nav>
               <Link href="/commands">Danh sách lệnh</Link>
+              <Link href="/timestamps">Timestamps</Link>
+              {supportUrl ? (
+                <a href={supportUrl} target="_blank" rel="noreferrer">
+                  Support
+                </a>
+              ) : null}
               <Link href="/status">Trạng thái</Link>
-              <Link href="/dashboard">Dashboard</Link>
             </nav>
             {session ? (
               <>
                 <span className="who">{session.username}</span>
-                <form action="/api/auth/logout" method="post" style={{ display: "inline" }}>
-                  <button className="btn dark sm" type="submit">
-                    Đăng xuất
-                  </button>
-                </form>
+                <Link href="/dashboard" className="btn dark sm">
+                  Dashboard
+                </Link>
               </>
             ) : (
               <Link href="/api/auth/login" className="btn dark sm">
@@ -59,14 +64,19 @@ export default async function PublicLayout({ children }: { children: ReactNode }
                 <div>
                   <h4>Chính</h4>
                   <Link href="/">Trang chủ</Link>
-                  <Link href="/dashboard">Dashboard</Link>
                   <Link href="/commands">Danh sách lệnh</Link>
+                  <Link href="/timestamps">Timestamps</Link>
                   <Link href="/status">Trạng thái</Link>
                 </div>
                 <div>
                   <h4>Khác</h4>
                   <Link href="/commands">Tính năng</Link>
                   <Link href="/status">Độ ổn định</Link>
+                  {supportUrl ? (
+                    <a href={supportUrl} target="_blank" rel="noreferrer">
+                      Support
+                    </a>
+                  ) : null}
                   <Link href="/api/auth/login">Đăng nhập</Link>
                 </div>
               </div>

@@ -46,6 +46,9 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
               <Link href="/admin/clusters" className="item">
                 Cluster &amp; Shard
               </Link>
+              <Link href="/admin/website" className="item">
+                Trang web
+              </Link>
               <div className="who" style={{ marginTop: "auto", fontSize: 13, color: "#7e8798" }}>
                 Chủ bot: <strong>{session.username}</strong>
                 <form action="/api/auth/logout" method="post" style={{ marginTop: 8 }}>

@@ -111,3 +111,26 @@ export async function listConfiguredGuildIds(): Promise<string[]> {
     return [];
   }
 }
+
+/** Site-wide settings (migration 0008), edited from the Admin panel and
+ *  read by the public layout — e.g. the Support link in the menu.
+ *  Tolerates a missing table so the site works before migration 0008. */
+export async function getSiteSetting(key: string): Promise<string | null> {
+  try {
+    const res = await db().query<{ value: string }>(
+      `SELECT value FROM site_settings WHERE key = $1`,
+      [key],
+    );
+    return res.rows[0]?.value ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function setSiteSetting(key: string, value: string): Promise<void> {
+  await db().query(
+    `INSERT INTO site_settings (key, value, updated_at) VALUES ($1, $2, now())
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()`,
+    [key, value],
+  );
+}
