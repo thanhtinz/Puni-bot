@@ -3,6 +3,7 @@ import Link from "next/link";
 import "../globals.css";
 import { currentSession } from "@/lib/current-session";
 import { getSiteSetting } from "@/lib/db";
+import { Burger } from "@/components/burger";
 
 export const metadata = {
   title: "Puni — Bot cộng đồng Discord",
@@ -22,11 +23,11 @@ export default async function PublicLayout({ children }: { children: ReactNode }
               <img src="/api/assets/logo" alt="Puni" className="logo-img brand-logo" />
               Puni
             </Link>
+            <Burger>
             <nav>
               <Link href="/commands">Danh sách lệnh</Link>
               <Link href="/timestamps">Timestamps</Link>
               <Link href="/membership">Hội viên</Link>
-              <Link href="/tcg">Game thẻ</Link>
               {supportUrl ? (
                 <a href={supportUrl} target="_blank" rel="noreferrer">
                   Support
@@ -34,11 +35,12 @@ export default async function PublicLayout({ children }: { children: ReactNode }
               ) : null}
               <Link href="/status">Trạng thái</Link>
             </nav>
+            </Burger>
             {session ? (
               <>
                 <span className="who">{session.username}</span>
-                <Link href="/dashboard" className="btn dark sm">
-                  Dashboard
+                <Link href="/welcome" className="btn dark sm">
+                  Vào Puni
                 </Link>
               </>
             ) : (
@@ -69,7 +71,6 @@ export default async function PublicLayout({ children }: { children: ReactNode }
                   <Link href="/commands">Danh sách lệnh</Link>
                   <Link href="/timestamps">Timestamps</Link>
                   <Link href="/membership">Hội viên</Link>
-              <Link href="/tcg">Game thẻ</Link>
                   <Link href="/status">Trạng thái</Link>
                 </div>
                 <div>

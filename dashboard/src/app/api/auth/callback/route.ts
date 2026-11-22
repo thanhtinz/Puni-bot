@@ -1,32 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { exchangeCode } from "@/lib/discord";
 import { SESSION_COOKIE, createSessionToken } from "@/lib/session";
-import { db } from "@/lib/db";
+import { canManagePuni } from "@/lib/landing";
 
 /**
- * Post-login routing (spec 6.24, owner decision 2026-11-21): if the
- * user manages at least one server where Puni is present (a
- * guild_settings row exists), land on the server dashboard; everyone
- * else lands on the player area /me.
+ * Post-login routing (spec 6.24, owner decisions 2026-11-21): users
+ * who manage a server with Puni get the CHOICE screen (/welcome) —
+ * server dashboard or player area; everyone else goes straight to
+ * the player area /me.
  */
 async function landingFor(guilds: { id: string; permissions: string }[]): Promise<string> {
-  const manageable = guilds.filter((g) => {
-    try {
-      const bits = BigInt(g.permissions);
-      return (bits & 0x8n) !== 0n || (bits & 0x20n) !== 0n;
-    } catch {
-      return false;
-    }
-  });
-  if (!manageable.length) return "/me";
+  const sessionLike = { guilds } as Parameters<typeof canManagePuni>[0];
   try {
-    const res = await db().query<{ guild_id: string }>(
-      `SELECT guild_id FROM guild_settings WHERE guild_id = ANY($1)`,
-      [manageable.map((g) => g.id)],
-    );
-    return res.rows.length ? "/dashboard" : "/me";
+    return (await canManagePuni(sessionLike)) ? "/welcome" : "/me";
   } catch {
-    return "/dashboard";
+    return "/me";
   }
 }
 

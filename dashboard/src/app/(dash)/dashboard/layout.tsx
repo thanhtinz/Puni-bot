@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import "../../globals.css";
 import { currentSession } from "@/lib/current-session";
 import { IconHome, IconList, IconServer } from "@/components/icons";
+import { Burger } from "@/components/burger";
 
 export const metadata = { title: "Bảng điều khiển — Puni" };
 
@@ -20,8 +21,12 @@ export default async function DashboardRootLayout({ children }: { children: Reac
             <div className="brand">
               <img src="/api/assets/logo" alt="Puni" className="logo-img brand-logo" /> Dashboard
             </div>
+            <Burger>
             <Link href="/dashboard" className="item">
               <IconServer /> Server của tôi
+            </Link>
+            <Link href="/me" className="item">
+              <IconHome /> Khu người chơi
             </Link>
             <Link href="/commands" className="item">
               <IconList /> Danh sách lệnh
@@ -37,6 +42,7 @@ export default async function DashboardRootLayout({ children }: { children: Reac
                 </button>
               </form>
             </div>
+            </Burger>
           </aside>
           <main className="content">{children}</main>
         </div>

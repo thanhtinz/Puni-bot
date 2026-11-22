@@ -4,6 +4,7 @@ import "../../globals.css";
 import { currentSession } from "@/lib/current-session";
 import { IconActivity, IconBag, IconChart, IconChat, IconCoins, IconGrid, IconHome, IconPaw, IconServer, IconGlobe, IconSpark, IconUsers } from "@/components/icons";
 import { isOwner } from "@/lib/session";
+import { Burger } from "@/components/burger";
 
 export const metadata = { title: "Puni Admin" };
 
@@ -41,6 +42,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
           <div className="shell">
             <aside className="side admin-side">
               <div className="brand"><img src="/api/assets/logo" alt="Puni" className="logo-img brand-logo" /> Puni Admin</div>
+              <Burger>
               <Link href="/admin" className="item">
                 <IconHome /> Tổng quan
               </Link>
@@ -88,6 +90,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
                   </button>
                 </form>
               </div>
+              </Burger>
             </aside>
             <main className="content admin-content">{children}</main>
           </div>

@@ -35,29 +35,71 @@ export interface MarketRow extends TcgCardInfo {
   floorPrice: number | null;
   listings: number;
   referenceValue: number;
+  /** Real market stats from sold listings (null when no sales yet). */
+  lastSold: number | null;
+  avgSold: number | null;
+  soldCount: number;
+  /** % change of the 7-day average sold price vs the previous 7 days. */
+  trendPct: number | null;
 }
 
-/** Catalog merged with live market floors. */
+interface MarketStat {
+  floor: number | null;
+  count: number;
+  lastSold: number | null;
+  avgSold: number | null;
+  soldCount: number;
+  trendPct: number | null;
+}
+
+/** Catalog merged with live market floors + real sales statistics. */
 export async function marketOverview(): Promise<MarketRow[]> {
-  const floors = new Map<string, { floor: number; count: number }>();
+  const stats = new Map<string, MarketStat>();
   try {
-    const res = await db().query<{ species_id: string; floor: string; n: string }>(
-      `SELECT i.species_id, MIN(l.price)::text AS floor, COUNT(*)::text AS n
+    const res = await db().query(
+      `SELECT i.species_id,
+              MIN(l.price) FILTER (WHERE l.status = 'open')::text AS floor,
+              COUNT(*) FILTER (WHERE l.status = 'open')::int AS open_n,
+              COUNT(*) FILTER (WHERE l.status = 'sold')::int AS sold_n,
+              AVG(l.price) FILTER (WHERE l.status = 'sold')::text AS avg_sold,
+              AVG(l.price) FILTER (WHERE l.status = 'sold' AND l.sold_at > now() - interval '7 days')::text AS avg_7d,
+              AVG(l.price) FILTER (WHERE l.status = 'sold' AND l.sold_at <= now() - interval '7 days'
+                                    AND l.sold_at > now() - interval '14 days')::text AS avg_prev7d,
+              (SELECT l2.price::text FROM tcg_listings l2
+                 JOIN tcg_instances i2 ON i2.code = l2.instance_code
+                WHERE i2.species_id = i.species_id AND l2.status = 'sold'
+                ORDER BY l2.sold_at DESC LIMIT 1) AS last_sold
        FROM tcg_listings l JOIN tcg_instances i ON i.code = l.instance_code
-       WHERE l.status = 'open' GROUP BY i.species_id`,
+       GROUP BY i.species_id`,
     );
     for (const r of res.rows) {
-      floors.set(r.species_id, { floor: Number.parseInt(r.floor, 10), count: Number.parseInt(r.n, 10) });
+      const avg7 = r.avg_7d ? Number.parseFloat(r.avg_7d) : null;
+      const prev7 = r.avg_prev7d ? Number.parseFloat(r.avg_prev7d) : null;
+      stats.set(r.species_id, {
+        floor: r.floor ? Number.parseInt(r.floor, 10) : null,
+        count: r.open_n ?? 0,
+        lastSold: r.last_sold ? Number.parseInt(r.last_sold, 10) : null,
+        avgSold: r.avg_sold ? Math.round(Number.parseFloat(r.avg_sold)) : null,
+        soldCount: r.sold_n ?? 0,
+        trendPct: avg7 && prev7 ? Math.round(((avg7 - prev7) / prev7) * 1000) / 10 : null,
+      });
     }
   } catch {
     /* market tables absent before migration — show reference values */
   }
-  return TCG_CARDS.map((c) => ({
-    ...c,
-    floorPrice: floors.get(c.slug)?.floor ?? null,
-    listings: floors.get(c.slug)?.count ?? 0,
-    referenceValue: BASE_VALUE[c.rarity] ?? 0,
-  }));
+  return TCG_CARDS.map((c) => {
+    const s = stats.get(c.slug);
+    return {
+      ...c,
+      floorPrice: s?.floor ?? null,
+      listings: s?.count ?? 0,
+      referenceValue: BASE_VALUE[c.rarity] ?? 0,
+      lastSold: s?.lastSold ?? null,
+      avgSold: s?.avgSold ?? null,
+      soldCount: s?.soldCount ?? 0,
+      trendPct: s?.trendPct ?? null,
+    };
+  });
 }
 
 export interface OwnedInstance {
