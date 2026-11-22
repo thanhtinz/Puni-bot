@@ -41,6 +41,14 @@ export default async function MeProfilePage({
         </div>
       </div>
       <section className="player-panel">
+        <h2>Thẻ profile của bạn</h2>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/api/me/profile-card" alt="Thẻ profile" style={{ width: "100%", maxWidth: 645, borderRadius: 14, display: "block" }} />
+        <p style={{ marginTop: 10 }}>
+          <a href="/api/me/profile-card" download="puni-profile.png">Tải thẻ profile (PNG)</a>
+        </p>
+      </section>
+      <section className="player-panel">
         <h2>Thông tin profile (hiện trên thẻ profile game)</h2>
         <form method="post" action="/api/me/profile" className="player-form">
           <label>

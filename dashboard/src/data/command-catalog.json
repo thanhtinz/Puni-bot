@@ -1,906 +1,974 @@
 [
-  {
-    "name": "help",
-    "aliases": [
-      "h",
-      "commands"
-    ],
-    "description": "Xem danh sách lệnh",
-    "module": "core",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "ping",
-    "aliases": [],
-    "description": "Kiểm tra độ trễ của bot",
-    "module": "core",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "info",
-    "aliases": [
-      "botinfo"
-    ],
-    "description": "Thông tin về bot Puni",
-    "module": "core",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "uptime",
-    "aliases": [],
-    "description": "Thời gian bot đã chạy liên tục",
-    "module": "core",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "airkiss",
-    "aliases": [],
-    "description": "Reaction: airkiss",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "angrystare",
-    "aliases": [],
-    "description": "Reaction: angrystare",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "bite",
-    "aliases": [],
-    "description": "Reaction: bite",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "bleh",
-    "aliases": [],
-    "description": "Reaction: bleh",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "blush",
-    "aliases": [],
-    "description": "Reaction: blush",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "brofist",
-    "aliases": [],
-    "description": "Reaction: brofist",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "celebrate",
-    "aliases": [],
-    "description": "Reaction: celebrate",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "cheers",
-    "aliases": [],
-    "description": "Reaction: cheers",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "clap",
-    "aliases": [],
-    "description": "Reaction: clap",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "confused",
-    "aliases": [],
-    "description": "Reaction: confused",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "cool",
-    "aliases": [],
-    "description": "Reaction: cool",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "cry",
-    "aliases": [],
-    "description": "Reaction: cry",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "cuddle",
-    "aliases": [],
-    "description": "Reaction: cuddle",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "dance",
-    "aliases": [],
-    "description": "Reaction: dance",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "drool",
-    "aliases": [],
-    "description": "Reaction: drool",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "evillaugh",
-    "aliases": [],
-    "description": "Reaction: evillaugh",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "facepalm",
-    "aliases": [],
-    "description": "Reaction: facepalm",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "handhold",
-    "aliases": [],
-    "description": "Reaction: handhold",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "happy",
-    "aliases": [],
-    "description": "Reaction: happy",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "headbang",
-    "aliases": [],
-    "description": "Reaction: headbang",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "hug",
-    "aliases": [],
-    "description": "Reaction: hug",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "huh",
-    "aliases": [],
-    "description": "Reaction: huh",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "kiss",
-    "aliases": [],
-    "description": "Reaction: kiss",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "laugh",
-    "aliases": [],
-    "description": "Reaction: laugh",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "lick",
-    "aliases": [],
-    "description": "Reaction: lick",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "love",
-    "aliases": [],
-    "description": "Reaction: love",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "mad",
-    "aliases": [],
-    "description": "Reaction: mad",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "nervous",
-    "aliases": [],
-    "description": "Reaction: nervous",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "no",
-    "aliases": [],
-    "description": "Reaction: no",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "nom",
-    "aliases": [],
-    "description": "Reaction: nom",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "nosebleed",
-    "aliases": [],
-    "description": "Reaction: nosebleed",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "nuzzle",
-    "aliases": [],
-    "description": "Reaction: nuzzle",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "nyah",
-    "aliases": [],
-    "description": "Reaction: nyah",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "pat",
-    "aliases": [],
-    "description": "Reaction: pat",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "peek",
-    "aliases": [],
-    "description": "Reaction: peek",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "pinch",
-    "aliases": [],
-    "description": "Reaction: pinch",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "poke",
-    "aliases": [],
-    "description": "Reaction: poke",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "pout",
-    "aliases": [],
-    "description": "Reaction: pout",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "punch",
-    "aliases": [],
-    "description": "Reaction: punch",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "roll",
-    "aliases": [],
-    "description": "Reaction: roll",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "run",
-    "aliases": [],
-    "description": "Reaction: run",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "sad",
-    "aliases": [],
-    "description": "Reaction: sad",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "scared",
-    "aliases": [],
-    "description": "Reaction: scared",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "shout",
-    "aliases": [],
-    "description": "Reaction: shout",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "shrug",
-    "aliases": [],
-    "description": "Reaction: shrug",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "shy",
-    "aliases": [],
-    "description": "Reaction: shy",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "sigh",
-    "aliases": [],
-    "description": "Reaction: sigh",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "sip",
-    "aliases": [],
-    "description": "Reaction: sip",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "slap",
-    "aliases": [],
-    "description": "Reaction: slap",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "sleep",
-    "aliases": [],
-    "description": "Reaction: sleep",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "slowclap",
-    "aliases": [],
-    "description": "Reaction: slowclap",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "smack",
-    "aliases": [],
-    "description": "Reaction: smack",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "smile",
-    "aliases": [],
-    "description": "Reaction: smile",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "smug",
-    "aliases": [],
-    "description": "Reaction: smug",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "sneeze",
-    "aliases": [],
-    "description": "Reaction: sneeze",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "sorry",
-    "aliases": [],
-    "description": "Reaction: sorry",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "stare",
-    "aliases": [],
-    "description": "Reaction: stare",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "stop",
-    "aliases": [],
-    "description": "Reaction: stop",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "surprised",
-    "aliases": [],
-    "description": "Reaction: surprised",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "sweat",
-    "aliases": [],
-    "description": "Reaction: sweat",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "thumbsup",
-    "aliases": [],
-    "description": "Reaction: thumbsup",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "tickle",
-    "aliases": [],
-    "description": "Reaction: tickle",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "tired",
-    "aliases": [],
-    "description": "Reaction: tired",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "wave",
-    "aliases": [],
-    "description": "Reaction: wave",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "wink",
-    "aliases": [],
-    "description": "Reaction: wink",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "woah",
-    "aliases": [],
-    "description": "Reaction: woah",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "yawn",
-    "aliases": [],
-    "description": "Reaction: yawn",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "yay",
-    "aliases": [],
-    "description": "Reaction: yay",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "yes",
-    "aliases": [],
-    "description": "Reaction: yes",
-    "module": "reaction",
-    "slash": false,
-    "prefix": true
-  },
-  {
-    "name": "reaction",
-    "aliases": [],
-    "description": "Gửi một reaction GIF (gõ tên reaction, có thể tag một người)",
-    "module": "reaction",
-    "slash": true,
-    "prefix": false
-  },
-  {
-    "name": "vote",
-    "aliases": [
-      "binhchon"
-    ],
-    "description": "Vote cho Puni trên top.gg và nhận tiền thưởng",
-    "module": "economy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "balance",
-    "aliases": [
-      "bal",
-      "money"
-    ],
-    "description": "Xem số dư economy (dùng chung mọi server)",
-    "module": "economy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "daily",
-    "aliases": [],
-    "description": "Nhận thưởng economy hằng ngày (1 lần/ngày trên toàn hệ thống)",
-    "module": "economy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "pay",
-    "aliases": [
-      "transfer"
-    ],
-    "description": "Chuyển economy cho người khác: pay @người <số tiền>",
-    "module": "economy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "ecotop",
-    "aliases": [
-      "top"
-    ],
-    "description": "Bảng xếp hạng economy toàn hệ thống",
-    "module": "economy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "pass",
-    "aliases": [
-      "membership",
-      "hoivien"
-    ],
-    "description": "Xem gói hội viên Puni của bạn và các gói đang mở",
-    "module": "economy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "orders",
-    "aliases": [
-      "lichsu",
-      "donhang"
-    ],
-    "description": "Xem lịch sử mua gói hội viên của bạn",
-    "module": "economy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "marry",
-    "aliases": [
-      "cuoi",
-      "kethon"
-    ],
-    "description": "Hôn nhân: marry buy <bậc> mua nhẫn · marry @người cầu hôn · accept/reject · divorce",
-    "module": "economy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "coinflip",
-    "aliases": [
-      "cf"
-    ],
-    "description": "Tung xu cược Coins với bot hoặc thách đấu người khác",
-    "module": "games",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "blackjack",
-    "aliases": [
-      "bj"
-    ],
-    "description": "Blackjack cược Coins — blackjack trả 3:2, nhà cái dằn ở 17",
-    "module": "games",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "tictactoe",
-    "aliases": [
-      "ttt",
-      "caro"
-    ],
-    "description": "Cờ caro 3x3 đấu bot (3 mức khó) hoặc thách đấu bạn bè",
-    "module": "games",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "race",
-    "aliases": [
-      "dua",
-      "duathu"
-    ],
-    "description": "Đua thú cược Coins: race <ngua|tho|cho|meo|rua> <cược> — thắng trả theo hệ số",
-    "module": "games",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "masoi",
-    "aliases": [
-      "werewolf",
-      "ww",
-      "soi"
-    ],
-    "description": "Ma sói: mở sảnh, vào sảnh, chơi theo ván (chỉ tính danh vọng)",
-    "module": "games",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "tcg",
-    "aliases": [],
-    "description": "Trung tâm game thẻ TCG: số dư, gói, bộ sưu tập",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "inventory",
-    "aliases": [
-      "kho",
-      "tui"
-    ],
-    "description": "Kho thẻ và vật phẩm TCG",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "collection",
-    "aliases": [
-      "bosuutap"
-    ],
-    "description": "Bộ sưu tập thẻ: tiến độ loài và độ hiếm",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "currency",
-    "aliases": [
-      "tiente"
-    ],
-    "description": "Xem số dư tiền tệ và nguyên liệu TCG",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "weekly",
-    "aliases": [
-      "quatuan"
-    ],
-    "description": "Nhận thưởng TCG hàng tuần: 3 gói + Coins + Mảnh",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "achievements",
-    "aliases": [
-      "thanhtuu"
-    ],
-    "description": "Thành tựu TCG và phần thưởng",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "leaderboard",
-    "aliases": [
-      "bxh"
-    ],
-    "description": "Bảng xếp hạng nhà sưu tập TCG",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "settings",
-    "aliases": [
-      "caidat"
-    ],
-    "description": "Cài đặt cá nhân TCG: settings [private|trade] [on|off]",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "gacha",
-    "aliases": [
-      "triehoi"
-    ],
-    "description": "Gacha TCG: gacha [single|multi|banner|history|pity|rates|exchange|free|pack]",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "card",
-    "aliases": [
-      "the"
-    ],
-    "description": "Quản lý thẻ: card [view|search|favorite|lock|unlock|upgrade|enhance|evolve|burn] <mã>",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "deck",
-    "aliases": [
-      "bobai"
-    ],
-    "description": "Bộ bài: deck [create|view|edit|delete|set-active|validate|share|import]",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "market",
-    "aliases": [
-      "cho"
-    ],
-    "description": "Chợ thẻ: market [browse|sell|buy|cancel|my-listings]",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "trade",
-    "aliases": [
-      "traodoi"
-    ],
-    "description": "Trao đổi trực tiếp: trade [offer|accept|reject|history]",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "cardbattle",
-    "aliases": [
-      "cbattle",
-      "dauthe"
-    ],
-    "description": "Battle thẻ bằng bộ bài đang dùng (5 thẻ đầu) với đội đối thủ tự động.",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "ranked",
-    "aliases": [
-      "dauhang"
-    ],
-    "description": "Đấu hạng TCG: đấu với bộ bài của người chơi khác, cộng/trừ điểm hạng (MMR).",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "rank",
-    "aliases": [
-      "hang",
-      "mmr"
-    ],
-    "description": "Xem bậc hạng TCG, điểm MMR và thành tích mùa này của bạn.",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  },
-  {
-    "name": "duel",
-    "aliases": [
-      "thachdau"
-    ],
-    "description": "Thách đấu TCG: duel @người [số cược] · duel accept · duel reject.",
-    "module": "cozy",
-    "slash": true,
-    "prefix": true
-  }
+ {
+  "name": "help",
+  "aliases": [
+   "h",
+   "commands"
+  ],
+  "description": "Xem danh sách lệnh",
+  "module": "core",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "ping",
+  "aliases": [],
+  "description": "Kiểm tra độ trễ của bot",
+  "module": "core",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "info",
+  "aliases": [
+   "botinfo"
+  ],
+  "description": "Thông tin về bot Puni",
+  "module": "core",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "uptime",
+  "aliases": [],
+  "description": "Thời gian bot đã chạy liên tục",
+  "module": "core",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "airkiss",
+  "aliases": [],
+  "description": "Reaction: airkiss",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "angrystare",
+  "aliases": [],
+  "description": "Reaction: angrystare",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "bite",
+  "aliases": [],
+  "description": "Reaction: bite",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "bleh",
+  "aliases": [],
+  "description": "Reaction: bleh",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "blush",
+  "aliases": [],
+  "description": "Reaction: blush",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "brofist",
+  "aliases": [],
+  "description": "Reaction: brofist",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "celebrate",
+  "aliases": [],
+  "description": "Reaction: celebrate",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "cheers",
+  "aliases": [],
+  "description": "Reaction: cheers",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "clap",
+  "aliases": [],
+  "description": "Reaction: clap",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "confused",
+  "aliases": [],
+  "description": "Reaction: confused",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "cool",
+  "aliases": [],
+  "description": "Reaction: cool",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "cry",
+  "aliases": [],
+  "description": "Reaction: cry",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "cuddle",
+  "aliases": [],
+  "description": "Reaction: cuddle",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "dance",
+  "aliases": [],
+  "description": "Reaction: dance",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "drool",
+  "aliases": [],
+  "description": "Reaction: drool",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "evillaugh",
+  "aliases": [],
+  "description": "Reaction: evillaugh",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "facepalm",
+  "aliases": [],
+  "description": "Reaction: facepalm",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "handhold",
+  "aliases": [],
+  "description": "Reaction: handhold",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "happy",
+  "aliases": [],
+  "description": "Reaction: happy",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "headbang",
+  "aliases": [],
+  "description": "Reaction: headbang",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "hug",
+  "aliases": [],
+  "description": "Reaction: hug",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "huh",
+  "aliases": [],
+  "description": "Reaction: huh",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "kiss",
+  "aliases": [],
+  "description": "Reaction: kiss",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "laugh",
+  "aliases": [],
+  "description": "Reaction: laugh",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "lick",
+  "aliases": [],
+  "description": "Reaction: lick",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "love",
+  "aliases": [],
+  "description": "Reaction: love",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "mad",
+  "aliases": [],
+  "description": "Reaction: mad",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "nervous",
+  "aliases": [],
+  "description": "Reaction: nervous",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "no",
+  "aliases": [],
+  "description": "Reaction: no",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "nom",
+  "aliases": [],
+  "description": "Reaction: nom",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "nosebleed",
+  "aliases": [],
+  "description": "Reaction: nosebleed",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "nuzzle",
+  "aliases": [],
+  "description": "Reaction: nuzzle",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "nyah",
+  "aliases": [],
+  "description": "Reaction: nyah",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "pat",
+  "aliases": [],
+  "description": "Reaction: pat",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "peek",
+  "aliases": [],
+  "description": "Reaction: peek",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "pinch",
+  "aliases": [],
+  "description": "Reaction: pinch",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "poke",
+  "aliases": [],
+  "description": "Reaction: poke",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "pout",
+  "aliases": [],
+  "description": "Reaction: pout",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "punch",
+  "aliases": [],
+  "description": "Reaction: punch",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "roll",
+  "aliases": [],
+  "description": "Reaction: roll",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "run",
+  "aliases": [],
+  "description": "Reaction: run",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "sad",
+  "aliases": [],
+  "description": "Reaction: sad",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "scared",
+  "aliases": [],
+  "description": "Reaction: scared",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "shout",
+  "aliases": [],
+  "description": "Reaction: shout",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "shrug",
+  "aliases": [],
+  "description": "Reaction: shrug",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "shy",
+  "aliases": [],
+  "description": "Reaction: shy",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "sigh",
+  "aliases": [],
+  "description": "Reaction: sigh",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "sip",
+  "aliases": [],
+  "description": "Reaction: sip",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "slap",
+  "aliases": [],
+  "description": "Reaction: slap",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "sleep",
+  "aliases": [],
+  "description": "Reaction: sleep",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "slowclap",
+  "aliases": [],
+  "description": "Reaction: slowclap",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "smack",
+  "aliases": [],
+  "description": "Reaction: smack",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "smile",
+  "aliases": [],
+  "description": "Reaction: smile",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "smug",
+  "aliases": [],
+  "description": "Reaction: smug",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "sneeze",
+  "aliases": [],
+  "description": "Reaction: sneeze",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "sorry",
+  "aliases": [],
+  "description": "Reaction: sorry",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "stare",
+  "aliases": [],
+  "description": "Reaction: stare",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "stop",
+  "aliases": [],
+  "description": "Reaction: stop",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "surprised",
+  "aliases": [],
+  "description": "Reaction: surprised",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "sweat",
+  "aliases": [],
+  "description": "Reaction: sweat",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "thumbsup",
+  "aliases": [],
+  "description": "Reaction: thumbsup",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "tickle",
+  "aliases": [],
+  "description": "Reaction: tickle",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "tired",
+  "aliases": [],
+  "description": "Reaction: tired",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "wave",
+  "aliases": [],
+  "description": "Reaction: wave",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "wink",
+  "aliases": [],
+  "description": "Reaction: wink",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "woah",
+  "aliases": [],
+  "description": "Reaction: woah",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "yawn",
+  "aliases": [],
+  "description": "Reaction: yawn",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "yay",
+  "aliases": [],
+  "description": "Reaction: yay",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "yes",
+  "aliases": [],
+  "description": "Reaction: yes",
+  "module": "reaction",
+  "slash": false,
+  "prefix": true
+ },
+ {
+  "name": "reaction",
+  "aliases": [],
+  "description": "Gửi một reaction GIF (gõ tên reaction, có thể tag một người)",
+  "module": "reaction",
+  "slash": true,
+  "prefix": false
+ },
+ {
+  "name": "vote",
+  "aliases": [
+   "binhchon"
+  ],
+  "description": "Vote cho Puni trên top.gg và nhận tiền thưởng",
+  "module": "economy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "balance",
+  "aliases": [
+   "bal",
+   "money"
+  ],
+  "description": "Xem số dư economy (dùng chung mọi server)",
+  "module": "economy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "daily",
+  "aliases": [],
+  "description": "Nhận thưởng economy hằng ngày (1 lần/ngày trên toàn hệ thống)",
+  "module": "economy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "pay",
+  "aliases": [
+   "transfer"
+  ],
+  "description": "Chuyển economy cho người khác: pay @người <số tiền>",
+  "module": "economy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "ecotop",
+  "aliases": [
+   "top"
+  ],
+  "description": "Bảng xếp hạng economy toàn hệ thống",
+  "module": "economy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "pass",
+  "aliases": [
+   "membership",
+   "hoivien"
+  ],
+  "description": "Xem gói hội viên Puni của bạn và các gói đang mở",
+  "module": "economy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "orders",
+  "aliases": [
+   "lichsu",
+   "donhang"
+  ],
+  "description": "Xem lịch sử mua gói hội viên của bạn",
+  "module": "economy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "marry",
+  "aliases": [
+   "cuoi",
+   "kethon"
+  ],
+  "description": "Hôn nhân: marry buy <bậc> mua nhẫn · marry @người cầu hôn · accept/reject · divorce",
+  "module": "economy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "coinflip",
+  "aliases": [
+   "cf"
+  ],
+  "description": "Tung xu cược Coins với bot hoặc thách đấu người khác",
+  "module": "games",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "blackjack",
+  "aliases": [
+   "bj"
+  ],
+  "description": "Blackjack cược Coins — blackjack trả 3:2, nhà cái dằn ở 17",
+  "module": "games",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "tictactoe",
+  "aliases": [
+   "ttt",
+   "caro"
+  ],
+  "description": "Cờ caro 3x3 đấu bot (3 mức khó) hoặc thách đấu bạn bè",
+  "module": "games",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "race",
+  "aliases": [
+   "dua",
+   "duathu"
+  ],
+  "description": "Đua thú cược Coins: race <ngua|tho|cho|meo|rua> <cược> — thắng trả theo hệ số",
+  "module": "games",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "masoi",
+  "aliases": [
+   "werewolf",
+   "ww",
+   "soi"
+  ],
+  "description": "Ma sói: mở sảnh, vào sảnh, chơi theo ván (chỉ tính danh vọng)",
+  "module": "games",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "tcg",
+  "aliases": [],
+  "description": "Trung tâm game thẻ TCG: số dư, gói, bộ sưu tập",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "inventory",
+  "aliases": [
+   "kho",
+   "tui"
+  ],
+  "description": "Kho thẻ và vật phẩm TCG",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "collection",
+  "aliases": [
+   "bosuutap"
+  ],
+  "description": "Bộ sưu tập thẻ: tiến độ loài và độ hiếm",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "currency",
+  "aliases": [
+   "tiente"
+  ],
+  "description": "Xem số dư tiền tệ và nguyên liệu TCG",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "weekly",
+  "aliases": [
+   "quatuan"
+  ],
+  "description": "Nhận thưởng TCG hàng tuần: 3 gói + Coins + Mảnh",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "achievements",
+  "aliases": [
+   "thanhtuu"
+  ],
+  "description": "Thành tựu TCG và phần thưởng",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "leaderboard",
+  "aliases": [
+   "bxh"
+  ],
+  "description": "Bảng xếp hạng nhà sưu tập TCG",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "settings",
+  "aliases": [
+   "caidat"
+  ],
+  "description": "Cài đặt cá nhân TCG: settings [private|trade] [on|off]",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "gacha",
+  "aliases": [
+   "triehoi"
+  ],
+  "description": "Gacha TCG: gacha [single|multi|banner|history|pity|rates|exchange|free|pack]",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "card",
+  "aliases": [
+   "the"
+  ],
+  "description": "Quản lý thẻ: card [view|search|favorite|lock|unlock|upgrade|enhance|evolve|burn] <mã>",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "deck",
+  "aliases": [
+   "bobai"
+  ],
+  "description": "Bộ bài: deck [create|view|edit|delete|set-active|validate|share|import]",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "market",
+  "aliases": [
+   "cho"
+  ],
+  "description": "Chợ thẻ: market [browse|sell|buy|cancel|my-listings]",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "trade",
+  "aliases": [
+   "traodoi"
+  ],
+  "description": "Trao đổi trực tiếp: trade [offer|accept|reject|history]",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "cardbattle",
+  "aliases": [
+   "cbattle",
+   "dauthe"
+  ],
+  "description": "Battle thẻ bằng bộ bài đang dùng (5 thẻ đầu) với đội đối thủ tự động.",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "ranked",
+  "aliases": [
+   "dauhang"
+  ],
+  "description": "Đấu hạng TCG: đấu với bộ bài của người chơi khác, cộng/trừ điểm hạng (MMR).",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "rank",
+  "aliases": [
+   "hang",
+   "mmr"
+  ],
+  "description": "Xem bậc hạng TCG, điểm MMR và thành tích mùa này của bạn.",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "duel",
+  "aliases": [
+   "thachdau"
+  ],
+  "description": "Thách đấu TCG: duel @người [số cược] · duel accept · duel reject.",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "challenge",
+  "aliases": [
+   "thuthach"
+  ],
+  "description": "Thử thách ngày: đấu với đội NPC theo đội của bạn, thắng nhận Coins + Mảnh thẻ",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "draft",
+  "aliases": [],
+  "description": "Đấu Draft: chọn 1 trong 3 lá qua 8 vòng rồi đấu chuỗi NPC",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "sealed",
+  "aliases": [],
+  "description": "Đấu Sealed: mở pool 30 lá ngẫu nhiên, lấy 5 lá mạnh nhất đấu chuỗi NPC",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "quest",
+  "aliases": [
+   "nhiemvu"
+  ],
+  "description": "Nhiệm vụ ngày TCG: 5 nhiệm vụ mỗi ngày, nhận thưởng Coins + Mảnh thẻ",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "showcase",
+  "aliases": [
+   "trungbay"
+  ],
+  "description": "Xem trang trưng bày thẻ của người chơi khác",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "auction",
+  "aliases": [
+   "daugia",
+   "dg"
+  ],
+  "description": "Đấu giá thẻ: tạo phiên, đặt giá, mua ngay — dùng chung dữ liệu với web",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ },
+ {
+  "name": "tournament",
+  "aliases": [
+   "giaidau",
+   "giai"
+  ],
+  "description": "Giải đấu thẻ theo bảng đấu, dùng chung dữ liệu với web",
+  "module": "cozy",
+  "slash": true,
+  "prefix": true
+ }
 ]

@@ -125,6 +125,15 @@ export function IconList({ size = 19, style }: IconProps) {
   );
 }
 
+export function IconQuest({ size = 19, style }: IconProps) {
+  return (
+    <svg {...base(size)} style={style}>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="m8.5 12.2 2.4 2.4 4.6-5" />
+    </svg>
+  );
+}
+
 export function IconSearch({ size = 19, style }: IconProps) {
   return (
     <svg {...base(size)} style={style}>

@@ -12,6 +12,8 @@ import { db } from "./db";
 import { adjustBalanceTx } from "./player";
 import { userDecks } from "./tcg";
 import { userPerksWeb } from "./gacha";
+import { bumpQuest } from "./quest-hooks";
+import { speciesEdition } from "./player-deck";
 
 const MAX_LEVEL = 100;
 const MAX_ROUNDS = 40;
@@ -220,7 +222,10 @@ export async function cardBattleWeb(
   const catRes = await db().query(
     `SELECT id, name, base_hp, base_atk, sprite_url, rarity FROM game_species WHERE enabled`,
   );
-  const catalog = catRes.rows as unknown as Array<{ id: string; name: string; base_hp: number; base_atk: number; sprite_url: string | null; rarity: string }>;
+  const fullCatalog = catRes.rows as unknown as Array<{ id: string; name: string; base_hp: number; base_atk: number; sprite_url: string | null; rarity: string }>;
+  // Edition split (spec 6.38): the rival team only uses the player's edition.
+  const myEdition = speciesEdition(team[0]!.speciesId);
+  const catalog = fullCatalog.filter((s) => speciesEdition(s.id) === myEdition);
   if (!catalog.length) return { ok: false, error: "Chưa có dữ liệu loài để tạo đối thủ." };
   const rng = Math.random;
   const enemy: BattleCardInput[] = [];
@@ -273,6 +278,8 @@ export async function cardBattleWeb(
     }
     await adjustBalanceTx(client, userId, coins, "tcg-battle", win ? "Thắng battle thẻ (web)" : "Battle thẻ (web)");
     await client.query("COMMIT");
+    await bumpQuest(userId, "battle_play", 1);
+    if (win) await bumpQuest(userId, "battle_win", 1);
     return {
       ok: true, win, rounds: result.rounds, log: result.log.slice(-14),
       events: result.events,

@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { adjustBalanceTx, fmtCoins, snapMoney } from "@/lib/player";
 import { userDecks } from "@/lib/tcg";
-import { validateDeckWeb } from "@/lib/player-deck";
+import { deckEdition, validateDeckWeb } from "@/lib/player-deck";
 import {
   battleStatsFor, simulateCardBattleWeb, type BattleCardInput,
 } from "@/lib/battle";
@@ -99,6 +99,8 @@ export interface TournamentRow {
   startedAt: string | null;
   finishedAt: string | null;
   championId: string | null;
+  /** Edition lock (spec 6.38): set by the first entrant's deck. */
+  edition: "en" | "jp" | null;
   entrants: number;
   joined: boolean;
 }
@@ -125,7 +127,7 @@ const TOURNEY_SELECT = `
          t.rake_percent::text AS rake_percent, t.prize_first::text AS prize_first,
          t.prize_second::text AS prize_second, t.prize_semis::text AS prize_semis,
          t.status, t.created_at::text AS created_at, t.started_at::text AS started_at,
-         t.finished_at::text AS finished_at, t.champion_id,
+         t.finished_at::text AS finished_at, t.champion_id, t.edition,
          (SELECT COUNT(*)::int FROM tcg_tournament_entries e WHERE e.tournament_id = t.id) AS entrants
   FROM tcg_tournaments t`;
 
@@ -139,6 +141,7 @@ function mapTournament(r: Record<string, unknown>, meId?: string): TournamentRow
     startedAt: r.started_at ? String(r.started_at) : null,
     finishedAt: r.finished_at ? String(r.finished_at) : null,
     championId: r.champion_id ? String(r.champion_id) : null,
+    edition: r.edition === "jp" ? "jp" : r.edition === "en" ? "en" : null,
     entrants: Number(r.entrants ?? 0),
     joined: meId ? r.joined === true : false,
   };
@@ -395,10 +398,10 @@ export async function joinTournament(userId: string, tournamentId: number): Prom
   try {
     await client.query("BEGIN");
     const tRes = await client.query(
-      `SELECT id, size, entry_fee::text AS entry_fee, status FROM tcg_tournaments WHERE id = $1 FOR UPDATE`,
+      `SELECT id, size, entry_fee::text AS entry_fee, status, edition FROM tcg_tournaments WHERE id = $1 FOR UPDATE`,
       [tournamentId],
     );
-    const t = tRes.rows[0] as unknown as { id: number; size: number; entry_fee: string; status: string } | undefined;
+    const t = tRes.rows[0] as unknown as { id: number; size: number; entry_fee: string; status: string; edition: string | null } | undefined;
     if (!t) { await client.query("ROLLBACK"); return { ok: false, error: "Không tìm thấy giải đấu." }; }
     if (t.status !== "open") { await client.query("ROLLBACK"); return { ok: false, error: "Giải này đã khoá đăng ký." }; }
     const already = await client.query(
@@ -420,10 +423,21 @@ export async function joinTournament(userId: string, tournamentId: number): Prom
       await client.query("ROLLBACK");
       return { ok: false, error: "Bộ bài đang dùng có thẻ không còn trong kho của bạn — kiểm tra lại ở trang Bộ Bài." };
     }
-    const errors = validateDeckWeb(inst.rows.map((r) => String(r.species_id)));
+    const speciesIds = inst.rows.map((r) => String(r.species_id));
+    const errors = validateDeckWeb(speciesIds);
     if (errors.length) {
       await client.query("ROLLBACK");
       return { ok: false, error: `Bộ bài chưa hợp lệ: ${errors.join("; ")}.` };
+    }
+    // Edition split (spec 6.38): the first entrant fixes the edition
+    // (the row is FOR UPDATE, so this is race-free); others must match.
+    const myEdition = deckEdition(speciesIds);
+    if (t.edition && t.edition !== myEdition) {
+      await client.query("ROLLBACK");
+      return { ok: false, error: `Giải này dành cho bản ${t.edition === "jp" ? "Nhật" : "tiếng Anh"} — bộ bài của bạn là bản ${myEdition === "jp" ? "Nhật" : "tiếng Anh"}.` };
+    }
+    if (!t.edition) {
+      await client.query(`UPDATE tcg_tournaments SET edition = $2 WHERE id = $1`, [t.id, myEdition]);
     }
     const fee = Number(t.entry_fee);
     if (fee > 0) {

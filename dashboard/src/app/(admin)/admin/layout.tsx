@@ -85,6 +85,9 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
               <Link href="/admin/rulings" className="item">
                 <IconShield /> Rulings
               </Link>
+              <Link href="/admin/banners" className="item">
+                <IconBag /> Banner gacha
+              </Link>
               <Link href="/admin/website" className="item">
                 <IconGlobe /> Trang web
               </Link>

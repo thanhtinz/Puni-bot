@@ -14,6 +14,7 @@
  */
 import { db } from "./db";
 import { adjustBalanceTx, cardValue, getPriceCoinsPerUsd } from "./player";
+import { bumpQuest } from "./quest-hooks";
 import { userPerksWeb } from "./gacha";
 
 export const SHOP_PACK_PRICES = { standard: 2000, premium: 5000 } as const;
@@ -456,5 +457,7 @@ export async function buySingleCardWeb(
     rate,
     r.market_price_coins != null ? Number(r.market_price_coins) : undefined,
   );
-  return buySpeciesTx(userId, speciesId, price);
+  const out = await buySpeciesTx(userId, speciesId, price);
+  if (out.ok) await bumpQuest(userId, "buy", 1);
+  return out;
 }

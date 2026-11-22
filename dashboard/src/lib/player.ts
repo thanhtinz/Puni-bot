@@ -4,6 +4,8 @@
  * enforces (one source of truth, two surfaces).
  */
 import { db } from "./db";
+import { bumpQuest } from "./quest-hooks";
+import { speciesEdition, validateDeckWeb } from "./player-deck";
 import { BASE_VALUE, DEFAULT_PRICE_COINS_PER_USD, getPriceCoinsPerUsd } from "./tcg";
 
 export { DEFAULT_PRICE_COINS_PER_USD, getPriceCoinsPerUsd };
@@ -270,6 +272,8 @@ export async function buyListingWeb(buyerId: string, listingId: number): Promise
       }
     }
     await client.query("COMMIT");
+    await bumpQuest(buyerId, "buy", 1);
+    await bumpQuest(row.seller_id, "sell", 1);
     return { ok: true };
   } catch {
     await client.query("ROLLBACK").catch(() => undefined);
@@ -356,9 +360,21 @@ export async function editDeckWeb(
       await client.query(`DELETE FROM tcg_deck_cards WHERE deck_id = $1 AND instance_code = $2`, [deckId, code]);
     } else {
       const inst = await client.query(
-        `SELECT 1 FROM tcg_instances WHERE code = $1 AND user_id = $2`, [code, userId],
+        `SELECT species_id FROM tcg_instances WHERE code = $1 AND user_id = $2`, [code, userId],
       );
       if (!inst.rows.length) { await client.query("ROLLBACK"); return { ok: false, error: "Thẻ đó không có trong kho của bạn." }; }
+      // Edition split (spec 6.38): a deck holds ONE edition only —
+      // reject adding a card from the other edition.
+      const newEdition = speciesEdition(String(inst.rows[0].species_id));
+      const existing = await client.query(
+        `SELECT DISTINCT i.species_id FROM tcg_deck_cards dc
+         JOIN tcg_instances i ON i.code = dc.instance_code WHERE dc.deck_id = $1`,
+        [deckId],
+      );
+      if (existing.rows.some((r) => speciesEdition(String(r.species_id)) !== newEdition)) {
+        await client.query("ROLLBACK");
+        return { ok: false, error: "Bộ bài này đang dùng một bản thẻ khác (Anh/Nhật) — hai bản đấu riêng, không trộn vào một bộ được." };
+      }
       const count = await client.query(
         `SELECT COUNT(*)::int AS n FROM tcg_deck_cards WHERE deck_id = $1`, [deckId],
       );
@@ -369,6 +385,19 @@ export async function editDeckWeb(
       );
     }
     await client.query("COMMIT");
+    if (action === "add") {
+      // Daily quest (spec 6.38): a deck that just became fully valid
+      // (validateDeckWeb also enforces the single-edition rule).
+      const chk = await db().query(
+        `SELECT i.species_id FROM tcg_deck_cards dc
+         JOIN tcg_instances i ON i.code = dc.instance_code WHERE dc.deck_id = $1`,
+        [deckId],
+      );
+      const ids = (chk.rows as Array<{ species_id: string }>).map((r) => String(r.species_id));
+      if (validateDeckWeb(ids).length === 0) {
+        await bumpQuest(userId, "deck_build", 1);
+      }
+    }
     return { ok: true };
   } catch {
     await client.query("ROLLBACK").catch(() => undefined);

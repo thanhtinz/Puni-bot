@@ -8,6 +8,7 @@
  */
 import { db, getBotConfig, getUserMembership } from "./db";
 import { adjustBalanceTx } from "./player";
+import { bumpQuest } from "./quest-hooks";
 import { normalizeMembershipTiers, effectivePerksWeb } from "./membership";
 
 export const TCG_RARITIES = [
@@ -376,6 +377,7 @@ export async function pullWeb(userId: string, bannerId: string, count: 1 | 10): 
     );
     await savePity(client as TxClient, userId, bannerId, next);
     await client.query("COMMIT");
+    await bumpQuest(userId, "pull", results.length);
     return { ok: true, results, cost };
   } catch {
     await client.query("ROLLBACK").catch(() => undefined);
@@ -421,6 +423,7 @@ export async function openPackWeb(userId: string, premium: boolean): Promise<Pul
     );
     await savePity(client as TxClient, userId, "standard", next);
     await client.query("COMMIT");
+    await bumpQuest(userId, "pull", results.length);
     return { ok: true, results, cost: 0 };
   } catch {
     await client.query("ROLLBACK").catch(() => undefined);

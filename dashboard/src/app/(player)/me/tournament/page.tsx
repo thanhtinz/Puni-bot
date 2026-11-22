@@ -148,6 +148,7 @@ export default async function TournamentPage({
               <p className="player-sub">
                 {t.entrants}/{t.size} người · Phí {fmtCoins(t.entryFee)} Coins · Quỹ thưởng{" "}
                 {fmtCoins(t.size * t.entryFee * (1 - t.rakePercent / 100))} Coins
+                {t.edition ? <> · Bản {t.edition === "jp" ? "Nhật" : "tiếng Anh"}</> : null}
               </p>
               {t.joined ? (
                 <p className="player-notice ok">Đã đăng ký — đủ {t.size} người là bracket tự khoá.</p>

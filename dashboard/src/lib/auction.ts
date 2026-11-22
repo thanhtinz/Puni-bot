@@ -3,6 +3,7 @@ import {
   adjustBalanceTx, fmtCoins, nextMarketPrice, sellerFeePercent, snapMoney,
 } from "@/lib/player";
 import { BASE_VALUE, getPriceCoinsPerUsd } from "@/lib/tcg";
+import { bumpQuest } from "@/lib/quest-hooks";
 
 export { fmtCoins };
 
@@ -251,6 +252,7 @@ export async function placeBid(userId: string, auctionId: number, amountRaw: str
       await client.query(`UPDATE tcg_auctions SET ends_at = now() + interval '5 minutes' WHERE id = $1`, [a.id]);
     }
     await client.query("COMMIT");
+    await bumpQuest(userId, "auction_bid", 1);
     return { ok: true };
   } catch {
     await client.query("ROLLBACK").catch(() => undefined);
