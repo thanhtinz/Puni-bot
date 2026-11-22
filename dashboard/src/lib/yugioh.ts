@@ -24,6 +24,8 @@ export interface YgoCardView {
   speciesId: string;
   name: string;
   spriteUrl: string;
+  /** Monster-art-only image (YGOPRODeck cropped art) for the hologram. */
+  artUrl: string;
   atk: number;
   def: number;
   level: number;
@@ -56,12 +58,13 @@ interface InstRow {
   ygo_attribute: string | null;
   ygo_race: string | null;
   sprite_url: string | null;
+  ygo_art_url: string | null;
 }
 
 const INST_SQL = `
   SELECT i.code, i.level, i.xp, i.enhance, i.species_id,
          s.name AS sp_name, s.ygo_atk, s.ygo_def, s.ygo_level,
-         s.ygo_attribute, s.ygo_race, s.sprite_url
+         s.ygo_attribute, s.ygo_race, s.sprite_url, s.ygo_art_url
   FROM tcg_instances i JOIN game_species s ON s.id = i.species_id
   WHERE i.user_id = $1 AND s.ygo_atk IS NOT NULL
   ORDER BY EXISTS (
@@ -80,10 +83,11 @@ const toCard = (r: InstRow): YgoCard => ({
   race: r.ygo_race ?? undefined,
   enhance: Number(r.enhance),
 });
-const toView = (c: YgoCard, spriteUrl: string): YgoCardView => ({
+const toView = (c: YgoCard, spriteUrl: string, artUrl = ""): YgoCardView => ({
   speciesId: c.speciesId,
   name: c.name,
   spriteUrl,
+  artUrl,
   atk: c.atk + (c.enhance ?? 0) * 50,
   def: c.def + (c.enhance ?? 0) * 50,
   level: c.level,
@@ -98,7 +102,7 @@ export async function yugiohDeckPreview(
   return {
     ready: rows.length >= MIN_DECK,
     count: rows.length,
-    deck: rows.map((r) => toView(toCard(r), String(r.sprite_url ?? ""))),
+    deck: rows.map((r) => toView(toCard(r), String(r.sprite_url ?? ""), String(r.ygo_art_url ?? ""))),
   };
 }
 
@@ -117,7 +121,7 @@ export async function yugiohBattleWeb(
   const avgLevel = rows.reduce((s, r) => s + Number(r.level), 0) / rows.length;
 
   const npcRes = await db().query(
-    `SELECT id, name, ygo_atk, ygo_def, ygo_level, ygo_attribute, ygo_race, sprite_url
+    `SELECT id, name, ygo_atk, ygo_def, ygo_level, ygo_attribute, ygo_race, sprite_url, ygo_art_url
      FROM game_species WHERE ygo_atk IS NOT NULL
      ORDER BY random() LIMIT 30`,
   );
@@ -184,8 +188,8 @@ export async function yugiohBattleWeb(
       coins,
       xp,
       leveledUp,
-      deckA: deck.map((c, i) => toView(c, String(rows[i]!.sprite_url ?? ""))),
-      deckB: enemy.map((c, i) => toView(c, String(npcRows[i]!.sprite_url ?? ""))),
+      deckA: deck.map((c, i) => toView(c, String(rows[i]!.sprite_url ?? ""), String(rows[i]!.ygo_art_url ?? ""))),
+      deckB: enemy.map((c, i) => toView(c, String(npcRows[i]!.sprite_url ?? ""), String(npcRows[i]!.ygo_art_url ?? ""))),
       events: result.events,
     };
   } catch {

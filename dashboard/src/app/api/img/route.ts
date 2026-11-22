@@ -10,6 +10,7 @@ const ALLOWED_HOSTS = new Set([
   "tcgplayer-cdn.tcgplayer.com",
   "tcgsdk.com",
   "api.apitcg.com",
+  "images.ygoprodeck.com",
 ]);
 
 export async function GET(req: NextRequest) {

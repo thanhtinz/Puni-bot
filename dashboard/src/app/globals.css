@@ -2245,6 +2245,32 @@ a.player-btn { display: inline-flex; align-items: center; text-decoration: none;
   .holo-ring { width: 92px; height: 16px; }
 }
 
+/* Art holograms (Yu-Gi-Oh / One Piece): card artwork projected
+   above each field slot, smaller than the Pokémon sprite stage. */
+.holo-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.holo-row .holo-wrap { margin: 0 auto; }
+.holo-center { display: flex; justify-content: center; }
+.holo-wrap.holo-sm { --lungeY: -18px; width: 96px; height: 100px; margin-bottom: -4px; }
+.holo-wrap.holo-sm[data-side="b"] { --lungeY: 18px; }
+.holo-wrap.holo-sm .holo-cone { width: 84px; height: 86px; bottom: 5px; }
+.holo-wrap.holo-sm .holo-ring { width: 76px; height: 13px; }
+.holo-wrap.is-empty { visibility: hidden; }
+.holo-wrap.is-dim { opacity: 0.45; filter: saturate(0.5); }
+.holo-art-frame { position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); width: 72px; height: 72px; border-radius: 10px; overflow: hidden; border: 2px solid rgba(56, 189, 248, 0.65); box-shadow: 0 0 14px rgba(56, 189, 248, 0.55), inset 0 0 12px rgba(56, 189, 248, 0.35); background: rgba(8, 47, 73, 0.35); animation: holoFloat 2.8s ease-in-out infinite, holoFlicker 3.9s linear infinite; z-index: 2; }
+.holo-art-frame img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(1.15) brightness(1.06); }
+.holo-art-frame::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(to bottom, rgba(125, 211, 252, 0.16) 0 2px, transparent 2px 5px); pointer-events: none; }
+.holo-art-frame.is-crop img { object-position: 50% 0%; transform: scale(1.9); transform-origin: 50% 0%; }
+.holo-wrap.holo-sm.is-attacking .holo-art-frame { animation: holoLungeY 0.45s ease; }
+.holo-wrap.holo-sm.is-hit .holo-art-frame { animation: holoHitShake 0.4s ease; filter: brightness(1.7) hue-rotate(-35deg); }
+.holo-wrap.is-dying { opacity: 0.2; filter: grayscale(0.9); transition: opacity 0.45s ease, filter 0.45s ease; }
+@keyframes holoLungeY { 30% { transform: translateX(-50%) translateY(var(--lungeY)) scale(1.14); } }
+@media (max-width: 620px) {
+  .holo-wrap.holo-sm { width: 76px; height: 84px; }
+  .holo-wrap.holo-sm .holo-cone { width: 66px; height: 70px; }
+  .holo-wrap.holo-sm .holo-ring { width: 60px; height: 11px; }
+  .holo-art-frame { width: 58px; height: 58px; bottom: 20px; }
+}
+
 /* Yu-Gi-Oh arena (spec 6.39) */
 .ygo-deckline { color: #44598a; font-size: 0.88rem; margin: 0; }
 .ygo-field { display: flex; flex-direction: column; gap: 10px; background: linear-gradient(180deg, #fdfdff, #f3efff); border: 1px solid #ddd7fb; border-radius: 16px; padding: 14px; }

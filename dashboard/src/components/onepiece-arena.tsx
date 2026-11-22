@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import CardArt from "@/components/card-art";
+import HoloArt from "@/components/holo-art";
 import type { OnePieceOutcome, OpCardView, OpLeaderView } from "@/lib/onepiece";
 import type { OpEvent } from "@/lib/onepiece-battle";
 
@@ -188,6 +189,16 @@ export default function OnePieceArena({
     const leaderLunge = lunge?.side === sideKey && lunge?.name === leader.name && !finished;
     return (
       <div className="op-side">
+        <div className="holo-center">
+          <HoloArt
+            src={leader.spriteUrl}
+            side={sideKey}
+            variant="crop"
+            attacking={leaderLunge}
+            hit={leaderHit}
+            dimmed={side.leaderRested}
+          />
+        </div>
         <div
           className={`op-leader${side.leaderRested ? " is-rested" : ""}${leaderHit ? " is-hit" : ""}${leaderLunge ? ` lunge-${sideKey}` : ""}`}
         >
@@ -203,6 +214,27 @@ export default function OnePieceArena({
             </span>
             <small>DON!! ×{side.donTotal}</small>
           </div>
+        </div>
+        <div className="holo-row">
+          {[0, 1, 2, 3, 4].map((slot) => {
+            const c = side.chars[slot];
+            if (!c) return <div key={slot} />;
+            const v = viewOf(sideKey, c.name);
+            const cHit = hit?.side === sideKey && hit?.name === c.name && !finished;
+            const cLunge = lunge?.side === sideKey && lunge?.name === c.name && !finished;
+            return (
+              <HoloArt
+                key={slot}
+                src={v?.spriteUrl ?? ""}
+                side={sideKey}
+                variant="crop"
+                attacking={cLunge}
+                hit={cHit}
+                dying={!!c.dying}
+                dimmed={c.rested}
+              />
+            );
+          })}
         </div>
         <div className="ygo-zones">
           {[0, 1, 2, 3, 4].map((slot) => {

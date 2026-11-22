@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import CardArt from "@/components/card-art";
+import HoloArt from "@/components/holo-art";
 import type { YugiohOutcome, YgoCardView } from "@/lib/yugioh";
 import type { YgoEvent, YgoPosition } from "@/lib/yugioh-battle";
 
@@ -165,6 +166,33 @@ export default function YugiohArena({
     }
   };
 
+  /** Monster holograms projected above the zones (Solid Vision
+   * style): the art-only image hovers over a cone of light. */
+  const renderHoloRow = (sideKey: "a" | "b") => {
+    if (!sides) return null;
+    const side = sides[sideKey];
+    return (
+      <div className="holo-row">
+        {[0, 1, 2, 3, 4].map((slot) => {
+          const m = side.monsters[slot];
+          if (!m) return <div key={slot} />;
+          const v = viewOf(sideKey, m.name);
+          return (
+            <HoloArt
+              key={slot}
+              src={v?.artUrl || v?.spriteUrl || ""}
+              side={sideKey}
+              variant="art"
+              attacking={lunge?.side === sideKey && lunge?.name === m.name && !finished}
+              hit={hit?.side === sideKey && hit?.name === m.name && !finished}
+              dying={!!m.dying}
+            />
+          );
+        })}
+      </div>
+    );
+  };
+
   const renderMonsters = (sideKey: "a" | "b") => {
     if (!sides) return null;
     const side = sides[sideKey];
@@ -244,10 +272,12 @@ export default function YugiohArena({
         <>
           <div className="ygo-field">
             {renderLp("b", "Đối thủ")}
+            {renderHoloRow("b")}
             {renderMonsters("b")}
             <div className="poke-log" aria-live="polite">
               {finished ? <strong>{outcome.win ? "Thắng trận!" : "Thua trận"}</strong> : log || "Trận đấu bắt đầu!"}
             </div>
+            {renderHoloRow("a")}
             {renderMonsters("a")}
             {renderLp("a", "Bạn")}
           </div>
