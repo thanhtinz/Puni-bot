@@ -2513,3 +2513,51 @@ a.player-btn { display: inline-flex; align-items: center; text-decoration: none;
 @media (max-width: 620px) {
   .ygo-field, .op-field { min-height: 600px; }
 }
+
+/* Dragon Ball Fusion World stage (6.39): full-field arena —
+   Life stack + Leader on the left of each half, Battle Area in the
+   middle, Energy orbs under it, Deck/hand piles on the right. */
+.db-stage { position: relative; display: flex; flex-direction: column; border-radius: 18px; overflow: hidden; min-height: 700px; border: 1px solid #263b63; background-color: #201408; background-image: linear-gradient(rgba(10, 8, 20, 0.30), rgba(10, 8, 20, 0.30)), url("/db-arena-bg-a.jpg"), url("/db-arena-bg-b.jpg"); background-size: 100% 100%, 50.5% 100%, 50.5% 100%; background-position: center, left top, right top; background-repeat: no-repeat; }
+.db-half { position: relative; flex: 1; display: flex; gap: 12px; padding: 14px 14px 26px; background: rgba(8, 16, 34, 0.34); backdrop-filter: blur(1.5px); }
+.db-half.me { padding: 26px 14px 14px; }
+.db-leftcol { width: 178px; flex: none; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.db-half .op-life-stack small { color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65); font-weight: 700; }
+.db-leader { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.db-leader-card { display: flex; gap: 10px; align-items: center; background: #fff; border-radius: 12px; padding: 8px 10px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35); }
+.db-leader-card.rested { opacity: 0.72; transform: rotate(3deg); }
+.db-leader-art { width: 46px; aspect-ratio: 63/88; border-radius: 6px; overflow: hidden; background: #dfe8fa; flex: none; display: block; }
+.db-leader-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.db-leader-info { display: flex; flex-direction: column; min-width: 0; }
+.db-leader-info strong { color: #10254d; font-size: 0.9rem; overflow-wrap: anywhere; }
+.db-leader-info small { color: #5a6b8c; font-size: 0.74rem; }
+.db-centercol { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.db-centercol .holo-row { display: flex; gap: 8px; }
+.db-centercol .holo-row > * { flex: 1; max-width: 132px; }
+.db-field-row { display: flex; gap: 8px; }
+.db-zone { flex: 1; max-width: 132px; aspect-ratio: 63/88; border: 2px dashed rgba(255, 255, 255, 0.4); border-radius: 10px; display: flex; align-items: center; justify-content: center; position: relative; }
+.db-zone.filled { border: none; background: #fff; flex-direction: column; padding: 5px; gap: 3px; box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35); align-items: stretch; }
+.db-zone-art { width: 100%; flex: 1; min-height: 0; border-radius: 6px; overflow: hidden; background: #dfe8fa; display: block; }
+.db-zone-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.db-zone small { color: #10254d; font-size: 0.68rem; line-height: 1.2; text-align: center; overflow-wrap: anywhere; }
+.db-zone-power { align-self: center; background: #b45309; color: #fff; font-weight: 800; font-size: 0.72rem; border-radius: 999px; padding: 1px 9px; }
+.db-zone.rested { transform: rotate(90deg) scale(0.78); }
+.db-zone.is-dying { animation: koFade 0.5s ease forwards; }
+.db-energy { display: flex; gap: 5px; align-items: center; justify-content: center; min-height: 22px; }
+.db-energy-orb { width: 15px; height: 15px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fde68a, #f97316 72%); border: 1px solid rgba(0, 0, 0, 0.35); box-shadow: 0 0 8px rgba(249, 115, 22, 0.55); }
+.db-energy-orb.spent { background: radial-gradient(circle at 35% 30%, #64748b, #334155 72%); box-shadow: none; }
+.db-energy small { color: #fff; font-weight: 700; font-size: 0.78rem; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65); margin-left: 4px; }
+.db-rightcol { flex: none; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+.db-half .ygo-pile strong { font-weight: 800; font-size: 1.05rem; line-height: 1; }
+.db-half .op-side-label { position: absolute; left: 14px; bottom: 8px; color: #fff; font-weight: 700; font-size: 0.85rem; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65); }
+.db-half.foe .op-side-label { bottom: auto; top: 8px; }
+@media (max-width: 620px) {
+  .db-stage { min-height: 600px; }
+  .db-leftcol { width: 118px; }
+  .db-leader-info strong { font-size: 0.78rem; }
+  .db-zone small { display: none; }
+}
+
+/* DB stage label placement fix: corners next to the piles, clear of
+   the Life stacks and Leader plates. */
+.db-half .op-side-label { left: auto; right: 14px; bottom: 8px; }
+.db-half.foe .op-side-label { bottom: auto; top: 8px; }

@@ -58,11 +58,15 @@ export default function HoloArt({
   vfxColor?: string;
   hitKey?: number;
 }) {
-  const [err, setErr] = useState(false);
+  // One retry with a cache-busting query: a single cold-proxy
+  // failure must not kill the projection for the whole battle.
+  const [tries, setTries] = useState(0);
   useEffect(() => {
-    setErr(false);
+    setTries(0);
   }, [src]);
-  if (!src || err) return <div className={`holo-wrap holo-${size} is-empty`} aria-hidden />;
+  if (!src || tries > 1) return <div className={`holo-wrap holo-${size} is-empty`} aria-hidden />;
+  const baseSrc = artSrc(src);
+  const imgSrc = tries === 0 ? baseSrc : `${baseSrc}${baseSrc.includes("?") ? "&" : "?"}retry=1`;
   return (
     <div
       className={`holo-wrap holo-${size}${attacking ? " is-attacking" : ""}${hit ? " is-hit" : ""}${dying ? " is-dying" : ""}${dimmed ? " is-dim" : ""}`}
@@ -72,7 +76,7 @@ export default function HoloArt({
       <div className="holo-cone" />
       <span className={`holo-art-frame ${variant === "crop" ? "is-crop" : "is-art"}`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={artSrc(src)} alt="" onError={() => setErr(true)} />
+        <img src={imgSrc} alt="" onError={() => setTries((t) => t + 1)} />
       </span>
       {hit && hitKey !== undefined ? <VfxBurst color={vfxColor} burstKey={hitKey} /> : null}
       <div className="holo-ring" />
