@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import CardArt from "@/components/card-art";
-import HoloArt from "@/components/holo-art";
 import type { YugiohOutcome, YgoCardView } from "@/lib/yugioh";
 import type { YgoEvent, YgoPosition } from "@/lib/yugioh-battle";
 
@@ -17,11 +16,6 @@ interface DuelSide {
   deck: number;
 }
 
-/** Impact-burst colour per monster attribute (the attacker's). */
-const ATTR_COLORS: Record<string, string> = {
-  DARK: "#a855f7", LIGHT: "#facc15", FIRE: "#ef4444", WATER: "#3b82f6",
-  EARTH: "#d97706", WIND: "#22c55e", DIVINE: "#f59e0b",
-};
 
 const emptySide = (deckSize: number): DuelSide => ({
   monsters: [],
@@ -176,40 +170,6 @@ export default function YugiohArena({
     }
   };
 
-  /** Full-body monster holograms standing over the zones (Solid
-   * Vision style): the art-only image towers over a cone of light;
-   * hits burst in the ATTACKER's attribute colour. */
-  const renderHoloRow = (sideKey: "a" | "b") => {
-    if (!sides) return null;
-    const side = sides[sideKey];
-    const attacker = lunge ? viewOf(lunge.side, lunge.name) : undefined;
-    const vfxColor = ATTR_COLORS[attacker?.attribute ?? ""] ?? "#38bdf8";
-    return (
-      <div className="holo-row">
-        {[0, 1, 2, 3, 4].map((slot) => {
-          const m = side.monsters[slot];
-          if (!m) return <div key={slot} />;
-          const v = viewOf(sideKey, m.name);
-          const isHit = hit?.side === sideKey && hit?.name === m.name && !finished;
-          return (
-            <HoloArt
-              key={slot}
-              src={v?.artUrl || v?.spriteUrl || ""}
-              side={sideKey}
-              variant="art"
-              size="lg"
-              attacking={lunge?.side === sideKey && lunge?.name === m.name && !finished}
-              hit={isHit}
-              dying={!!m.dying}
-              vfxColor={vfxColor}
-              hitKey={isHit ? hit?.key : undefined}
-            />
-          );
-        })}
-      </div>
-    );
-  };
-
   const renderMonsters = (sideKey: "a" | "b") => {
     if (!sides) return null;
     const side = sides[sideKey];
@@ -290,7 +250,7 @@ export default function YugiohArena({
   };
 
   return (
-    <div className="poke-wrap">
+    <div className="poke-wrap arena-bleed">
       {!outcome ? (
         <>
           <p className="ygo-deckline">
@@ -320,7 +280,6 @@ export default function YugiohArena({
               <div className="ygo-mat-main">
                 <div className="ygo-mat-zones">
                   {renderStRow()}
-                  {renderHoloRow("b")}
                   {renderMonsters("b")}
                 </div>
                 {renderPiles("b")}
@@ -335,7 +294,6 @@ export default function YugiohArena({
             <div className="ygo-mat me">
               <div className="ygo-mat-main">
                 <div className="ygo-mat-zones">
-                  {renderHoloRow("a")}
                   {renderMonsters("a")}
                   {renderStRow()}
                 </div>

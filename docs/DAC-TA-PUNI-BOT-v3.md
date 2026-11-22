@@ -1515,3 +1515,10 @@ Nguyên tắc xuyên suốt: **bot cũ chỉ tắt khi bot mới đã live và �
 ---
 
 *Hết đặc tả v3. Sau khi Tín chốt các câu hỏi còn lại ở mục 8, đợt thi công đầu tiên là GĐ1 (API nội bộ phía Shop) — làm và kiểm chứng ở local trước, chưa cắt bot đang sống.*
+
+### 6.39h Đổi hướng trình diễn theo lệnh Tín (2026-11-22 16:42–16:52): BỎ HÌNH CHIẾU + THẺ THẬT + SÂN TRÀN MÀN HÌNH + MẶT SAU PUNI
+- **Bỏ toàn bộ hologram** ở cả 4 sân (Pokémon/Yu-Gi-Oh/One Piece/Dragon Ball): trong trận chỉ còn THẺ THẬT. Hoạt ảnh tấn công = chính tấm thẻ: nhấc lên rồi lao về phía đối thủ (keyframes poke-lunge-up/down tăng lực: nhấc −14px scale 1.07 rồi lao −62px), thẻ trúng đòn rung (poke-shake). DB bổ sung class lunge/is-hit cho Leader + Battle Card (trước đó chỉ hologram có).
+- **Sân đấu tràn màn hình**: 4 trang đấu bỏ tiêu đề trang + dòng số dư + khung section; sân dùng `.arena-bleed` tràn qua padding của khung trang sáng, nền tối liền mạch dưới header — không còn khung trắng bao ngoài sân.
+- **Số dư CHỈ hiện ở header** (lệnh Tín "chỉ hiện 1 chỗ"): gỡ dòng "Số dư … Coins" khỏi mọi trang người chơi (battle/4 sân/gacha/shop/chi tiết thẻ — gacha/shop giữ lại số gói đang có).
+- **Mặt sau thẻ PUNI cho mọi thẻ**: một mẫu mặt sau chung (mascot Puni trong huy chương vàng, nền navy viền vàng) + logo chính thức của từng họ thẻ ghép ở dưới: public/cardbacks/{puni,pokemon,yugioh,onepiece,dragonball}.jpg. Áp cho mọi chồng lá úp trong sân: Prize (Pokémon), Life (One Piece/Dragon Ball), chồng Deck (Yu-Gi-Oh/One Piece/Dragon Ball).
+- Kiểm chứng: DOM 0 phần tử hologram ở cả 4 sân; ảnh shots-660 (Pokémon/YGO/OP/Dragon Ball giữa trận, full-bleed, mặt sau Puni hiện rõ); mobile 390 không tràn.

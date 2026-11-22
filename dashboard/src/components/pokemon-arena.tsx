@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import CardArt from "@/components/card-art";
-import { VfxBurst } from "@/components/holo-art";
 import type { PokemonOutcome, PokeTeamCard } from "@/lib/pokemon";
 import type { PokeEvent, PokeStatus } from "@/lib/pokemon-battle";
 
@@ -37,59 +36,6 @@ function hpTone(hp: number, max: number): string {
   if (k > 0.5) return "hp-high";
   if (k > 0.22) return "hp-mid";
   return "hp-low";
-}
-
-/**
- * Hologram projection of the Active Pokémon: its animated sprite
- * hovers over a cone of light above the card like a 3D projection —
- * floating, flickering, with a floor reflection. It lunges when the
- * Pokémon attacks and flashes when it takes a hit. Species without a
- * mapped sprite simply show no projection.
- */
-const TYPE_COLORS: Record<string, string> = {
-  G: "#22c55e", W: "#3b82f6", R: "#f97316", L: "#eab308", P: "#a855f7",
-  F: "#c2410c", D: "#7c3aed", M: "#94a3b8", Y: "#ec4899", N: "#f59e0b", C: "#fbbf24",
-};
-
-function HoloProj({
-  card,
-  side,
-  attacking,
-  hit,
-  vfxColor,
-  hitKey,
-}: {
-  card: PokeTeamCard;
-  side: "a" | "b";
-  attacking: boolean;
-  hit: boolean;
-  vfxColor?: string;
-  hitKey?: number;
-}) {
-  const [err, setErr] = useState(false);
-  useEffect(() => {
-    setErr(false);
-  }, [card.speciesId]);
-  const src = card.slug && !err ? `/api/poke-sprite?slug=${card.slug}` : null;
-  return (
-    <div
-      className={`holo-wrap${attacking ? " is-attacking" : ""}${hit ? " is-hit" : ""}`}
-      data-side={side}
-      aria-hidden
-    >
-      <div className="holo-cone" />
-      {src ? (
-        <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="holo-img" src={src} alt="" onError={() => setErr(true)} />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="holo-reflect" src={src} alt="" />
-        </>
-      ) : null}
-      {hit && hitKey !== undefined ? <VfxBurst color={vfxColor} burstKey={hitKey} /> : null}
-      <div className="holo-ring" />
-    </div>
-  );
 }
 
 /**
@@ -244,18 +190,8 @@ export default function PokemonArena({
     if (!f) return null;
     const isLunging = lunge?.side === sideKey && !finished;
     const isHit = float?.side === sideKey && !finished;
-    const foe = sides[other(sideKey)];
-    const foeType = foe.fighters[foe.active]?.card.type ?? "C";
     return (
       <div key={`${sideKey}-${side.active}-${lunge?.key ?? 0}`} className="poke-active-stack">
-        <HoloProj
-          card={f.card}
-          side={sideKey}
-          attacking={isLunging}
-          hit={isHit}
-          vfxColor={TYPE_COLORS[foeType.charAt(0).toUpperCase()] ?? "#fbbf24"}
-          hitKey={float?.key}
-        />
         <div
           className={`poke-active${isLunging ? ` lunge-${sideKey}` : ""}${isHit ? " is-hit" : ""}${f.ko ? " is-ko" : ""}`}
         >
@@ -314,7 +250,7 @@ export default function PokemonArena({
   );
 
   return (
-    <div className="poke-wrap">
+    <div className="poke-wrap arena-bleed">
       {!outcome ? (
         <>
           <div className="poke-team-preview">

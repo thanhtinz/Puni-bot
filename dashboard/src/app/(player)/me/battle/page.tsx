@@ -41,7 +41,6 @@ export default async function MeBattlePage({
     <div className="player-body-inner">
       <h1 className="player-title">Đấu thẻ</h1>
       {sp.err ? <p className="player-notice err">{sp.err}</p> : null}
-      <p className="player-sub">Số dư {fmt(balance)} Coins</p>
 
       {"error" in preview ? (
         <p className="player-notice err">{preview.error}</p>

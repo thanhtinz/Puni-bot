@@ -41,7 +41,7 @@ export default async function MeGachaPage({
       {sp.msg ? <p className="player-notice ok">{sp.msg}</p> : null}
       {sp.err ? <p className="player-notice err">{sp.err}</p> : null}
       <p className="player-sub">
-        Số dư {fmt(balance)} Coins · Gói Thường: {wallet.packsStandard} · Gói Cao Cấp: {wallet.packsPremium}
+        Gói Thường: {wallet.packsStandard} · Gói Cao Cấp: {wallet.packsPremium}
         {standardPity ? (
           <> · Điểm triệu hồi (banner chuẩn): {standardPity.summonPoints}/{cfg.exchangePoints} · Bảo hiểm: còn tối đa {Math.max(0, cfg.pityLegendary - standardPity.sinceLegendary)} lượt tới Huyền thoại</>
         ) : null}

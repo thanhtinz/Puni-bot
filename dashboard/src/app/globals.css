@@ -2203,8 +2203,8 @@ a.player-btn { display: inline-flex; align-items: center; text-decoration: none;
 .poke-active.lunge-a { animation: poke-lunge-up 0.55s ease; }
 .poke-active.lunge-b { animation: poke-lunge-down 0.55s ease; }
 @keyframes poke-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 60% { transform: translateX(5px); } }
-@keyframes poke-lunge-up { 0% { transform: translateY(0); } 35% { transform: translateY(-16px) scale(1.03); } 100% { transform: translateY(0); } }
-@keyframes poke-lunge-down { 0% { transform: translateY(0); } 35% { transform: translateY(16px) scale(1.03); } 100% { transform: translateY(0); } }
+@keyframes poke-lunge-up { 0% { transform: translateY(0) scale(1); } 28% { transform: translateY(-14px) scale(1.07); } 52% { transform: translateY(-62px) scale(1.07); } 74% { transform: translateY(-58px) scale(1.05); } 100% { transform: translateY(0) scale(1); } }
+@keyframes poke-lunge-down { 0% { transform: translateY(0) scale(1); } 28% { transform: translateY(14px) scale(1.07); } 52% { transform: translateY(62px) scale(1.07); } 74% { transform: translateY(58px) scale(1.05); } 100% { transform: translateY(0) scale(1); } }
 .poke-float { position: absolute; top: 6px; right: 12px; font-weight: 800; font-size: 1.35rem; color: #e5484d; text-shadow: 0 1px 0 #fff; animation: poke-float-up 0.9s ease forwards; display: flex; flex-direction: column; align-items: flex-end; pointer-events: none; }
 .poke-float em { font-style: normal; font-size: 0.72rem; color: #b97a0c; }
 @keyframes poke-float-up { 0% { opacity: 0; transform: translateY(8px); } 18% { opacity: 1; } 100% { opacity: 0; transform: translateY(-20px); } }
@@ -2561,3 +2561,42 @@ a.player-btn { display: inline-flex; align-items: center; text-decoration: none;
    the Life stacks and Leader plates. */
 .db-half .op-side-label { left: auto; right: 14px; bottom: 8px; }
 .db-half.foe .op-side-label { bottom: auto; top: 8px; }
+
+/* Real-card battles (Tín's direction, 2026-11-22): NO hologram
+   projections anywhere — the actual cards animate. Attacking cards
+   lift up and strike toward the opponent (poke-lunge keyframes);
+   hit cards shake. DB cards/leaders join the same system here. */
+.db-zone.lunge-a, .db-leader-card.lunge-a { animation: poke-lunge-up 0.55s ease; position: relative; z-index: 4; }
+.db-zone.lunge-b, .db-leader-card.lunge-b { animation: poke-lunge-down 0.55s ease; position: relative; z-index: 4; }
+.db-zone.is-hit, .db-leader-card.is-hit { animation: poke-shake 0.4s ease; }
+.poke-active.lunge-a, .poke-active.lunge-b,
+.ygo-zone.lunge-a, .ygo-zone.lunge-b,
+.op-leader.lunge-a, .op-leader.lunge-b { position: relative; z-index: 4; }
+
+/* Arena pages are full game screens: the field bleeds over the
+   player shell's padding on every side below the header — no light
+   web frame around the field. */
+.arena-bleed { margin: -10px calc(-1 * clamp(14px, 3vw, 34px)) -34px; background: #0a1c38; padding-bottom: 16px; min-height: calc(100vh - 150px); }
+.arena-bleed .poke-bench-card { background: rgba(255, 255, 255, 0.06); border-color: rgba(147, 178, 255, 0.35); }
+.arena-bleed .poke-bench-card small { color: #c7d7f7; }
+.arena-bleed .poke-hint { color: #9fb4dd; }
+.arena-bleed .poke-stage, .arena-bleed .ygo-field, .arena-bleed .db-stage { border-radius: 0; border-left: none; border-right: none; border-top: none; min-height: max(620px, calc(100vh - 215px)); }
+.arena-bleed .poke-controls { padding: 14px 14px 0; }
+.arena-bleed .poke-result, .arena-bleed .form-note, .arena-bleed .form-error, .arena-bleed .poke-hint { margin: 12px 14px 0; }
+.arena-bleed .poke-result { color: #dbeafe; }
+.arena-bleed .poke-result p { color: #b9cdf3; }
+.arena-bleed .form-note { color: #9fb4dd; }
+.arena-bleed .poke-team-preview { padding: 14px 14px 0; }
+.arena-bleed .poke-fight-btn { margin: 14px 14px 0; }
+
+/* Puni card backs (per family: Puni mascot back + the family's own
+   logo) on every face-down stack in the arenas. */
+.poke-stage .poke-prize { background-image: url("/cardbacks/pokemon.jpg"); background-size: cover; background-position: center; border-color: #c9a227; }
+.op-field .op-life-card { background-image: url("/cardbacks/onepiece.jpg"); background-size: cover; background-position: center; border-color: #c9a227; }
+.db-stage .op-life-card { background-image: url("/cardbacks/dragonball.jpg"); background-size: cover; background-position: center; border-color: #c9a227; }
+.ygo-field .ygo-pile.deck { background-image: linear-gradient(rgba(8, 14, 28, 0.42), rgba(8, 14, 28, 0.42)), url("/cardbacks/yugioh.jpg"); background-size: cover; background-position: center; }
+.op-field .ygo-pile.deck { background-image: linear-gradient(rgba(8, 14, 28, 0.42), rgba(8, 14, 28, 0.42)), url("/cardbacks/onepiece.jpg"); background-size: cover; background-position: center; }
+.db-stage .ygo-pile.deck { background-image: linear-gradient(rgba(8, 14, 28, 0.42), rgba(8, 14, 28, 0.42)), url("/cardbacks/dragonball.jpg"); background-size: cover; background-position: center; }
+.arena-bleed .ygo-deckline { color: #c7d7f7; padding: 14px 14px 0; margin: 0; }
+.arena-bleed .poke-bench-card small { color: #d7e4fb; }
+.arena-bleed .poke-bench-card.big small:first-of-type { color: #eef4ff; }

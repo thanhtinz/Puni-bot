@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import CardArt from "@/components/card-art";
-import HoloArt from "@/components/holo-art";
 import type { OnePieceOutcome, OpCardView, OpLeaderView } from "@/lib/onepiece";
 import type { OpEvent } from "@/lib/onepiece-battle";
 
@@ -215,19 +214,6 @@ export default function OnePieceArena({
             </div>
           </div>
           <div className="op-centercol">
-            <div className="holo-center">
-              <HoloArt
-                src={leader.spriteUrl}
-                side={sideKey}
-                variant="crop"
-                size="leader"
-                attacking={leaderLunge}
-                hit={leaderHit}
-                dimmed={side.leaderRested}
-                vfxColor="#ef4444"
-                hitKey={leaderHit ? hit?.key : undefined}
-              />
-            </div>
             <div className="op-leader-row">
               <div
                 className={`op-leader${side.leaderRested ? " is-rested" : ""}${leaderHit ? " is-hit" : ""}${leaderLunge ? ` lunge-${sideKey}` : ""}`}
@@ -240,30 +226,6 @@ export default function OnePieceArena({
               </div>
               <div className="op-stage-slot" aria-hidden>Stage</div>
             </div>
-        <div className="holo-row">
-          {[0, 1, 2, 3, 4].map((slot) => {
-            const c = side.chars[slot];
-            if (!c) return <div key={slot} />;
-            const v = viewOf(sideKey, c.name);
-            const cHit = hit?.side === sideKey && hit?.name === c.name && !finished;
-            const cLunge = lunge?.side === sideKey && lunge?.name === c.name && !finished;
-            return (
-              <HoloArt
-                key={slot}
-                src={v?.spriteUrl ?? ""}
-                side={sideKey}
-                variant="crop"
-                size="portrait"
-                attacking={cLunge}
-                hit={cHit}
-                dying={!!c.dying}
-                dimmed={c.rested}
-                vfxColor="#f59e0b"
-                hitKey={cHit ? hit?.key : undefined}
-              />
-            );
-          })}
-        </div>
         <div className="ygo-zones">
           {[0, 1, 2, 3, 4].map((slot) => {
             const c = side.chars[slot];
@@ -308,7 +270,7 @@ export default function OnePieceArena({
   };
 
   return (
-    <div className="poke-wrap">
+    <div className="poke-wrap arena-bleed">
       {!outcome ? (
         <>
           <p className="ygo-deckline">

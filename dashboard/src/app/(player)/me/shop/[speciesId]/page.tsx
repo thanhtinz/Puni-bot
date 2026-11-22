@@ -150,7 +150,7 @@ export default async function ShopSpeciesPage({
               Bán lại cho hệ thống: {fmt(sellBack)} Coins ({sellRate}%)
               {detail.priceUsd != null ? ` · Giá thị trường tham khảo $${detail.priceUsd.toLocaleString("en-US", { maximumFractionDigits: 2 })}` : ""}
             </p>
-            <p className="player-sub">Bạn đang có {detail.owned} lá này · Số dư {fmt(balance)} Coins</p>
+            <p className="player-sub">Bạn đang có {detail.owned} lá này</p>
             <form method="post" action="/api/me/shop">
               <input type="hidden" name="kind" value="card-single" />
               <input type="hidden" name="species" value={detail.speciesId} />

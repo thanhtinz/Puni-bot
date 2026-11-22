@@ -135,7 +135,7 @@ export default async function MeShopPage({
       {sp.msg ? <p className="player-notice ok">{sp.msg}</p> : null}
       {sp.err ? <p className="player-notice err">{sp.err}</p> : null}
       <p className="player-sub">
-        Số dư {fmt(balance)} Coins · Gói Thường đang có: {wallet.packsStandard} · Gói Cao Cấp: {wallet.packsPremium}
+        Gói Thường đang có: {wallet.packsStandard} · Gói Cao Cấp: {wallet.packsPremium}
       </p>
 
       <nav className="shop-tabs" aria-label="Shop">

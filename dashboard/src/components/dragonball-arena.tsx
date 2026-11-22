@@ -13,7 +13,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { DbCardView, DbLeaderView, DragonBallOutcome } from "@/lib/dragonball";
 import type { DbEvent } from "@/lib/dragonball-battle";
 import CardArt from "@/components/card-art";
-import HoloArt from "@/components/holo-art";
 
 interface FieldChar {
   name: string;
@@ -231,17 +230,7 @@ export default function DragonBallArena({
             <small>Life {life[side === "a" ? 0 : 1]}</small>
           </div>
           <div className="db-leader">
-            <HoloArt
-              src={leader.spriteUrl}
-              side={side}
-              size="leader"
-              variant="crop"
-              attacking={lunge?.side === side && lunge?.name === leader.name}
-              hit={hit?.side === side && hit?.name === leader.name}
-              vfxColor="#f97316"
-              hitKey={hit?.side === side && hit?.name === leader.name ? hitKey : 0}
-            />
-            <div className={`db-leader-card${st.leaderRested ? " rested" : ""}`}>
+            <div key={`leader-${side}-${lunge?.name === leader.name || hit?.name === leader.name ? hitKey : 0}`} className={`db-leader-card${st.leaderRested ? " rested" : ""}${lunge?.side === side && lunge?.name === leader.name ? ` lunge-${side}` : ""}${hit?.side === side && hit?.name === leader.name ? " is-hit" : ""}`}>
               <CardArt src={leader.spriteUrl} alt={leader.name} className="db-leader-art" />
               <div className="db-leader-info">
                 <strong>{leader.name}</strong>
@@ -254,30 +243,11 @@ export default function DragonBallArena({
           </div>
         </div>
         <div className="db-centercol">
-          <div className="holo-row">
-            {st.field.map((c, i) => {
-              const v = viewOf.get(c.name);
-              return (
-                <HoloArt
-                  key={`${c.name}-${i}`}
-                  src={v?.spriteUrl ?? ""}
-                  side={side}
-                  size="portrait"
-                  variant="crop"
-                  attacking={lunge?.side === side && lunge?.name === c.name}
-                  hit={hit?.side === side && hit?.name === c.name}
-                  dying={c.dying}
-                  vfxColor="#f59e0b"
-                  hitKey={hit?.side === side && hit?.name === c.name ? hitKey : 0}
-                />
-              );
-            })}
-          </div>
           <div className="db-field-row">
             {st.field.map((c, i) => {
               const v = viewOf.get(c.name);
               return (
-                <div key={`${c.name}-${i}`} className={`db-zone filled${c.rested ? " rested" : ""}${c.dying ? " is-dying" : ""}`}>
+                <div key={`${c.name}-${i}-${lunge?.name === c.name || hit?.name === c.name ? hitKey : 0}`} className={`db-zone filled${c.rested ? " rested" : ""}${c.dying ? " is-dying" : ""}${lunge?.side === side && lunge?.name === c.name ? ` lunge-${side}` : ""}${hit?.side === side && hit?.name === c.name ? " is-hit" : ""}`}>
                   <CardArt src={v?.spriteUrl ?? ""} alt={c.name} className="db-zone-art" />
                   <small>{c.name}</small>
                   <span className="db-zone-power">{(v?.power ?? 0).toLocaleString("en-US")}</span>
@@ -300,7 +270,7 @@ export default function DragonBallArena({
   };
 
   return (
-    <div className="battle-arena">
+    <div className="battle-arena arena-bleed">
       {!ready && !outcome ? (
         <p className="form-note">
           Cần ít nhất 20 lá Battle Card Dragon Ball Fusion World có Power thật để đấu — bạn đang có {count}.
