@@ -35,7 +35,7 @@ const RARITIES = [
   { name: "Common", rate: 55, color: "#9fb3c8", slug: "op01-009", label: "Carrot" },
   { name: "Uncommon", rate: 25, color: "#7fd08c", slug: "op01-011", label: "Gordon" },
   { name: "Rare", rate: 12, color: "#6fb7ff", slug: "op01-004", label: "Usopp" },
-  { name: "Epic", rate: 5, color: "#c792ff", slug: "op01-096", label: "King" },
+  { name: "Epic", rate: 5, color: "#c792ff", slug: "op01-078", label: "Boa Hancock" },
   { name: "Legendary", rate: 2, color: "#ffd83d", slug: "op01-120", label: "Shanks" },
   { name: "Mythical", rate: 0.7, color: "#ff9de2", slug: "op01-001", label: "Roronoa Zoro" },
   { name: "Fabled", rate: 0.3, color: "#ff7a59", slug: null, label: "Có ở họ thẻ khác" },
@@ -47,7 +47,7 @@ const SHOWCASE = [
   { slug: "op01-031", name: "Kouzuki Oden", rarity: "Mythical" },
   { slug: "op01-060", name: "Donquixote Doflamingo", rarity: "Mythical" },
   { slug: "op01-001", name: "Roronoa Zoro", rarity: "Mythical" },
-  { slug: "op01-096", name: "King", rarity: "Epic" },
+  { slug: "op01-078", name: "Boa Hancock", rarity: "Epic" },
   { slug: "op01-013", name: "Sanji", rarity: "Rare" },
   { slug: "op01-077", name: "Perona", rarity: "Uncommon" },
 ];

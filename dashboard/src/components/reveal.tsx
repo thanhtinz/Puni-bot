@@ -27,12 +27,12 @@ export default function Reveal({
           }
         }
       },
-      { threshold: 0.12 },
+      { threshold: 0.12, rootMargin: "240px 0px" },
     );
     io.observe(el);
     // Safety net: never leave content hidden if the observer
     // somehow never fires (odd webviews, screenshot tooling).
-    const fallback = setTimeout(() => el.classList.add("in"), 2600);
+    const fallback = setTimeout(() => el.classList.add("in"), 1600);
     return () => {
       io.disconnect();
       clearTimeout(fallback);

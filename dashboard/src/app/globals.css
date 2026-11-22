@@ -2033,3 +2033,60 @@ a.player-btn { display: inline-flex; align-items: center; text-decoration: none;
 @media (prefers-reduced-motion: reduce) {
   .cascade-card { animation: none; opacity: 1; }
 }
+
+/* ==== ĐỢT CĂN CHỈNH 3 (quét toàn trang 2026-11-22) ====
+   1) Ô shop: nút Mua ghim đáy + tên chừa đúng 2 dòng + meta 1 dòng
+      -> mọi ô trong hàng cao bằng nhau, nút thẳng hàng.
+   2) Tem slab: chữ nhỏ lại để tên thẻ không bị cắt còn vài ký tự.
+   3) Banner gacha: gói thẻ đứng trên "bệ" sáng đồng nhất (ảnh nền
+      trắng của TCGplayer không còn là mảng trắng lạc lõng), nút mở
+      ghim đáy banner, tên rate-up tối đa 2 dòng.
+   4) Meta thẻ trong Kho: một dòng duy nhất, không nhảy dòng lung tung. */
+.shop-cell { display: flex; flex-direction: column; }
+.shop-cell h3 {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; min-height: calc(1.35em * 2);
+}
+.shop-cell form { margin-top: auto; }
+.shop-cell form .player-btn { width: 100%; white-space: nowrap; text-align: center; }
+.tcg-card-meta > span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.slab-label { padding: 6px 8px; gap: 8px; }
+.slab-label-main strong { font-size: 12px; }
+.slab-label-main span { font-size: 9.5px; }
+.slab-label-grade strong { font-size: 12.5px; }
+.slab-label-grade span { font-size: 9.5px; }
+@media (max-width: 640px) {
+  .slab-label-main span { display: none; }
+  .slab-label-main strong { font-size: 11px; }
+}
+
+.gacha-banner.v2 .gacha-actions { margin-top: auto; }
+.gb-featured { min-height: 58px; }
+.gb-featured-names {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.gb-thumbs img { background: #22355c; font-size: 0; object-fit: cover; }
+.gb-art {
+  align-self: center; padding: 10px; border-radius: 16px;
+  background: radial-gradient(120% 120% at 50% 0%, #fdfdff 0%, #e2ebfc 55%, #c7d8f6 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.65), 0 14px 30px rgba(2, 10, 30, 0.35);
+  transform: rotate(4deg); transition: transform 0.35s ease;
+}
+.gb-art img {
+  width: 126px; height: 168px; object-fit: contain; transform: none;
+  filter: drop-shadow(0 8px 14px rgba(2, 10, 30, 0.35));
+}
+.gacha-banner.v2:hover .gb-art { transform: rotate(1deg) scale(1.03); }
+.gacha-banner.v2:hover .gb-art img { transform: none; }
+@media (max-width: 640px) {
+  .gb-art { padding: 7px; border-radius: 13px; }
+  .gb-art img { width: 92px; height: 124px; }
+  .shop-filters input[name="q"] { flex: 1 1 100%; }
+  .shop-filters select { flex: 1 1 40%; }
+  .shop-filters .player-btn { flex: 1 1 100%; }
+}
+@media (max-width: 640px) {
+  /* Tem slab trên mobile: bỏ cả dòng phụ của grade cho tên thẻ rộng chỗ. */
+  .slab-label-grade span { display: none; }
+}
