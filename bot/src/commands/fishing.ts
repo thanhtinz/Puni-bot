@@ -1,7 +1,8 @@
 /**
  * Fishing command — spec 6.20. Thin presentation over FishingService:
  * the catch auto-sells for Coins in v1; the fish NAME is drawn from
- * the owner-managed item catalogue (category 'fish') when available.
+ * the owner-managed fish catalogue (game_fish) matching the rolled
+ * rarity; member-exclusive fish only surface for members.
  */
 import type { CommandDef } from "@puni/shared";
 import {
@@ -20,7 +21,7 @@ const FALLBACK_NAMES: Record<FishRarity, string> = {
 
 export function createFishingCommands(deps: {
   fishing: FishingService;
-  fishNamesSource?: () => Promise<string[]>;
+  fishNamesSource?: (rarity: FishRarity, userId: string) => Promise<string[]>;
   currencyName: string;
 }): CommandDef[] {
   const fish: CommandDef = {
@@ -42,7 +43,7 @@ export function createFishingCommands(deps: {
         };
       }
       const names = deps.fishNamesSource
-        ? await deps.fishNamesSource().catch(() => [])
+        ? await deps.fishNamesSource(outcome.rarity, ctx.userId).catch(() => [])
         : [];
       const name =
         names.length > 0

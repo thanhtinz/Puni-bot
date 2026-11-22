@@ -26,8 +26,14 @@ export const DEFAULT_MEMBERSHIP_TIERS: MembershipTier[] = [
     dailyBonusPercent: 25,
     extraTeams: 0,
     extraLootboxPerDay: 0,
-    exclusivePets: false,
-    perks: ["Daily nhận thêm +25% tiền", "Huy hiệu hội viên trong hồ sơ"],
+    exclusivePets: true,
+    perks: [
+      "Daily nhận thêm +25% tiền",
+      "Mở khoá pet độc quyền dành cho hội viên",
+      "Câu cá: trần tiền mỗi ngày x2, thời gian chờ giảm nửa",
+      "Huy hiệu hội viên trong hồ sơ",
+      "Role màu hội viên trong server chính của Puni",
+    ],
   },
   {
     id: "ung-ho",
@@ -40,7 +46,7 @@ export const DEFAULT_MEMBERSHIP_TIERS: MembershipTier[] = [
     exclusivePets: true,
     perks: [
       "Daily nhận thêm +50% tiền",
-      "Thêm 1 đội hình lưu sẵn trong Cozy World",
+      "Thêm 1 đội hình lưu sẵn trong game",
       "Mở khoá pet độc quyền dành cho hội viên",
     ],
   },
@@ -55,9 +61,11 @@ export const DEFAULT_MEMBERSHIP_TIERS: MembershipTier[] = [
     exclusivePets: true,
     perks: [
       "Daily nhận thêm +100% tiền (gấp đôi)",
-      "Thêm 2 đội hình lưu sẵn trong Cozy World",
-      "Thêm 1 lootbox mỗi ngày trong Cozy World",
+      "Thêm 2 đội hình lưu sẵn trong game",
+      "Thêm 1 lootbox mỗi ngày trong game",
       "Huy hiệu đặc biệt trên thẻ profile game",
+      "Thiết kế 1 pet riêng theo yêu cầu của bạn (liên hệ chủ bot)",
+      "Được yêu cầu tuỳ biến 1 lệnh theo ý bạn (liên hệ chủ bot)",
     ],
   },
 ];

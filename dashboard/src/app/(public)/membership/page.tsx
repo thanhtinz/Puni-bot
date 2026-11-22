@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Hội viên Puni — ủng hộ và nhận quyền lợi",
   description:
-    "Các gói hội viên của Puni: daily nhận thêm tiền, thêm đội hình và lootbox trong Cozy World, pet độc quyền và huy hiệu riêng.",
+    "Các gói hội viên của Puni: daily nhận thêm tiền, thêm đội hình và lootbox trong game, pet độc quyền và huy hiệu riêng.",
 };
 
 /** Public membership page (spec 6.19). Tiers come from the owner-edited
@@ -33,7 +33,7 @@ export default async function MembershipPage() {
         <p>
           Hội viên là cách bạn giúp Puni có kinh phí chạy máy chủ và phát triển
           tiếp. Đổi lại, bạn nhận thêm tiền daily mỗi ngày cùng các quyền lợi
-          trong game Cozy World — quyền lợi cộng dồn: gói cao gồm mọi quyền
+          trong game — quyền lợi cộng dồn: gói cao gồm mọi quyền
           lợi của gói dưới.
         </p>
       </section>

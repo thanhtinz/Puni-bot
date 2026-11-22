@@ -1,5 +1,5 @@
 /**
- * Gems wallet — the Cozy World game currency (spec 6.17). Gems live in
+ * Gems wallet — the in-game currency (spec 6.17). Gems live in
  * the player's game profile, separate from the global economy (Coins):
  * no conversion between the two in v1. This store is the seam the game
  * module (GĐ9) persists behind PostgreSQL later; the interface stays.

@@ -91,3 +91,35 @@ test("service: cooldown blocks recast, cap trims the credit, disabled refuses", 
   });
   assert.equal((await offSvc.cast("u3")).kind, "disabled");
 });
+
+test("member boost: cooldown halved and daily cap doubled for members", async () => {
+  let now = 5_000_000;
+  const svc = new FishingService({
+    configSource: async () => normalizeFishingConfig({ dailyCap: 100, cooldownSec: 60 }),
+    earnedToday: async () => 100, // at the normal cap already
+    credit: async () => {},
+    memberBoost: async (userId) =>
+      userId === "member"
+        ? { cooldownFactor: 0.5, capFactor: 2 }
+        : { cooldownFactor: 1, capFactor: 1 },
+    rng: () => 0,
+    now: () => now,
+  });
+  // Member is past the base cap (100) but under the doubled cap (200).
+  const caught = await svc.cast("member");
+  assert.equal(caught.kind, "caught");
+  if (caught.kind === "caught") assert.equal(caught.credited, 5);
+  // 31 seconds later: member cooldown (30s) has passed, guest's (60s) has not.
+  now += 31_000;
+  assert.equal((await svc.cast("member")).kind, "caught");
+  const guest = new FishingService({
+    configSource: async () => normalizeFishingConfig({ dailyCap: 100, cooldownSec: 60 }),
+    earnedToday: async () => 0,
+    credit: async () => {},
+    memberBoost: async () => ({ cooldownFactor: 1, capFactor: 1 }),
+    rng: () => 0,
+    now: () => now,
+  });
+  await guest.cast("guest");
+  assert.equal((await guest.cast("guest")).kind, "cooldown");
+});

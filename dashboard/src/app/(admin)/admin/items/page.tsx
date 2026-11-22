@@ -30,7 +30,7 @@ export default async function AdminItemsPage({
       {saved ? <div className="notice ok">Đã lưu thay đổi item.</div> : null}
       {err ? <div className="notice">Không thực hiện được: {err}</div> : null}
       <p style={{ maxWidth: 780, lineHeight: 1.6 }}>
-        Mọi vật phẩm của Cozy World ở một chỗ: hạt giống, nông sản, dụng cụ nông
+        Mọi vật phẩm của game ở một chỗ: hạt giống, nông sản, dụng cụ nông
         trại, cá câu được, vật phẩm tiêu hao… Lọc theo nhóm ở dưới. Cá câu được
         quản lý tại đây (nhóm Cá) — hệ thống câu cá lấy tên cá từ nhóm này.
       </p>

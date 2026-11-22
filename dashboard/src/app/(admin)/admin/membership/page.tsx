@@ -41,7 +41,7 @@ function TierSlot({ index, tier }: { index: number; tier?: MembershipTier }) {
       </div>
       <label className="check" style={{ marginTop: 12 }}>
         <input type="checkbox" name={`${p}pets`} defaultChecked={tier?.exclusivePets ?? false} />
-        <span>Mở khoá pet độc quyền (Cozy World)</span>
+        <span>Mở khoá pet độc quyền (game)</span>
       </label>
       <div className="field" style={{ marginTop: 10 }}>
         <label htmlFor={`${p}perks`}>Quyền lợi hiển thị (mỗi dòng một ý)</label>
@@ -66,6 +66,7 @@ export default async function AdminMembershipPage({
   const joinUrl = (await getSiteSetting("membership_url").catch(() => null)) ?? "";
   const members = await listMemberships().catch(() => null);
   const orders = await listMembershipOrders(50).catch(() => null);
+  const roleId = await getBotConfig<string>("membership_role_id").catch(() => null);
   const [payBin, payAcc, payName] = await Promise.all([
     getSiteSetting("pay_bank_bin").catch(() => null),
     getSiteSetting("pay_account_no").catch(() => null),
@@ -160,6 +161,27 @@ export default async function AdminMembershipPage({
             </div>
             <button className="btn" type="submit">
               Cấp hội viên
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div className="panel">
+        <h2>Role màu cho hội viên (server chính)</h2>
+        <p>
+          Dán Role ID của role hội viên trong server chính của Puni — bot tự cấp
+          role cho hội viên còn hạn và tự thu hồi khi hết hạn (kiểm tra mỗi 10
+          phút). Để trống = tắt quyền lợi này. Role của bot phải nằm TRÊN role
+          hội viên trong danh sách role của server thì mới cấp được.
+        </p>
+        <form action="/api/admin/membership/role" method="post">
+          <div className="field" style={{ margin: 0 }}>
+            <label htmlFor="role_id">Role ID</label>
+            <input id="role_id" name="role_id" type="text" defaultValue={roleId ?? ""} placeholder="Ví dụ: 1505404647924564999" style={{ width: 320 }} />
+          </div>
+          <div style={{ marginTop: 12 }}>
+            <button className="btn" type="submit">
+              Lưu Role ID
             </button>
           </div>
         </form>

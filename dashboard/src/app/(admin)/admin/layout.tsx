@@ -66,7 +66,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
                 <IconGrid /> Cluster &amp; Shard
               </Link>
               <Link href="/admin/pets" className="item">
-                <IconPaw /> Pet (Cozy World)
+                <IconPaw /> Pet
               </Link>
               <Link href="/admin/items" className="item">
                 <IconGrid /> Item & nông trại
@@ -76,6 +76,9 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
               </Link>
               <Link href="/admin/fishing" className="item">
                 <IconFish /> Câu cá
+              </Link>
+              <Link href="/admin/farm" className="item">
+                <IconGrid /> Nông trại
               </Link>
               <Link href="/admin/website" className="item">
                 <IconGlobe /> Trang web

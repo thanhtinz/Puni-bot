@@ -63,7 +63,7 @@ export default async function AdminEconomyPage({
       <div className="panel">
         <h2>Thông số tiền tệ</h2>
         <p>
-          Áp dụng cho MỌI server và Cozy World (economy là ví cộng đồng toàn cục theo
+          Áp dụng cho MỌI server và game (economy là ví cộng đồng toàn cục theo
           Discord ID). Bot tự đọc lại cấu hình mỗi 30 giây.
         </p>
         <form action="/api/admin/economy" method="post">
@@ -73,7 +73,7 @@ export default async function AdminEconomyPage({
             <div className="hint">Tên hiển thị cạnh số dư, ví dụ Coins.</div>
           </div>
           <div className="field">
-            <label htmlFor="gemsName">Tên tiền Gems (Cozy World)</label>
+            <label htmlFor="gemsName">Tên tiền Gems (trong game)</label>
             <input id="gemsName" name="gemsName" type="text" defaultValue={cfg.gemsName} maxLength={24} style={{ maxWidth: 260 }} />
             <div className="hint">Tên hiển thị cạnh số Gems — luôn hiện cùng lúc với {cfg.currencyName} theo luật hiển thị tiền.</div>
           </div>

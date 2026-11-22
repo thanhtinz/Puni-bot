@@ -63,4 +63,11 @@ export class PgMembershipStore implements MembershipStore {
   async revoke(userId: string): Promise<void> {
     await this.pool.query(`DELETE FROM memberships WHERE user_id = $1`, [userId]);
   }
+
+  async listAll(): Promise<MembershipRecord[]> {
+    const res = await this.pool.query<Row>(
+      `SELECT user_id, tier_id, started_at, expires_at, source, note FROM memberships`,
+    );
+    return res.rows.map(toRecord);
+  }
 }

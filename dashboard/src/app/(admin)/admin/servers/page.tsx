@@ -14,7 +14,7 @@ const MODULE_LABELS: Record<string, string> = {
   reaction: "Reaction",
   economy: "Economy",
   games: "Minigame",
-  cozy: "Cozy World",
+  cozy: "Game",
   community: "Cộng đồng",
 };
 

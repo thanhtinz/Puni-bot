@@ -22,11 +22,11 @@ export default async function AdminGameShopPage({
 
   return (
     <>
-      <h1>Shop trong game — Cozy World</h1>
+      <h1>Shop trong game</h1>
       {saved ? <div className="notice ok">Đã lưu thay đổi shop.</div> : null}
       {err ? <div className="notice">Không thực hiện được: {err}</div> : null}
       <p style={{ maxWidth: 780, lineHeight: 1.6 }}>
-        Đây là shop TRONG GAME Cozy World (bán item bằng Coins/Gems của game) —
+        Đây là shop TRONG GAME (bán item bằng Coins/Gems của game) —
         không liên quan hệ thống bán hàng bên ngoài. Chọn item để đưa lên kệ,
         giá để trống thì dùng giá gốc của item.
       </p>

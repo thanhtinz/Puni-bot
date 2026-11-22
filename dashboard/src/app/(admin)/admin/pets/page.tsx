@@ -24,13 +24,14 @@ export default async function AdminPetsPage({
 
   return (
     <>
-      <h1>Quản lý Pet — Cozy World</h1>
+      <h1>Quản lý Pet</h1>
       {saved ? <div className="notice ok">Đã lưu thay đổi pet.</div> : null}
       {err ? <div className="notice">Không thực hiện được: {err}</div> : null}
       <p style={{ maxWidth: 780, lineHeight: 1.6 }}>
-        Kho loài của game Cozy World nằm ở đây — game đọc thẳng từ bảng này, không
-        hardcode danh sách loài. Đợt nhập dữ liệu Tuxemon (GĐ9) cũng đổ vào đây và
-        bạn sửa tiếp tại trang này.
+        Kho loài của game nằm ở đây — game đọc thẳng từ bảng này, không hardcode
+        danh sách loài. Đã nhập sẵn 411 loài từ Tuxemon kèm ảnh sprite (dữ liệu
+        và hình ảnh của dự án Tuxemon, giấy phép CC-BY-SA — giữ credit khi dùng).
+        Bạn sửa tiếp tại trang này.
       </p>
 
       <div className="panel">
@@ -109,6 +110,7 @@ export default async function AdminPetsPage({
           <table className="plain">
             <thead>
               <tr>
+                <th>Ảnh</th>
                 <th>Mã</th>
                 <th>Tên</th>
                 <th>Hệ</th>
@@ -122,6 +124,14 @@ export default async function AdminPetsPage({
             <tbody>
               {rows.map((r) => (
                 <tr key={r.id}>
+                  <td>
+                    {r.sprite_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={r.sprite_url} alt={r.name} width={44} height={44} style={{ objectFit: "contain", imageRendering: "pixelated" }} />
+                    ) : (
+                      "—"
+                    )}
+                  </td>
                   <td>{r.id}</td>
                   <td>{r.name}</td>
                   <td>{r.types || "—"}</td>

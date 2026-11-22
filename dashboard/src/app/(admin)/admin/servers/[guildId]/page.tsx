@@ -19,7 +19,7 @@ const MODULES: { key: string; label: string }[] = [
   { key: "reaction", label: "Reaction" },
   { key: "economy", label: "Economy" },
   { key: "games", label: "Minigame" },
-  { key: "cozy", label: "Cozy World" },
+  { key: "cozy", label: "Game" },
   { key: "community", label: "Cộng đồng" },
 ];
 

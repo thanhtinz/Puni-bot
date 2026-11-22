@@ -66,7 +66,7 @@ export function buildBot(deps: {
   /** Live fishing config (Admin panel → Câu cá). */
   fishingConfigSource?: () => Promise<FishingConfig>;
   /** Names for caught fish, from the owner-managed item catalogue. */
-  fishNamesSource?: () => Promise<string[]>;
+  fishNamesSource?: (rarity: string, isMember: boolean) => Promise<string[]>;
   /** Coins a user already earned from fishing today (daily cap). */
   fishingEarnedToday?: (userId: string) => Promise<number>;
 }): BotDeps {
@@ -120,8 +120,19 @@ export function buildBot(deps: {
         credit: async (userId, amount, note) => {
           await economy.credit(userId, amount, "fishing", note);
         },
+        memberBoost: async (userId) => {
+          const rec = await membership.getActive(userId, new Date()).catch(() => null);
+          return rec
+            ? { cooldownFactor: 0.5, capFactor: 2 }
+            : { cooldownFactor: 1, capFactor: 1 };
+        },
       }),
-      fishNamesSource: deps.fishNamesSource,
+      fishNamesSource: deps.fishNamesSource
+        ? async (rarity, userId) => {
+            const rec = await membership.getActive(userId, new Date()).catch(() => null);
+            return deps.fishNamesSource!(rarity, Boolean(rec));
+          }
+        : undefined,
       currencyName: economyConfig.currencyName,
     }),
     ...createModerationCommands({ cases }),

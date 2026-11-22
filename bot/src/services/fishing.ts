@@ -123,6 +123,9 @@ export class FishingService {
       /** Coins this user already earned from fishing today (ledger). */
       earnedToday: (userId: string) => Promise<number>;
       credit: (userId: string, amount: number, note: string) => Promise<void>;
+      /** Membership boost (spec 6.19): members fish with a halved
+       *  cooldown and a doubled daily cap. */
+      memberBoost?: (userId: string) => Promise<{ cooldownFactor: number; capFactor: number }>;
       rng?: () => number;
       now?: () => number;
     },
@@ -131,10 +134,15 @@ export class FishingService {
   async cast(userId: string): Promise<FishOutcome> {
     const cfg = await this.deps.configSource();
     if (!cfg.enabled) return { kind: "disabled" };
+    const boost = this.deps.memberBoost
+      ? await this.deps.memberBoost(userId).catch(() => ({ cooldownFactor: 1, capFactor: 1 }))
+      : { cooldownFactor: 1, capFactor: 1 };
+    const cooldownSec = Math.floor(cfg.cooldownSec * boost.cooldownFactor);
+    const dailyCap = cfg.dailyCap > 0 ? Math.floor(cfg.dailyCap * boost.capFactor) : 0;
     const now = this.deps.now ? this.deps.now() : Date.now();
     const last = this.lastCast.get(userId) ?? 0;
-    const waitMs = last + cfg.cooldownSec * 1000 - now;
-    if (cfg.cooldownSec > 0 && waitMs > 0) {
+    const waitMs = last + cooldownSec * 1000 - now;
+    if (cooldownSec > 0 && waitMs > 0) {
       return { kind: "cooldown", waitSec: Math.ceil(waitMs / 1000) };
     }
     this.lastCast.set(userId, now);
@@ -143,9 +151,9 @@ export class FishingService {
     const price = rollFishPrice(cfg, rarity, rng);
     let credited = price;
     let capped = false;
-    if (cfg.dailyCap > 0) {
+    if (dailyCap > 0) {
       const earned = await this.deps.earnedToday(userId).catch(() => 0);
-      const room = Math.max(0, cfg.dailyCap - earned);
+      const room = Math.max(0, dailyCap - earned);
       credited = Math.min(price, room);
       capped = credited < price;
     }

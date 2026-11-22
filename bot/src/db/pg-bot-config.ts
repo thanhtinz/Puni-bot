@@ -54,7 +54,19 @@ export class PgBotConfig {
     return normalizeMembershipTiers(await this.get("membership_tiers"));
   }
 
+  /** Discord role id granted to active members in the main guild
+   *  (Admin panel → Membership). Empty = role perk off. */
+  async getMembershipRoleId(): Promise<string> {
+    const raw = await this.get("membership_role_id");
+    return typeof raw === "string" && /^\d{5,25}$/.test(raw) ? raw : "";
+  }
+
   /** Fishing config (Admin panel → Câu cá). */
+  async getFarmConfig(): Promise<import("../services/farm").FarmConfig> {
+    const { normalizeFarmConfig } = await import("../services/farm");
+    return normalizeFarmConfig(await this.get("farm_config"));
+  }
+
   async getFishingConfig(): Promise<import("../services/fishing").FishingConfig> {
     const { normalizeFishingConfig } = await import("../services/fishing");
     return normalizeFishingConfig(await this.get("fishing_config"));

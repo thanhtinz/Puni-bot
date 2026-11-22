@@ -7,7 +7,7 @@ import { getSiteSetting } from "@/lib/db";
 export const metadata = {
   title: "Puni — Bot cộng đồng Discord",
   description:
-    "Puni: bot cộng đồng Discord tất cả trong một — chào mừng, log, automod, reaction, minigame và Cozy World.",
+    "Puni: bot cộng đồng Discord tất cả trong một — chào mừng, log, automod, reaction, minigame và game thú cưng.",
 };
 
 export default async function PublicLayout({ children }: { children: ReactNode }) {
@@ -58,7 +58,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
                 </Link>
                 <p className="tagline">
                   Bot cộng đồng Discord tất cả trong một — từ chào mừng, kiểm duyệt tới
-                  minigame và Cozy World.
+                  minigame và game thú cưng.
                 </p>
               </div>
               <div className="footer-cols">

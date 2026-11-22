@@ -83,9 +83,13 @@ async function main(): Promise<void> {
     membershipOrders,
     fishingConfigSource: botConfig ? () => botConfig.getFishingConfig() : undefined,
     fishNamesSource: pgPool
-      ? async () => {
+      ? async (rarity: string, isMember: boolean) => {
           const res = await pgPool!.query<{ name: string }>(
-            "SELECT name FROM game_items WHERE category = 'fish' AND enabled = true LIMIT 200",
+            `SELECT name FROM game_fish
+             WHERE rarity = $1 AND enabled = true
+               AND (member_exclusive = false OR $2 = true)
+             ORDER BY random() LIMIT 12`,
+            [rarity, isMember],
           );
           return res.rows.map((r) => r.name);
         }
@@ -131,6 +135,47 @@ async function main(): Promise<void> {
       aiConfigured: Boolean(config.ai.apiKey),
       aiEnvModel: config.ai.model,
     });
+  }
+
+  // Membership role sync (spec 6.19): active members hold the member
+  // role in the main guild; expired members lose it. Runs at startup
+  // and every 10 minutes; every step is best-effort and logged.
+  if (botConfig && bot.membership && config.mainGuildId) {
+    const syncRoles = async () => {
+      try {
+        const roleId = await botConfig.getMembershipRoleId();
+        if (!roleId) return;
+        const guild = await client.guilds.fetch(config.mainGuildId);
+        const role = await guild.roles.fetch(roleId).catch(() => null);
+        if (!role) return;
+        await guild.members.fetch();
+        const holders = new Set(role.members.map((m) => m.id));
+        const now = new Date();
+        const all = await bot.membership.listAll();
+        const active = new Set(
+          all.filter((r) => r.expiresAt.getTime() > now.getTime()).map((r) => r.userId),
+        );
+        const { computeRoleDiff } = await import("./services/membership-roles");
+        const diff = computeRoleDiff(active, holders);
+        for (const userId of diff.grant) {
+          const member = await guild.members.fetch(userId).catch(() => null);
+          if (member) await member.roles.add(roleId).catch(() => undefined);
+        }
+        for (const userId of diff.revoke) {
+          const member = await guild.members.fetch(userId).catch(() => null);
+          if (member) await member.roles.remove(roleId).catch(() => undefined);
+        }
+        if (diff.grant.length || diff.revoke.length) {
+          console.log(
+            `[puni] membership roles synced: +${diff.grant.length} -${diff.revoke.length}`,
+          );
+        }
+      } catch (err) {
+        console.warn("[puni] membership role sync failed", err);
+      }
+    };
+    void syncRoles();
+    setInterval(() => void syncRoles(), 10 * 60 * 1000);
   }
 }
 

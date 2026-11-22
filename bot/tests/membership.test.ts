@@ -36,7 +36,7 @@ test("effective perks: cumulative allowances, own-tier daily percent", () => {
   const tiers = DEFAULT_MEMBERSHIP_TIERS;
   const t1 = effectivePerks(tiers, "dong-hanh");
   assert.equal(t1?.dailyBonusPercent, 25);
-  assert.equal(t1?.exclusivePets, false);
+  assert.equal(t1?.exclusivePets, true);
   const t3 = effectivePerks(tiers, "hao-tam");
   assert.equal(t3?.dailyBonusPercent, 100);
   assert.equal(t3?.extraTeams, 2);
@@ -129,4 +129,12 @@ test("orders command: empty history message, then lists orders with status label
   assert.match(out.text, /PUNI-TEST1/);
   assert.match(out.text, /50\.000đ/);
   assert.match(out.text, /Đã thanh toán/);
+});
+
+test("role diff: grants to active non-holders, revokes from expired holders", async () => {
+  const { computeRoleDiff } = await import("../src/services/membership-roles");
+  const diff = computeRoleDiff(new Set(["a", "b"]), new Set(["b", "c"]));
+  assert.deepEqual(diff.grant, ["a"]);
+  assert.deepEqual(diff.revoke, ["c"]);
+  assert.deepEqual(computeRoleDiff(new Set(), new Set()), { grant: [], revoke: [] });
 });

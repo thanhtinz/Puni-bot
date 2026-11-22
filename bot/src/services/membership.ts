@@ -17,11 +17,11 @@ export interface MembershipTier {
   priceAmount: number;
   /** Percent added on top of the daily payout (0..300). */
   dailyBonusPercent: number;
-  /** Extra saved team slots in Cozy World (GĐ9 reads this). */
+  /** Extra saved team slots in the game (GĐ9 reads this). */
   extraTeams: number;
-  /** Extra daily lootbox allowance in Cozy World (GĐ9 reads this). */
+  /** Extra daily lootbox allowance in the game (GĐ9 reads this). */
   extraLootboxPerDay: number;
-  /** Unlocks member-exclusive pets in Cozy World (GĐ9 reads this). */
+  /** Unlocks member-exclusive pets in the game (GĐ9 reads this). */
   exclusivePets: boolean;
   /** Display perk lines for /membership and the `pass` command. */
   perks: string[];
@@ -36,8 +36,14 @@ export const DEFAULT_MEMBERSHIP_TIERS: MembershipTier[] = [
     dailyBonusPercent: 25,
     extraTeams: 0,
     extraLootboxPerDay: 0,
-    exclusivePets: false,
-    perks: ["Daily nhận thêm +25% tiền", "Huy hiệu hội viên trong hồ sơ"],
+    exclusivePets: true,
+    perks: [
+      "Daily nhận thêm +25% tiền",
+      "Mở khoá pet độc quyền dành cho hội viên",
+      "Câu cá: trần tiền mỗi ngày x2, thời gian chờ giảm nửa",
+      "Huy hiệu hội viên trong hồ sơ",
+      "Role màu hội viên trong server chính của Puni",
+    ],
   },
   {
     id: "ung-ho",
@@ -50,7 +56,7 @@ export const DEFAULT_MEMBERSHIP_TIERS: MembershipTier[] = [
     exclusivePets: true,
     perks: [
       "Daily nhận thêm +50% tiền",
-      "Thêm 1 đội hình lưu sẵn trong Cozy World",
+      "Thêm 1 đội hình lưu sẵn trong game",
       "Mở khoá pet độc quyền dành cho hội viên",
     ],
   },
@@ -65,9 +71,11 @@ export const DEFAULT_MEMBERSHIP_TIERS: MembershipTier[] = [
     exclusivePets: true,
     perks: [
       "Daily nhận thêm +100% tiền (gấp đôi)",
-      "Thêm 2 đội hình lưu sẵn trong Cozy World",
-      "Thêm 1 lootbox mỗi ngày trong Cozy World",
+      "Thêm 2 đội hình lưu sẵn trong game",
+      "Thêm 1 lootbox mỗi ngày trong game",
       "Huy hiệu đặc biệt trên thẻ profile game",
+      "Thiết kế 1 pet riêng theo yêu cầu của bạn (liên hệ chủ bot)",
+      "Được yêu cầu tuỳ biến 1 lệnh theo ý bạn (liên hệ chủ bot)",
     ],
   },
 ];
@@ -169,6 +177,8 @@ export interface MembershipStore {
     at: Date;
   }): Promise<MembershipRecord>;
   revoke(userId: string): Promise<void>;
+  /** Every record, including expired ones (role sync, spec 6.19). */
+  listAll(): Promise<MembershipRecord[]>;
 }
 
 export class InMemoryMembershipStore implements MembershipStore {
@@ -207,6 +217,10 @@ export class InMemoryMembershipStore implements MembershipStore {
 
   async revoke(userId: string): Promise<void> {
     this.records.delete(userId);
+  }
+
+  async listAll(): Promise<MembershipRecord[]> {
+    return [...this.records.values()];
   }
 }
 
