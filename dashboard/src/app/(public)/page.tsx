@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { IconEmbed, IconShield, IconSpark } from "@/components/icons";
 import catalog from "@/data/command-catalog.json";
 import Reveal from "@/components/reveal";
 import PawPrint from "@/components/paw";
@@ -27,7 +28,7 @@ function DiscordMockup() {
       <div className="mock-card">
         <span className="mock-badge">mới vào server</span>
         <div className="mock-msg">
-          <img src="/logo.jpg" alt="Puni" className="mock-ava-img" />
+          <img src="/api/assets/logo" alt="Puni" className="mock-ava-img" />
           <div>
             <div className="mock-name">
               Puni <span className="app-tag">APP</span> <span className="mock-time">hôm nay lúc 21:51</span>
@@ -164,7 +165,7 @@ export default function HomePage() {
           <Reveal delay={120}>
           <div className="feat-grid">
             <div className="feat-card">
-              <div className="feat-ico">Aa</div>
+              <div className="feat-ico"><IconEmbed size={22} /></div>
               <h3>Tạo mọi thứ bằng embed</h3>
               <p>
                 Dựng tin nhắn embed có nút bấm ngay trên dashboard bằng trình tạo trực quan —
@@ -172,7 +173,7 @@ export default function HomePage() {
               </p>
             </div>
             <div className="feat-card">
-              <div className="feat-ico">P!</div>
+              <div className="feat-ico"><IconSpark size={22} /></div>
               <h3>Prefix &amp; phong cách riêng</h3>
               <p>
                 Đổi tiền tố lệnh theo từng server, tự viết lời chào mừng / tạm biệt / cảm ơn
@@ -180,7 +181,7 @@ export default function HomePage() {
               </p>
             </div>
             <div className="feat-card">
-              <div className="feat-ico">24/7</div>
+              <div className="feat-ico"><IconShield size={22} /></div>
               <h3>Ổn định bạn tin được</h3>
               <p>
                 Kiến trúc shard + cluster, trạng thái từng shard hiện công khai theo thời gian
@@ -209,7 +210,7 @@ export default function HomePage() {
               <PawPrint size={24} rotate={16} style={{ marginTop: 14 }} />
               <PawPrint size={28} rotate={-8} />
             </span>
-            <img src="/logo.jpg" alt="Mascot Puni" className="cta-logo" />
+            <img src="/api/assets/logo" alt="Mascot Puni" className="cta-logo" />
           </div>
           </Reveal>
         </div>

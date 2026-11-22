@@ -59,7 +59,7 @@ export function buildBot(deps: {
       version: deps.version ?? "0.1.0",
     }),
     ...createReactionCommands({ settings: deps.settings, botName: deps.botName ?? "Puni" }),
-    ...createEconomyCommands({ economy, currencyName: economyConfig.currencyName, gems }),
+    ...createEconomyCommands({ economy, currencyName: economyConfig.currencyName, gemsName: economyConfig.gemsName, gems }),
     ...createModerationCommands({ cases }),
     ...createEnforcementCommands({ cases, enforcer }),
   ];

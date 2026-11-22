@@ -18,8 +18,10 @@ export async function POST(req: Request) {
     return Math.min(Math.max(n, 0), max);
   };
   const nameRaw = String(form.get("currencyName") ?? "").trim().slice(0, 24);
+  const gemsRaw = String(form.get("gemsName") ?? "").trim().slice(0, 24);
   const cfg = {
     currencyName: nameRaw === "" ? "Coins" : nameRaw,
+    gemsName: gemsRaw === "" ? "Gems" : gemsRaw,
     dailyBase: int(form.get("dailyBase"), 100, 1_000_000),
     dailyStreakBonus: int(form.get("dailyStreakBonus"), 10, 100_000),
     dailyStreakBonusCap: int(form.get("dailyStreakBonusCap"), 100, 1_000_000),

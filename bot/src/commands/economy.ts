@@ -11,12 +11,18 @@ import { formatMoneyPair, type GemsWallet } from "../services/gems";
 export function createEconomyCommands(deps: {
   economy: EconomyService;
   currencyName: string;
+  gemsName: string;
   gems: GemsWallet;
 }): CommandDef[] {
-  const { economy, currencyName, gems } = deps;
+  const { economy, currencyName, gemsName, gems } = deps;
   /** Money display law: Coins and Gems ALWAYS appear together. */
   const pair = async (userId: string) =>
-    formatMoneyPair(await economy.getBalance(userId), await gems.getBalance(userId), currencyName);
+    formatMoneyPair(
+      await economy.getBalance(userId),
+      await gems.getBalance(userId),
+      currencyName,
+      gemsName,
+    );
   const fmt = (n: number) => `${n.toLocaleString("vi-VN")} ${currencyName}`;
 
   const balance: CommandDef = {

@@ -215,3 +215,44 @@ export async function getEconomyStats(): Promise<EconomyStats | null> {
     return null;
   }
 }
+
+export interface EconomyChart {
+  days: { day: string; tx: number; minted: number; burned: number }[];
+  sources: { source: string; tx: number; volume: number }[];
+}
+
+/** Chart data for the admin overview: per-day economy activity for the
+ *  last 14 days (zero-filled) and the all-time breakdown by ledger
+ *  source. */
+export async function getEconomyChart(): Promise<EconomyChart | null> {
+  try {
+    const dayRes = await db().query<{ day: string; tx: string; minted: string; burned: string }>(
+      `SELECT to_char(d::date, 'YYYY-MM-DD') AS day,
+              COUNT(l.id)::text AS tx,
+              COALESCE(SUM(l.delta) FILTER (WHERE l.delta > 0), 0)::text AS minted,
+              COALESCE(-SUM(l.delta) FILTER (WHERE l.delta < 0), 0)::text AS burned
+       FROM generate_series(current_date - interval '13 days', current_date, interval '1 day') AS d
+       LEFT JOIN economy_ledger l ON l.created_at::date = d::date
+       GROUP BY d ORDER BY d`,
+    );
+    const srcRes = await db().query<{ source: string; tx: string; volume: string }>(
+      `SELECT source, COUNT(*)::text AS tx, COALESCE(SUM(ABS(delta)), 0)::text AS volume
+       FROM economy_ledger GROUP BY source ORDER BY COUNT(*) DESC LIMIT 8`,
+    );
+    return {
+      days: dayRes.rows.map((r) => ({
+        day: r.day,
+        tx: Number.parseInt(r.tx, 10),
+        minted: Number.parseInt(r.minted, 10),
+        burned: Number.parseInt(r.burned, 10),
+      })),
+      sources: srcRes.rows.map((r) => ({
+        source: r.source,
+        tx: Number.parseInt(r.tx, 10),
+        volume: Number.parseInt(r.volume, 10),
+      })),
+    };
+  } catch {
+    return null;
+  }
+}

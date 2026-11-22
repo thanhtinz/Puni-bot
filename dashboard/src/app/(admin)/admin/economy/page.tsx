@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 
 interface EconomyConfig {
   currencyName: string;
+  gemsName: string;
   dailyBase: number;
   dailyStreakBonus: number;
   dailyStreakBonusCap: number;
@@ -13,6 +14,7 @@ interface EconomyConfig {
 
 const DEFAULTS: EconomyConfig = {
   currencyName: "Coins",
+  gemsName: "Gems",
   dailyBase: 100,
   dailyStreakBonus: 10,
   dailyStreakBonusCap: 100,
@@ -69,6 +71,11 @@ export default async function AdminEconomyPage({
             <label htmlFor="currencyName">Tên tiền</label>
             <input id="currencyName" name="currencyName" type="text" defaultValue={cfg.currencyName} maxLength={24} style={{ maxWidth: 260 }} />
             <div className="hint">Tên hiển thị cạnh số dư, ví dụ Coins.</div>
+          </div>
+          <div className="field">
+            <label htmlFor="gemsName">Tên tiền Gems (Cozy World)</label>
+            <input id="gemsName" name="gemsName" type="text" defaultValue={cfg.gemsName} maxLength={24} style={{ maxWidth: 260 }} />
+            <div className="hint">Tên hiển thị cạnh số Gems — luôn hiện cùng lúc với {cfg.currencyName} theo luật hiển thị tiền.</div>
           </div>
           <div className="field">
             <label htmlFor="dailyBase">Daily cơ bản</label>

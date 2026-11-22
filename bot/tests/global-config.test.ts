@@ -7,6 +7,7 @@ import {
   DEFAULT_ECONOMY_CONFIG,
 } from "../src/services/economy";
 import { shouldTriggerAiChat } from "../src/services/ai-chat";
+import { formatMoneyPair } from "../src/services/gems";
 
 test("normalize economy config: defaults for junk, clamps for extremes", () => {
   assert.deepEqual(normalizeEconomyConfig(null), DEFAULT_ECONOMY_CONFIG);
@@ -23,6 +24,13 @@ test("normalize economy config: defaults for junk, clamps for extremes", () => {
   assert.equal(c.dailyStreakBonusCap, 1_000_000);
   const blank = normalizeEconomyConfig({ currencyName: "   " });
   assert.equal(blank.currencyName, DEFAULT_ECONOMY_CONFIG.currencyName);
+});
+
+test("custom currency names: normalize + money pair display follow the owner config", () => {
+  const c = normalizeEconomyConfig({ currencyName: "Xu", gemsName: "Ngọc" });
+  assert.equal(c.gemsName, "Ngọc");
+  assert.equal(formatMoneyPair(2138, 150, c.currencyName, c.gemsName), "**2.138** Xu · **150** Ngọc");
+  assert.equal(normalizeEconomyConfig({ gemsName: "  " }).gemsName, "Gems");
 });
 
 test("economy service: live config source drives daily amounts", async () => {

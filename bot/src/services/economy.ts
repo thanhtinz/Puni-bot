@@ -19,6 +19,8 @@
 export interface EconomyConfig {
   /** Display name of the currency (owner-set globally, spec 6.16.1). */
   currencyName: string;
+  /** Display name of the Cozy World gem currency (owner-set globally). */
+  gemsName: string;
   dailyBase: number;
   dailyStreakBonus: number;
   dailyStreakBonusCap: number;
@@ -26,6 +28,7 @@ export interface EconomyConfig {
 
 export const DEFAULT_ECONOMY_CONFIG: EconomyConfig = {
   currencyName: "Coins",
+  gemsName: "Gems",
   dailyBase: 100,
   dailyStreakBonus: 10,
   dailyStreakBonusCap: 100,
@@ -47,8 +50,13 @@ export function normalizeEconomyConfig(raw: unknown): EconomyConfig {
     typeof r.currencyName === "string" && r.currencyName.trim() !== ""
       ? r.currencyName.trim().slice(0, 24)
       : d.currencyName;
+  const gemsName =
+    typeof r.gemsName === "string" && r.gemsName.trim() !== ""
+      ? r.gemsName.trim().slice(0, 24)
+      : d.gemsName;
   return {
     currencyName: name,
+    gemsName,
     dailyBase: int(r.dailyBase, d.dailyBase, 1_000_000),
     dailyStreakBonus: int(r.dailyStreakBonus, d.dailyStreakBonus, 100_000),
     dailyStreakBonusCap: int(r.dailyStreakBonusCap, d.dailyStreakBonusCap, 1_000_000),

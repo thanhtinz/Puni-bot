@@ -474,3 +474,25 @@ table.plain tr:last-child td { border-bottom: none; }
 }
 @media (max-width: 640px) { .ts-preview { min-width: 100%; } }
 .notice.ok { background: rgba(35, 165, 89, 0.12); border-color: rgba(35, 165, 89, 0.45); color: #9fe8bb; }
+
+/* ---------------- icons + admin statistics ---------------- */
+.side a.item { display: flex; align-items: center; gap: 10px; }
+.side a.item svg { flex: none; opacity: 0.9; }
+.card .stat-ico {
+  width: 38px; height: 38px; border-radius: 12px; margin-bottom: 10px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(46, 107, 230, 0.12); color: #2057c9;
+}
+.chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 150px; padding-top: 10px; }
+.chart-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; min-width: 0; }
+.chart-bar {
+  width: 100%; max-width: 44px; border-radius: 7px 7px 3px 3px;
+  background: linear-gradient(180deg, #4c8dff, #2b63d8); min-height: 3px;
+}
+.chart-col .cv { font-size: 12px; font-weight: 700; color: #2057c9; }
+.chart-col .cl { font-size: 11.5px; color: #71868e; white-space: nowrap; }
+.src-row { display: grid; grid-template-columns: 130px 1fr 90px; align-items: center; gap: 12px; margin-bottom: 10px; }
+.src-row .sn { font-weight: 600; font-size: 14.5px; }
+.src-track { height: 12px; border-radius: 999px; background: #e4ebf7; overflow: hidden; }
+.src-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #4c8dff, #2b63d8); }
+.src-row .sv { text-align: right; font-weight: 700; font-size: 14px; color: #2057c9; }

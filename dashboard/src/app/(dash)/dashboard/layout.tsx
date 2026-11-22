@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import "../../globals.css";
 import { currentSession } from "@/lib/current-session";
+import { IconHome, IconList, IconServer } from "@/components/icons";
 
 export const metadata = { title: "Bảng điều khiển — Puni" };
 
@@ -17,16 +18,16 @@ export default async function DashboardRootLayout({ children }: { children: Reac
         <div className="shell">
           <aside className="side dash-side">
             <div className="brand">
-              <img src="/logo.jpg" alt="Puni" className="logo-img brand-logo" /> Dashboard
+              <img src="/api/assets/logo" alt="Puni" className="logo-img brand-logo" /> Dashboard
             </div>
             <Link href="/dashboard" className="item">
-              Server của tôi
+              <IconServer /> Server của tôi
             </Link>
             <Link href="/commands" className="item">
-              Danh sách lệnh
+              <IconList /> Danh sách lệnh
             </Link>
             <Link href="/" className="item">
-              Về trang chủ
+              <IconHome /> Về trang chủ
             </Link>
             <div className="who">
               Đăng nhập: <strong>{session.username}</strong>

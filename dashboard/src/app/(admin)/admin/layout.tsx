@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import "../../globals.css";
 import { currentSession } from "@/lib/current-session";
+import { IconChat, IconCoins, IconGrid, IconHome, IconServer, IconGlobe } from "@/components/icons";
 import { isOwner } from "@/lib/session";
 
 export const metadata = { title: "Puni Admin" };
@@ -39,24 +40,24 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
         ) : (
           <div className="shell">
             <aside className="side admin-side">
-              <div className="brand"><img src="/logo.jpg" alt="Puni" className="logo-img brand-logo" /> Puni Admin</div>
+              <div className="brand"><img src="/api/assets/logo" alt="Puni" className="logo-img brand-logo" /> Puni Admin</div>
               <Link href="/admin" className="item">
-                Tổng quan
+                <IconHome /> Tổng quan
               </Link>
               <Link href="/admin/economy" className="item">
-                Economy
+                <IconCoins /> Economy
               </Link>
               <Link href="/admin/servers" className="item">
-                Server
+                <IconServer /> Server
               </Link>
               <Link href="/admin/ai" className="item">
-                AI trò chuyện
+                <IconChat /> AI trò chuyện
               </Link>
               <Link href="/admin/clusters" className="item">
-                Cluster &amp; Shard
+                <IconGrid /> Cluster &amp; Shard
               </Link>
               <Link href="/admin/website" className="item">
-                Trang web
+                <IconGlobe /> Trang web
               </Link>
               <div className="who" style={{ marginTop: "auto", fontSize: 13, color: "#8fb0e8" }}>
                 Chủ bot: <strong>{session.username}</strong>

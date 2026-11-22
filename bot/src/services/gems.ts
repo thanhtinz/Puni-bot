@@ -38,6 +38,11 @@ export class InMemoryGemsWallet implements GemsWallet {
 }
 
 /** The one-line, two-currency money display used across chat surfaces. */
-export function formatMoneyPair(coins: number, gems: number, currencyName: string): string {
-  return `**${coins.toLocaleString("vi-VN")}** ${currencyName} · **${gems.toLocaleString("vi-VN")}** Gems`;
+export function formatMoneyPair(
+  coins: number,
+  gems: number,
+  currencyName: string,
+  gemsName = "Gems",
+): string {
+  return `**${coins.toLocaleString("vi-VN")}** ${currencyName} · **${gems.toLocaleString("vi-VN")}** ${gemsName}`;
 }
