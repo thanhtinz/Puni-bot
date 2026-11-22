@@ -131,8 +131,12 @@ function tierOf(mmr: number): { name: string; progress: number } {
 
 export async function renderProfileCard(data: ProfileCardData): Promise<Buffer> {
   const sharp = (await import("sharp")).default;
-  const sceneBuf = await readFile(path.join(process.cwd(), "public", "profile-scene.jpg"));
-  const sceneUri = `data:image/jpeg;base64,${sceneBuf.toString("base64")}`;
+  const [sceneA, sceneB] = await Promise.all([
+    readFile(path.join(process.cwd(), "public", "profile-scene-a.jpg")),
+    readFile(path.join(process.cwd(), "public", "profile-scene-b.jpg")),
+  ]);
+  const sceneUriA = `data:image/jpeg;base64,${sceneA.toString("base64")}`;
+  const sceneUriB = `data:image/jpeg;base64,${sceneB.toString("base64")}`;
   const [avatarUri, ...teamUris] = await Promise.all([
     data.avatarUrl ? fetchImageDataUri(data.avatarUrl) : Promise.resolve(null),
     ...data.team.map((c) => fetchImageDataUri(c.spriteUrl)),
@@ -169,7 +173,8 @@ export async function renderProfileCard(data: ProfileCardData): Promise<Buffer> 
   const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <rect width="${W}" height="${H}" fill="${TEAL}"/>
-  <image href="${sceneUri}" x="0" y="0" width="1290" height="400" preserveAspectRatio="xMidYMid slice"/>
+  <image href="${sceneUriA}" x="0" y="0" width="645" height="400"/>
+  <image href="${sceneUriB}" x="645" y="0" width="645" height="400"/>
   <rect x="0" y="330" width="${W}" height="${H - 330}" fill="${TEAL}"/>
   <rect x="345" y="192" width="540" height="150" rx="30" fill="${TEAL}"/>
 
