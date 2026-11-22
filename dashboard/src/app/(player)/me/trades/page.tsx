@@ -2,7 +2,7 @@ import { currentSession } from "@/lib/current-session";
 import { listTradesFor, type TradeRow } from "@/lib/player";
 
 export const dynamic = "force-dynamic";
-const fmt = (n: number) => n.toLocaleString("vi-VN");
+const fmt = (n: number) => n.toLocaleString("en-US", { maximumFractionDigits: 4 });
 const STATUS: Record<string, string> = {
   pending: "Đang chờ", accepted: "Đã nhận", rejected: "Đã từ chối", cancelled: "Đã huỷ",
 };

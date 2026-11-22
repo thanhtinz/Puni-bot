@@ -73,6 +73,9 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
               <Link href="/admin/users" className="item">
                 <IconUsers /> Người dùng
               </Link>
+              <Link href="/admin/ai" className="item">
+                <IconSpark /> AI trò chuyện
+              </Link>
               <Link href="/admin/clusters" className="item">
                 <IconGrid /> Cluster &amp; Shard
               </Link>

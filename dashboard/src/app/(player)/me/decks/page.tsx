@@ -1,5 +1,6 @@
 import { currentSession } from "@/lib/current-session";
-import { cardInfo, userDecks, userInstances } from "@/lib/tcg";
+import { userDecks, userInstances } from "@/lib/tcg";
+import CardArt from "@/components/card-art";
 import { validateDeckWeb } from "@/lib/player-deck";
 
 export const dynamic = "force-dynamic";
@@ -33,11 +34,10 @@ export default async function MeDecksPage({
             <div className="tcg-deck-strip">
               {deck.codes.map((code) => {
                 const inst = byCode.get(code);
-                const info = inst ? cardInfo(inst.speciesId) : undefined;
                 return (
                   <figure key={code}>
-                    <img src={`/cards/${inst?.speciesId ?? ""}.png`} alt={info?.name ?? code} loading="lazy" />
-                    <figcaption>{info?.name ?? code}</figcaption>
+                    <CardArt src={inst?.spriteUrl ?? ""} alt={inst?.name ?? code} rarity={inst?.rarity} />
+                    <figcaption>{inst?.name ?? code}</figcaption>
                     <form method="post" action="/api/me/decks">
                       <input type="hidden" name="action" value="remove" />
                       <input type="hidden" name="deckId" value={deck.id} />

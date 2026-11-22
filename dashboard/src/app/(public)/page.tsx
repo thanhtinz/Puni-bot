@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { IconCoins, IconHeart, IconSpark } from "@/components/icons";
+import { IconDiscord, IconLogin, IconSpark } from "@/components/icons";
+import { botInviteUrl } from "@/lib/invite";
 import catalog from "@/data/command-catalog.json";
 import Reveal from "@/components/reveal";
 import PawPrint from "@/components/paw";
@@ -10,53 +11,100 @@ const MARQUEE = [
   "bộ bài 30 lá",
   "đấu hạng elo",
   "thách đấu cược coins",
-  "chợ thẻ",
-  "trao đổi thẻ",
-  "daily mỗi ngày",
-  "kết hôn",
-  "nhẫn 7 bậc",
-  "đốt thẻ lấy mảnh",
+  "chợ thẻ người chơi",
   "tiến hoá thẻ",
-  "hội viên",
-  "bảng xếp hạng",
+  "đốt thẻ lấy mảnh",
+  "gói miễn phí mỗi ngày",
+  "161.000+ lá thẻ thật",
+  "7 bậc độ hiếm",
+  "trao đổi thẻ",
 ];
 
-function DiscordMockup() {
+/** Five chase cards of Romance Dawn (One Piece), fanned in the hero.
+ *  Only printings whose official art carries no SAMPLE stamp are used
+ *  on public surfaces (owner order 2026-11-22). */
+const FAN = [
+  { slug: "op01-031", name: "Kouzuki Oden", rot: -16, y: 26, z: 1 },
+  { slug: "op01-001", name: "Roronoa Zoro", rot: -8, y: 8, z: 2 },
+  { slug: "op01-120", name: "Shanks", rot: 0, y: 0, z: 3 },
+  { slug: "op01-121", name: "Yamato", rot: 8, y: 8, z: 2 },
+  { slug: "op01-060", name: "Donquixote Doflamingo", rot: 16, y: 26, z: 1 },
+];
+
+const RARITIES = [
+  { name: "Common", rate: 55, color: "#9fb3c8", slug: "op01-009", label: "Carrot" },
+  { name: "Uncommon", rate: 25, color: "#7fd08c", slug: "op01-011", label: "Gordon" },
+  { name: "Rare", rate: 12, color: "#6fb7ff", slug: "op01-004", label: "Usopp" },
+  { name: "Epic", rate: 5, color: "#c792ff", slug: "op01-096", label: "King" },
+  { name: "Legendary", rate: 2, color: "#ffd83d", slug: "op01-120", label: "Shanks" },
+  { name: "Mythical", rate: 0.7, color: "#ff9de2", slug: "op01-001", label: "Roronoa Zoro" },
+  { name: "Fabled", rate: 0.3, color: "#ff7a59", slug: null, label: "Có ở họ thẻ khác" },
+];
+
+const SHOWCASE = [
+  { slug: "op01-120", name: "Shanks", rarity: "Legendary" },
+  { slug: "op01-121", name: "Yamato", rarity: "Legendary" },
+  { slug: "op01-031", name: "Kouzuki Oden", rarity: "Mythical" },
+  { slug: "op01-060", name: "Donquixote Doflamingo", rarity: "Mythical" },
+  { slug: "op01-001", name: "Roronoa Zoro", rarity: "Mythical" },
+  { slug: "op01-096", name: "King", rarity: "Epic" },
+  { slug: "op01-013", name: "Sanji", rarity: "Rare" },
+  { slug: "op01-077", name: "Perona", rarity: "Uncommon" },
+];
+
+const LOOP = [
+  {
+    step: "1",
+    title: "Mở gói thẻ",
+    text: "Mỗi ngày một gói miễn phí, mở thêm bằng Coins. Pity bảo hiểm: 30 lượt chắc chắn có Epic, 90 lượt chắc chắn có Legendary trở lên — không bao giờ tay trắng quá lâu.",
+  },
+  {
+    step: "2",
+    title: "Xây bộ bài 30 lá",
+    text: "Tối đa 3 bản mỗi loài, ít nhất 10 loài khác nhau. Nâng cấp thẻ bằng Mảnh, cường hoá +10, tiến hoá lên dạng mạnh hơn — bộ bài là dấu ấn của riêng bạn.",
+  },
+  {
+    step: "3",
+    title: "Đấu thẻ",
+    text: "Đấu thường với bot, đấu hạng Elo theo mùa leo từ Đồng tới Cao Thủ, hoặc thách đấu cược Coins trực tiếp với bạn bè — thắng bại tính bằng bộ bài bạn xây.",
+  },
+  {
+    step: "4",
+    title: "Chợ & trao đổi",
+    text: "Đăng bán thẻ thừa trên chợ người chơi, săn lá còn thiếu trong Sổ Dex, hoặc trao đổi trực tiếp với người chơi khác — giá do cộng đồng quyết định.",
+  },
+];
+
+const RANKS = ["Đồng", "Bạc", "Vàng", "Bạch Kim", "Kim Cương", "Cao Thủ"];
+
+function CardFan() {
   return (
-    <div className="mock-stage">
+    <div className="fan-stage" aria-hidden="true">
       <div className="mock-glow" />
-      <div className="mock-card">
-        <span className="mock-badge">mở gói thẻ</span>
-        <div className="mock-msg">
-          <img src="/api/assets/logo" alt="Puni" className="mock-ava-img" />
-          <div>
-            <div className="mock-name">
-              Puni <span className="app-tag">APP</span> <span className="mock-time">hôm nay lúc 21:51</span>
-            </div>
-            <div className="mock-text">@nguoichoi mở 10 gói Bộ Tuxemon và nhận được:</div>
-            <div className="mock-embed">
-              <div className="t">Rockitten · Licc · Aardart · … · Flammie (Epic!)</div>
-              <div className="d">
-                Pity đang ở 24/90 — chắc chắn có thẻ Legendary trở lên ở lượt 90. Gõ
-                !collection để xem kho thẻ, !deck để xây bộ bài đấu hạng nhé.
-              </div>
-            </div>
-            <span className="mock-react">
-              <PawPrint size={13} /> 12
-            </span>
-          </div>
-        </div>
-      </div>
-      <span className="sticker" style={{ top: -8, right: 6, transform: "rotate(5deg)", zIndex: 3 }}>hên quá đi</span>
-      <div className="mock-mini">
-        <b>puni:</b> Hôm nay bạn và người ấy đã nhận daily chưa? Cả hai cùng nhận là có quà
-        TCG cho cặp đôi đó!
-      </div>
+      {FAN.map((c) => (
+        <img
+          key={c.slug}
+          src={`/op/${c.slug}.jpg`}
+          alt=""
+          className="fan-card"
+          style={{
+            transform: `translateY(${c.y}px) rotate(${c.rot}deg)`,
+            zIndex: c.z,
+          }}
+        />
+      ))}
+      <span className="sticker" style={{ top: 2, right: 10, transform: "rotate(5deg)", zIndex: 5 }}>
+        shanks · yamato — legendary
+      </span>
+      <span className="sticker pink" style={{ bottom: 6, left: 4, transform: "rotate(-5deg)", zIndex: 5 }}>
+        pity 90 bảo hiểm
+      </span>
     </div>
   );
 }
 
 export default function HomePage() {
+  const inviteUrl = botInviteUrl();
   const publicCount = (catalog as unknown[]).length;
   return (
     <>
@@ -76,38 +124,33 @@ export default function HomePage() {
         <span className="paw-deco" style={{ top: 128, right: "3%", animationDelay: "2.1s", color: "#ffb3c7" }}>
           <PawPrint size={36} rotate={14} />
         </span>
-        <span className="sparkle" style={{ top: 96, right: "10%", animationDelay: "1.7s" }}>
-          <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 L14.6 9.4 L23 12 L14.6 14.6 L12 23 L9.4 14.6 L1 12 L9.4 9.4 Z" /></svg>
-        </span>
         <div className="wrap hero-grid">
           <div>
             <h1>
-              Game thẻ bài <span className="hl">TCG</span> ngay trong Discord
+              <span className="h1-line">Sưu tầm thẻ.</span>{" "}
+              <span className="hl h1-line">Xây bộ bài. Leo hạng</span>{" "}
+              <span className="h1-line">ngay trong Discord</span>
             </h1>
             <p className="sub">
-              Puni là bot game thuần thẻ bài: mở gói sưu tầm hàng trăm lá thẻ, xây bộ bài
-              30 lá, đấu hạng leo bậc, mua bán trên chợ người chơi — cùng một ví Coins
-              dùng chung mọi server và cả hệ thống kết hôn dễ thương.
+              Puni là game thẻ bài TCG chạy ngay trong Discord: mở gói săn thẻ hiếm,
+              xây bộ bài 30 lá theo chiến thuật của bạn, đấu hạng Elo theo mùa và mua
+              bán trên chợ người chơi — mọi lá thẻ đều là của bạn, đi theo tài khoản
+              Discord qua mọi server.
             </p>
             <div className="hero-cta">
-              <Link href="/api/auth/login" className="btn">
-                Chơi ngay bằng Discord
-              </Link>
+              {inviteUrl ? (
+                <a href={inviteUrl} target="_blank" rel="noreferrer" className="btn secondary">
+                  <IconDiscord size={18} />
+                  Mời bot về server
+                </a>
+              ) : null}
               <Link href="/commands" className="btn ghost">
                 Xem danh sách lệnh
               </Link>
             </div>
-            <p className="hero-note">Miễn phí chơi · Đăng nhập là vào thẳng khu người chơi của bạn</p>
-          <div className="paw-trail" style={{ marginTop: 26 }} aria-hidden="true">
-            <span className="step" style={{ animationDelay: "0s" }}><PawPrint size={22} rotate={-16} /></span>
-            <span className="step" style={{ animationDelay: "0.4s", transform: "translateY(7px)" }}><PawPrint size={22} rotate={12} /></span>
-            <span className="step" style={{ animationDelay: "0.8s" }}><PawPrint size={22} rotate={-16} /></span>
-            <span className="step" style={{ animationDelay: "1.2s", transform: "translateY(7px)" }}><PawPrint size={22} rotate={12} /></span>
-            <span className="step" style={{ animationDelay: "1.6s" }}><PawPrint size={22} rotate={-16} /></span>
-            <span className="step" style={{ animationDelay: "2s", transform: "translateY(7px)" }}><PawPrint size={22} rotate={12} /></span>
+            <p className="hero-note">Miễn phí chơi · Mỗi ngày một gói thẻ miễn phí · {publicCount}+ lệnh game</p>
           </div>
-          </div>
-          <DiscordMockup />
+          <CardFan />
         </div>
       </section>
 
@@ -124,28 +167,48 @@ export default function HomePage() {
 
       <section className="section">
         <div className="wrap">
-          <div className="eyebrow">vì sao chọn puni?</div>
-          <h2>Một ví, một kho thẻ, mọi server</h2>
+          <div className="eyebrow">19 họ thẻ · 2.268 bộ thẻ</div>
+          <h2>161.198 lá thẻ thật, 7 bậc độ hiếm</h2>
           <p className="lead">
-            Thẻ, Coins và hôn nhân của bạn đi theo tài khoản Discord — chơi ở server nào
-            cũng là cùng một bộ sưu tập, cùng một số dư, cùng một người ấy.
+            Mỗi lá là một lá TCG có thật — One Piece, Pokémon, Magic, Yu-Gi-Oh! và
+            15 họ thẻ nữa — với giá thị trường thật làm nền giá trị trong game.
+            Tỉ lệ mở gói minh bạch, có pity bảo hiểm theo từng banner.
           </p>
           <Reveal>
+          <div className="rarity-list">
+            {RARITIES.map((r) => (
+              <div className="rarity-row" key={r.name}>
+                {r.slug ? (
+                  <img src={`/op/${r.slug}.jpg`} alt={r.label} className="rarity-thumb" loading="lazy" />
+                ) : (
+                  <span className="rarity-thumb rarity-thumb-empty">?</span>
+                )}
+                <span className="rarity-name" style={{ color: r.color }}>{r.name}</span>
+                <span className="rarity-bar">
+                  <span className="rarity-fill" style={{ width: `${Math.max(3, r.rate)}%`, background: r.color }} />
+                </span>
+                <span className="rarity-rate">{r.rate}%</span>
+                <span className="rarity-sample">{r.label}</span>
+              </div>
+            ))}
+          </div>
+          </Reveal>
+          <Reveal delay={100}>
           <div className="stat-grid">
             <div className="stat-card">
-              <div className="num">{publicCount}+</div>
-              <div className="cap">Lệnh chơi game</div>
-              <p>Slash và tiền tố dùng chung một hệ lệnh — danh sách luôn cập nhật tự động từ chính bot.</p>
+              <div className="num">161.198</div>
+              <div className="cap">Lá thẻ trong kho dữ liệu</div>
+              <p>19 họ thẻ TCG thật — Sổ Dex ghi lại từng lá bạn đã sở hữu.</p>
             </div>
             <div className="stat-card">
-              <div className="num">411</div>
-              <div className="cap">Thẻ bộ Tuxemon</div>
-              <p>Bộ thẻ đầu tiên với 411 loài và nhiều bộ thẻ mới đang được phát triển thêm.</p>
+              <div className="num">90</div>
+              <div className="cap">Pity bảo hiểm Legendary</div>
+              <p>Đủ 90 lượt mở chưa ra Legendary thì lượt 90 chắc chắn ra — đếm riêng từng banner.</p>
             </div>
             <div className="stat-card">
-              <div className="num">7</div>
-              <div className="cap">Bậc nhẫn cưới</div>
-              <p>Từ Nhẫn Vàng Trơn tới Nhẫn Kim Cương — nhẫn đắt chỉ để thể diện, quyền lợi như nhau.</p>
+              <div className="num">30</div>
+              <div className="cap">Lá mỗi bộ bài</div>
+              <p>Tối đa 5 bộ bài lưu sẵn, chuyển qua lại tuỳ đối thủ và chiến thuật.</p>
             </div>
             <div className="stat-card">
               <div className="num">100%</div>
@@ -160,35 +223,26 @@ export default function HomePage() {
       <section className="section">
         <div className="wrap">
           <div className="center">
-            <div className="eyebrow">ba trụ cột của puni</div>
-            <h2>Thẻ bài · Economy · Hôn nhân</h2>
+            <div className="eyebrow">vòng chơi</div>
+            <h2>Từ gói thẻ tới ngôi vương</h2>
           </div>
           <Reveal delay={120}>
-          <div className="feat-grid">
-            <div className="feat-card">
-              <div className="feat-ico"><IconSpark size={22} /></div>
-              <h3>Game thẻ bài TCG</h3>
-              <p>
-                Mở gói có pity bảo hiểm 30/90, nâng cấp và tiến hoá thẻ, xây bộ bài 30 lá,
-                đấu thường, đấu hạng Elo theo mùa và thách đấu cược Coins với bạn bè.
-              </p>
-            </div>
-            <div className="feat-card">
-              <div className="feat-ico"><IconCoins size={22} /></div>
-              <h3>Economy toàn hệ thống</h3>
-              <p>
-                Coins dùng chung mọi server: nhận daily giữ chuỗi ngày, chuyển tiền cho
-                nhau, leo bảng xếp hạng tài sản và tiêu Coins ngay trong game thẻ.
-              </p>
-            </div>
-            <div className="feat-card">
-              <div className="feat-ico"><IconHeart size={22} /></div>
-              <h3>Kết hôn &amp; quà cặp đôi</h3>
-              <p>
-                Mua nhẫn, cầu hôn, nâng cấp nhẫn cho người ấy — và khi cả hai cùng nhận
-                daily trong ngày, mỗi người nhận thêm một món quà TCG.
-              </p>
-            </div>
+          <div className="feat-grid loop-grid">
+            {LOOP.map((s) => (
+              <div className="feat-card" key={s.step}>
+                <div className="feat-ico loop-step">{s.step}</div>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+              </div>
+            ))}
+          </div>
+          </Reveal>
+          <Reveal delay={160}>
+          <div className="rank-strip">
+            <span className="rank-strip-label"><IconSpark size={16} /> Đấu hạng theo mùa:</span>
+            {RANKS.map((r, i) => (
+              <span key={r} className="rank-chip" style={{ opacity: 0.55 + i * 0.09 }}>{r}</span>
+            ))}
           </div>
           </Reveal>
         </div>
@@ -196,16 +250,59 @@ export default function HomePage() {
 
       <section className="section">
         <div className="wrap">
+          <div className="eyebrow">phòng trưng bày</div>
+          <h2>Những lá thẻ đáng săn nhất</h2>
+          <p className="lead">
+            Shanks, Yamato, Kaido và những lá được săn nhất của bộ Romance Dawn —
+            mở gói, mua trên chợ hoặc trao đổi với người chơi khác để đưa chúng về
+            kho của bạn.
+          </p>
+          <Reveal>
+          <div className="showcase-grid">
+            {SHOWCASE.map((c) => (
+              <figure className="showcase-tile" key={c.slug}>
+                <img src={`/op/${c.slug}.jpg`} alt={`Thẻ ${c.name}`} loading="lazy" />
+                <figcaption>
+                  <b>{c.name}</b>
+                  <span className={`rarity-tag rarity-${c.rarity.toLowerCase()}`}>{c.rarity}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="section extras-strip">
+        <div className="wrap">
+          <p>
+            Bên cạnh thẻ bài, Puni còn có ví Coins dùng chung mọi server, hệ thống kết
+            hôn với nhẫn 7 bậc, minigame blackjack · tung xu · cờ caro · đua thú, kênh
+            đếm số &amp; nối chữ, 69 lệnh tương tác và AI trò chuyện — xem tất cả ở{" "}
+            <Link href="/commands">danh sách lệnh</Link>.
+          </p>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="wrap">
           <Reveal>
           <div className="cta">
-            <h2>Bắt đầu sưu tầm hôm nay</h2>
+            <h2>Gói thẻ đầu tiên đang chờ</h2>
             <p>
-              Đăng nhập bằng Discord để vào khu người chơi: xem kho thẻ, bộ bài, chợ thẻ
-              và hồ sơ của bạn — gói thẻ miễn phí đầu tiên đang chờ.
+              Đăng nhập bằng Discord để vào khu người chơi: mở gói miễn phí, xem kho
+              thẻ, xây bộ bài đầu tiên và leo hạng ngay hôm nay.
             </p>
             <Link href="/api/auth/login" className="btn">
+              <IconLogin size={18} />
               Vào khu người chơi
             </Link>
+            {inviteUrl ? (
+              <a href={inviteUrl} target="_blank" rel="noreferrer" className="btn ghost" style={{ marginLeft: 10 }}>
+                <IconDiscord size={18} />
+                Mời bot về server
+              </a>
+            ) : null}
             <span className="cta-paws" aria-hidden="true">
               <PawPrint size={30} rotate={-14} />
               <PawPrint size={24} rotate={16} style={{ marginTop: 14 }} />

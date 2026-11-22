@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   if (!session) return NextResponse.redirect(new URL("/api/auth/login", req.url));
   const form = await req.formData();
   const action = String(form.get("action") ?? "");
-  const url = new URL("/me/market", req.url);
+  const url = new URL("/me/cho", req.url);
   let out;
   if (action === "buy") {
     out = await buyListingWeb(session.userId, Number.parseInt(String(form.get("listingId") ?? ""), 10));

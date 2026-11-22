@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   const code = String(form.get("code") ?? "").toUpperCase();
   const out = await sellCardWeb(session.userId, code);
   const url = new URL("/me/cards", req.url);
-  if (out.ok) url.searchParams.set("msg", `Đã bán thẻ ${code} → +${(out.coins ?? 0).toLocaleString("vi-VN")} Coins.`);
+  if (out.ok) url.searchParams.set("msg", `Đã bán thẻ ${code} → +${(out.coins ?? 0).toLocaleString("en-US", { maximumFractionDigits: 4 })} Coins.`);
   else url.searchParams.set("err", out.error);
   return NextResponse.redirect(url);
 }

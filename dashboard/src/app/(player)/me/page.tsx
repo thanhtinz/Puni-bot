@@ -1,10 +1,10 @@
 import { currentSession } from "@/lib/current-session";
 import { getUserEconomy, getUserMembership } from "@/lib/db";
 import { getProfile } from "@/lib/player";
-import { userInstances } from "@/lib/tcg";
+import { userInstances, dexTotalSpecies } from "@/lib/tcg";
 
 export const dynamic = "force-dynamic";
-const fmt = (n: number) => n.toLocaleString("vi-VN");
+const fmt = (n: number) => n.toLocaleString("en-US", { maximumFractionDigits: 4 });
 
 export default async function MeProfilePage({
   searchParams,
@@ -13,11 +13,12 @@ export default async function MeProfilePage({
 }) {
   const session = (await currentSession())!;
   const sp = await searchParams;
-  const [profile, economy, membership, instances] = await Promise.all([
+  const [profile, economy, membership, instances, totalSpecies] = await Promise.all([
     getProfile(session.userId),
     getUserEconomy(session.userId).catch(() => null),
     getUserMembership(session.userId).catch(() => null),
     userInstances(session.userId),
+    dexTotalSpecies().catch(() => 0),
   ]);
   const species = new Set(instances.map((i) => i.speciesId)).size;
   return (
@@ -31,7 +32,7 @@ export default async function MeProfilePage({
           <p>Coins trong ví (dùng chung toàn hệ thống)</p>
         </div>
         <div className="player-card">
-          <h3>{instances.length} lá · {species}/411 loài</h3>
+          <h3>{instances.length} lá · {species}/{totalSpecies.toLocaleString("en-US")} loài</h3>
           <p>Thẻ TCG đang sở hữu — xem ở Kho Thẻ và Sổ Dex</p>
         </div>
         <div className="player-card">

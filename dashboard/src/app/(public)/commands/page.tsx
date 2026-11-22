@@ -11,7 +11,9 @@ interface CatalogEntry {
 
 const MODULE_LABELS: Record<string, string> = {
   core: "Cơ bản",
+  reaction: "Tương tác",
   economy: "Economy & Hôn nhân",
+  games: "Minigame",
   cozy: "Game thẻ bài TCG",
 };
 

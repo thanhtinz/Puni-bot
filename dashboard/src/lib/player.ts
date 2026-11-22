@@ -4,7 +4,9 @@
  * enforces (one source of truth, two surfaces).
  */
 import { db } from "./db";
-import { BASE_VALUE } from "./tcg";
+import { BASE_VALUE, DEFAULT_PRICE_COINS_PER_USD, getPriceCoinsPerUsd } from "./tcg";
+
+export { DEFAULT_PRICE_COINS_PER_USD, getPriceCoinsPerUsd };
 
 export interface PlayerProfile {
   gender: string;
@@ -50,10 +52,54 @@ export async function dexOwnedSpecies(userId: string): Promise<Set<string>> {
   }
 }
 
-/** Per-instance Coins value — mirrors bot cardValueCoins (spec 6.24). */
-export function cardValue(rarity: string, level: number, enhance: number): number {
-  const base = BASE_VALUE[rarity] ?? 0;
-  return Math.round(base * (1 + Math.max(0, level - 1) * 0.02 + Math.max(0, enhance) * 0.15));
+/** Per-instance Coins value — mirrors bot cardValueCoins (spec 6.24/6.29).
+ * A species with a real market price is valued price x rate; species
+ * without price data fall back to the rarity table. */
+export function cardValue(
+  rarity: string,
+  level: number,
+  enhance: number,
+  priceUsd?: number,
+  coinsPerUsd?: number,
+  marketPriceCoins?: number,
+): number {
+  const base =
+    typeof marketPriceCoins === "number" && marketPriceCoins > 0
+      ? marketPriceCoins
+      : typeof priceUsd === "number" && priceUsd > 0
+        ? priceUsd * (coinsPerUsd ?? DEFAULT_PRICE_COINS_PER_USD)
+        : (BASE_VALUE[rarity] ?? 0);
+  return snapMoney(base * (1 + Math.max(0, level - 1) * 0.02 + Math.max(0, enhance) * 0.15));
+}
+
+/** Snap to the 4-decimal money scale (migration 0025) — kills float
+ * noise only; real prices keep their exact decimals (spec 6.29). */
+export function snapMoney(x: number): number {
+  return Math.round(x * 10000) / 10000;
+}
+
+/** Market-style number format: comma thousands, exact decimals. */
+export function fmtCoins(n: number): string {
+  return n.toLocaleString("en-US", { maximumFractionDigits: 4 });
+}
+
+/** Internal market price after one completed sale — mirrors bot
+ * nextMarketPrice (spec 6.29): moving average for the first 10 sales,
+ * EMA after, each sale moving the reference at most ±25%. */
+export function nextMarketPrice(
+  current: number | null,
+  seedValue: number,
+  salePrice: number,
+  salesCount: number,
+): number {
+  const ref = current != null && current > 0 ? current : seedValue;
+  if (!(ref > 0)) return snapMoney(salePrice);
+  const blended =
+    salesCount < 10
+      ? (ref * salesCount + salePrice) / (salesCount + 1)
+      : ref + 0.2 * (salePrice - ref);
+  const clamped = Math.min(ref * 1.25, Math.max(ref * 0.75, blended));
+  return snapMoney(clamped);
 }
 
 export async function getSellRatePercent(): Promise<number> {
@@ -70,7 +116,7 @@ export async function getSellRatePercent(): Promise<number> {
 
 type TxResult = { ok: true } | { ok: false; error: string };
 
-async function adjustBalanceTx(
+export async function adjustBalanceTx(
   client: { query: (sql: string, params?: unknown[]) => Promise<{ rows: Record<string, string>[] }> },
   userId: string,
   delta: number,
@@ -85,7 +131,7 @@ async function adjustBalanceTx(
     `SELECT balance::text AS balance FROM economy_accounts WHERE user_id = $1 FOR UPDATE`,
     [userId],
   );
-  const current = Number.parseInt(res.rows[0]?.balance ?? "0", 10);
+  const current = Number(res.rows[0]?.balance ?? "0");
   const next = current + delta;
   if (next < 0) return false;
   await client.query(`UPDATE economy_accounts SET balance = $2, updated_at = now() WHERE user_id = $1`, [
@@ -105,7 +151,7 @@ export async function sellCardWeb(userId: string, code: string): Promise<TxResul
   try {
     await client.query("BEGIN");
     const inst = await client.query(
-      `SELECT i.species_id, i.level, i.enhance, i.locked, i.favorite, s.rarity
+      `SELECT i.species_id, i.level, i.enhance, i.locked, i.favorite, s.rarity, s.price_usd, s.market_price_coins
        FROM tcg_instances i LEFT JOIN game_species s ON s.id = i.species_id
        WHERE i.code = $1 AND i.user_id = $2 FOR UPDATE OF i`,
       [code, userId],
@@ -120,9 +166,21 @@ export async function sellCardWeb(userId: string, code: string): Promise<TxResul
       `SELECT 1 FROM tcg_listings WHERE instance_code = $1 AND status = 'open'`, [code],
     );
     if (listed.rows.length) { await client.query("ROLLBACK"); return { ok: false, error: "Thẻ đang bán trên chợ — huỷ tin đăng trước." }; }
+    const auctioned = await client.query(
+      `SELECT 1 FROM tcg_auctions WHERE instance_code = $1 AND status = 'open'`, [code],
+    ).catch(() => ({ rows: [] as unknown[] }));
+    if (auctioned.rows.length) { await client.query("ROLLBACK"); return { ok: false, error: "Thẻ đang trong phiên đấu giá — chờ phiên kết thúc hoặc huỷ phiên trước." }; }
     const rate = await getSellRatePercent();
-    const value = cardValue(row.rarity ?? "Common", row.level, row.enhance);
-    const coins = Math.max(1, Math.floor((value * rate) / 100));
+    const priceRate = await getPriceCoinsPerUsd();
+    const value = cardValue(
+      row.rarity ?? "Common",
+      row.level,
+      row.enhance,
+      row.price_usd != null ? Number(row.price_usd) : undefined,
+      priceRate,
+      row.market_price_coins != null ? Number(row.market_price_coins) : undefined,
+    );
+    const coins = snapMoney((value * rate) / 100);
     await client.query(`DELETE FROM tcg_instances WHERE code = $1`, [code]);
     await adjustBalanceTx(client, userId, coins, "tcg-sell", `Bán thẻ ${code} (web)`);
     await client.query("COMMIT");
@@ -137,7 +195,7 @@ export async function sellCardWeb(userId: string, code: string): Promise<TxResul
 
 /** The seller's market fee %: the TCG base fee (5) or their lower
  *  membership fee when they hold an active tier (spec 6.19). */
-async function sellerFeePercent(sellerId: string): Promise<number> {
+export async function sellerFeePercent(sellerId: string): Promise<number> {
   try {
     const { getUserMembership, getBotConfig } = await import("@/lib/db");
     const { normalizeMembershipTiers, effectivePerksWeb } = await import("@/lib/membership");
@@ -176,6 +234,41 @@ export async function buyListingWeb(buyerId: string, listingId: number): Promise
       `UPDATE tcg_listings SET status = 'sold', buyer_id = $1, sold_at = now() WHERE id = $2`,
       [buyerId, listingId],
     );
+    // Internal market (spec 6.29): the completed sale moves the
+    // species' reference price — same transaction, all or nothing.
+    const instRow = await client.query(
+      `SELECT species_id FROM tcg_instances WHERE code = $1`,
+      [row.instance_code],
+    );
+    const speciesId = instRow.rows[0]?.species_id as string | undefined;
+    if (speciesId) {
+      const sp = await client.query(
+        `SELECT rarity, price_usd, market_price_coins, market_sales FROM game_species WHERE id = $1 FOR UPDATE`,
+        [speciesId],
+      );
+      const s = sp.rows[0];
+      if (s) {
+        const priceRate = await getPriceCoinsPerUsd();
+        const seed =
+          s.price_usd != null && Number(s.price_usd) > 0
+            ? Number(s.price_usd) * priceRate
+            : (BASE_VALUE[s.rarity as string] ?? 0);
+        const next = nextMarketPrice(
+          s.market_price_coins != null ? Number(s.market_price_coins) : null,
+          seed,
+          price,
+          (s.market_sales as number) ?? 0,
+        );
+        await client.query(
+          `UPDATE game_species SET market_price_coins = $1, market_sales = market_sales + 1 WHERE id = $2`,
+          [next, speciesId],
+        );
+        await client.query(
+          `INSERT INTO tcg_price_history (species_id, price, sale_price) VALUES ($1, $2, $3)`,
+          [speciesId, next, price],
+        );
+      }
+    }
     await client.query("COMMIT");
     return { ok: true };
   } catch {
@@ -212,6 +305,10 @@ export async function createListingWeb(userId: string, code: string, price: numb
       `SELECT 1 FROM tcg_listings WHERE instance_code = $1 AND status = 'open'`, [code],
     );
     if (listed.rows.length) { await client.query("ROLLBACK"); return { ok: false, error: "Thẻ đã có tin bán rồi." }; }
+    const auctioned = await client.query(
+      `SELECT 1 FROM tcg_auctions WHERE instance_code = $1 AND status = 'open'`, [code],
+    ).catch(() => ({ rows: [] as unknown[] }));
+    if (auctioned.rows.length) { await client.query("ROLLBACK"); return { ok: false, error: "Thẻ đang trong phiên đấu giá — chờ phiên kết thúc hoặc huỷ phiên trước." }; }
     await client.query(
       `INSERT INTO tcg_listings (seller_id, instance_code, price) VALUES ($1, $2, $3)`,
       [userId, code, price],

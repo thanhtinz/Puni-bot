@@ -1,41 +1,26 @@
 import Link from "next/link";
 import { currentSession } from "@/lib/current-session";
-import { cardInfo, marketOverview, marketSummary, openListings, RARITY_VI } from "@/lib/tcg";
-import { db, listGameSets } from "@/lib/db";
+import { marketIndexSeries, marketOverview, marketSummary, RARITY_VI } from "@/lib/tcg";
+import { listGameSets } from "@/lib/db";
+import { IconActivity, IconBag, IconChart, IconCoins, IconGrid, IconList, IconSpark } from "@/components/icons";
 
 export const dynamic = "force-dynamic";
-const fmt = (n: number) => n.toLocaleString("vi-VN");
+const fmt = (n: number) => n.toLocaleString("en-US", { maximumFractionDigits: 4 });
 const PAGE_SIZE = 24;
-
-async function myListings(userId: string) {
-  try {
-    const res = await db().query(
-      `SELECT l.id::text AS id, l.price::text AS price, i.code, i.species_id, i.level, i.enhance
-       FROM tcg_listings l JOIN tcg_instances i ON i.code = l.instance_code
-       WHERE l.seller_id = $1 AND l.status = 'open' ORDER BY l.created_at DESC`,
-      [userId],
-    );
-    return res.rows.map((r) => ({
-      id: Number.parseInt(r.id, 10), price: Number.parseInt(r.price, 10),
-      code: r.code, speciesId: r.species_id, level: r.level, enhance: r.enhance,
-    }));
-  } catch { return []; }
-}
 
 function TrendBadge({ pct }: { pct: number | null }) {
   if (pct === null) return <span className="mk-dim">—</span>;
   const up = pct >= 0;
   return (
     <span className={up ? "trend up" : "trend down"}>
-      {up ? "▲" : "▼"} {Math.abs(pct).toLocaleString("vi-VN")}%
+      {up ? "▲" : "▼"} {Math.abs(pct).toLocaleString("en-US", { maximumFractionDigits: 4 })}%
     </span>
   );
 }
 
-/** Tiny inline SVG sparkline from daily average sold prices. */
-function Sparkline({ data }: { data: number[] }) {
+function Sparkline({ data, w = 96, h = 28 }: { data: number[]; w?: number; h?: number }) {
   if (data.length < 2) return <span className="mk-dim">—</span>;
-  const w = 96, h = 28, pad = 2;
+  const pad = 2;
   const min = Math.min(...data), max = Math.max(...data);
   const range = max - min || 1;
   const pts = data.map((v, i) => {
@@ -51,26 +36,70 @@ function Sparkline({ data }: { data: number[] }) {
   );
 }
 
+/** Big market index chart (30 days) with area fill and end labels. */
+function IndexChart({ points, changePct }: { points: number[]; changePct: number | null }) {
+  if (points.length < 2) {
+    return <p className="tcg-empty">Chưa đủ giao dịch để vẽ đường chỉ số — đường giá sẽ hiện khi chợ có giao dịch ở ít nhất 2 ngày khác nhau.</p>;
+  }
+  const w = 720, h = 170, pad = 10;
+  const min = Math.min(...points), max = Math.max(...points);
+  const range = max - min || 1;
+  const xy = points.map((v, i) => {
+    const x = pad + (i / (points.length - 1)) * (w - pad * 2);
+    const y = h - pad - ((v - min) / range) * (h - pad * 2 - 14) - 4;
+    return [x, y] as const;
+  });
+  const line = xy.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
+  const area = `${pad},${h - 2} ${line} ${w - pad},${h - 2}`;
+  const rising = points[points.length - 1] >= points[0];
+  const color = rising ? "#1d9e75" : "#d6455b";
+  const [lx, ly] = xy[xy.length - 1];
+  return (
+    <div className="mk-chart">
+      <svg viewBox={`0 0 ${w} ${h}`} width="100%" role="img" aria-label="Đường chỉ số giá thị trường 30 ngày">
+        <polygon points={area} fill={color} opacity="0.10" />
+        <polyline points={line} fill="none" stroke={color} strokeWidth="2.4" strokeLinejoin="round" />
+        <circle cx={lx} cy={ly} r="4" fill={color} />
+      </svg>
+      <div className="mk-chart-meta">
+        <span>Thấp nhất {fmt(min)} điểm</span>
+        <span>Cao nhất {fmt(max)} điểm</span>
+        <span>Chỉ số hiện tại {fmt(points[points.length - 1])} điểm</span>
+        {changePct !== null ? <TrendBadge pct={changePct} /> : null}
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ icon, num, cap, sub }: { icon: React.ReactNode; num: React.ReactNode; cap: string; sub?: string }) {
+  return (
+    <div className="mk-stat">
+      <span className="mk-stat-ico">{icon}</span>
+      <span className="mk-stat-num">{num}</span>
+      <span className="mk-stat-cap">{cap}{sub ? <><br />{sub}</> : null}</span>
+    </div>
+  );
+}
+
 /**
- * Player market (spec 6.23 + Cardlytics-style layout, owner
- * 2026-11-21 23:16): headline market stats, gainers/losers, then a
- * professional data table — one row per species with set, floor,
- * last sale, averages, 7-day trend and a 30-day sparkline. All
- * numbers come from real tcg_listings rows; nothing is invented.
+ * Market analytics (spec 6.29) — the "Thị trường" page, separate from
+ * the "Chợ thẻ" trading page: headline statistics with icons, the
+ * 30-day market index line, movers with their own price lines, and
+ * the per-species data table. Every number comes from real
+ * tcg_listings / tcg_price_history rows.
  */
 export default async function MeMarketPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; rarity?: string; set?: string; sort?: string; page?: string; msg?: string; err?: string }>;
+  searchParams: Promise<{ q?: string; rarity?: string; set?: string; sort?: string; page?: string }>;
 }) {
-  const session = (await currentSession())!;
+  await currentSession();
   const sp = await searchParams;
-  const [all, listings, mine, summary, sets] = await Promise.all([
+  const [all, summary, sets, index] = await Promise.all([
     marketOverview(),
-    openListings(60),
-    myListings(session.userId),
     marketSummary(),
     listGameSets().catch(() => []),
+    marketIndexSeries(),
   ]);
   const setName = new Map(sets.map((s) => [s.id, s.name]));
 
@@ -82,7 +111,7 @@ export default async function MeMarketPage({
   const q = (sp.q ?? "").toLowerCase();
   let rows = all.filter(
     (c) =>
-      (!q || c.name.toLowerCase().includes(q) || c.slug.includes(q)) &&
+      (!q || c.name.toLowerCase().includes(q) || c.speciesId.includes(q)) &&
       (!sp.rarity || c.rarity === sp.rarity) &&
       (!sp.set || c.set === sp.set),
   );
@@ -107,42 +136,30 @@ export default async function MeMarketPage({
   return (
     <div className="player-body-inner">
       <h1>Thị trường thẻ</h1>
-      {sp.msg ? <p className="player-notice ok">{sp.msg}</p> : null}
-      {sp.err ? <p className="player-notice err">{sp.err}</p> : null}
+      <p className="player-sub">Số liệu và xu hướng giá của chợ — mua bán ở <Link href="/me/cho">Chợ thẻ</Link>.</p>
 
       <div className="mk-stats">
-        <div className="mk-stat">
-          <span className="mk-stat-num">{fmt(summary.openValue)} Coins</span>
-          <span className="mk-stat-cap">Tổng giá trị tin đang bán</span>
-        </div>
-        <div className="mk-stat">
-          <span className="mk-stat-num">{fmt(summary.openListings)}</span>
-          <span className="mk-stat-cap">Tin đang mở</span>
-        </div>
-        <div className="mk-stat">
-          <span className="mk-stat-num">{fmt(summary.soldCount)}</span>
-          <span className="mk-stat-cap">Lượt đã bán thành công</span>
-        </div>
-        <div className="mk-stat">
-          <span className="mk-stat-num">{summary.speciesListed}/{all.length}</span>
-          <span className="mk-stat-cap">Mẫu thẻ đang có tin bán</span>
-        </div>
-        <div className="mk-stat">
-          <span className="mk-stat-num"><TrendBadge pct={summary.indexChangePct} /></span>
-          <span className="mk-stat-cap">Chỉ số giá bán TB — 7 ngày so với 7 ngày trước</span>
-        </div>
+        <StatCard icon={<IconCoins size={17} />} num={`${fmt(summary.openValue)} Coins`} cap="Tổng giá trị tin đang bán" />
+        <StatCard icon={<IconList size={17} />} num={fmt(summary.openListings)} cap="Tin đang mở" />
+        <StatCard icon={<IconBag size={17} />} num={fmt(summary.soldCount)} cap="Lượt đã bán thành công" sub={`Tổng khối lượng ${fmt(summary.volumeAll)} Coins`} />
+        <StatCard icon={<IconActivity size={17} />} num={`${fmt(summary.volume7d)} Coins`} cap="Khối lượng giao dịch 7 ngày" sub={`${fmt(summary.trades7d)} giao dịch`} />
+        <StatCard icon={<IconGrid size={17} />} num={fmt(summary.speciesListed)} cap="Mẫu thẻ đang có tin bán" sub={`${fmt(summary.speciesTraded)} mẫu đã từng giao dịch`} />
+        <StatCard icon={<IconChart size={17} />} num={fmt(summary.internalPriced)} cap="Mẫu đã có giá nội bộ" sub="Giá do chợ quyết định" />
+        <StatCard icon={<IconSpark size={17} />} num={summary.topSale ? `${fmt(summary.topSale.price)} Coins` : "—"} cap="Giá bán cao nhất" sub={summary.topSale?.speciesName} />
+        <StatCard icon={<IconActivity size={17} />} num={<TrendBadge pct={summary.indexChangePct} />} cap="Chỉ số giá bán TB" sub="7 ngày so với 7 ngày trước" />
       </div>
-      <p className="player-sub">
-        Giá sàn là giá bán thấp nhất đang mở; giá bán gần nhất, trung bình và xu hướng tính từ
-        giao dịch thật trên chợ. Đường giá 30 ngày vẽ từ giá bán trung bình từng ngày.
-      </p>
+
+      <section className="player-panel">
+        <h2 className="mk-h2"><IconChart size={18} /> Chỉ số giá thị trường — 30 ngày</h2>
+        <IndexChart points={index.points} changePct={index.changePct} />
+      </section>
 
       <div className="tcg-top2">
         <section className="tcg-panel">
           <h2>{gainers.length ? "Top tăng giá (7 ngày)" : "Top thẻ giá trị cao nhất"}</h2>
           {(gainers.length ? gainers : topValue).map((c) => (
-            <div className="tcg-row" key={c.slug}>
-              <img src={`/cards/${c.slug}.png`} alt={c.name} loading="lazy" />
+            <div className="tcg-row" key={c.speciesId}>
+              {c.spriteUrl ? <img src={c.spriteUrl} alt={c.name} loading="lazy" /> : null}
               <div className="tcg-row-main">
                 <strong>{c.name}</strong>
                 <span>
@@ -150,48 +167,27 @@ export default async function MeMarketPage({
                   {c.lastSold ? ` · Bán gần nhất ${fmt(c.lastSold)}` : ""}
                 </span>
               </div>
-              {gainers.length ? <TrendBadge pct={c.trendPct} /> : <span className="tcg-badge">{c.number}</span>}
+              <Sparkline data={c.spark} w={64} h={20} />
+              {gainers.length ? <TrendBadge pct={c.trendPct} /> : <span className="tcg-badge">{RARITY_VI[c.rarity] ?? c.rarity}</span>}
             </div>
           ))}
+          {all.length === 0 ? <p className="tcg-empty">Chưa có mẫu thẻ nào có hoạt động chợ.</p> : null}
         </section>
         <section className="tcg-panel">
           <h2>{losers.length ? "Top giảm giá (7 ngày)" : "Bán chạy nhất"}</h2>
           {(losers.length ? losers : bestSellers).length ? (losers.length ? losers : bestSellers).map((c) => (
-            <div className="tcg-row" key={c.slug}>
-              <img src={`/cards/${c.slug}.png`} alt={c.name} loading="lazy" />
+            <div className="tcg-row" key={c.speciesId}>
+              {c.spriteUrl ? <img src={c.spriteUrl} alt={c.name} loading="lazy" /> : null}
               <div className="tcg-row-main">
                 <strong>{c.name}</strong>
                 <span>Đã bán {c.soldCount} lượt{c.avgSold ? ` · TB ${fmt(c.avgSold)} Coins` : ""}</span>
               </div>
+              <Sparkline data={c.spark} w={64} h={20} />
               {losers.length ? <TrendBadge pct={c.trendPct} /> : <span className="tcg-badge">{RARITY_VI[c.rarity] ?? c.rarity}</span>}
             </div>
           )) : <p className="tcg-empty">Chưa có giao dịch nào hoàn tất — lịch sử bán sẽ hiện ở đây.</p>}
         </section>
       </div>
-
-      <section className="player-panel">
-        <h2>Đăng bán thẻ của tôi</h2>
-        <form method="post" action="/api/me/market" className="player-inline-form">
-          <input type="hidden" name="action" value="sell" />
-          <input type="text" name="code" placeholder="Mã thẻ 8 ký tự" maxLength={8} required />
-          <input type="number" name="price" placeholder="Giá Coins (từ 10)" min={10} required />
-          <button type="submit" className="player-btn">Đăng bán (phí 5% khi bán được)</button>
-        </form>
-        {mine.length ? (
-          <div style={{ marginTop: 10 }}>
-            {mine.map((l) => (
-              <div className="player-line" key={l.id}>
-                <span><strong>{cardInfo(l.speciesId)?.name ?? l.speciesId}</strong> Lv.{l.level} +{l.enhance} · <code>{l.code}</code> · {fmt(l.price)} Coins</span>
-                <form method="post" action="/api/me/market">
-                  <input type="hidden" name="action" value="cancel" />
-                  <input type="hidden" name="listingId" value={l.id} />
-                  <button type="submit" className="player-btn sm ghost">Huỷ tin</button>
-                </form>
-              </div>
-            ))}
-          </div>
-        ) : <p className="player-sub">Bạn chưa có tin bán nào đang mở.</p>}
-      </section>
 
       <form className="tcg-filters" method="get">
         <label>
@@ -233,31 +229,34 @@ export default async function MeMarketPage({
           <thead>
             <tr>
               <th>Thẻ</th>
-              <th>Bộ</th>
               <th>Độ hiếm</th>
               <th className="num">Giá sàn</th>
+              <th className="num">Tham chiếu</th>
               <th className="num">Bán gần nhất</th>
               <th className="num">TB đã bán</th>
               <th className="num">7 ngày</th>
               <th className="num">Tin / Đã bán</th>
-              <th>Giá 30 ngày</th>
+              <th>Đường giá</th>
             </tr>
           </thead>
           <tbody>
             {pageRows.map((c) => (
-              <tr key={c.slug}>
+              <tr key={c.speciesId}>
                 <td>
                   <span className="mk-card-cell">
-                    <img src={`/cards/${c.slug}.png`} alt={c.name} loading="lazy" />
+                    {c.spriteUrl ? <img src={c.spriteUrl} alt={c.name} loading="lazy" /> : null}
                     <span>
                       <strong>{c.name}</strong>
-                      <small>N°{c.number} · HP {c.hp}</small>
+                      <small>{setName.get(c.set) ?? c.set} · HP {c.hp} · ATK {c.atk}</small>
                     </span>
                   </span>
                 </td>
-                <td>{setName.get(c.set) ?? c.set}</td>
                 <td>{RARITY_VI[c.rarity] ?? c.rarity}</td>
                 <td className="num">{c.floorPrice ? `${fmt(c.floorPrice)}` : <span className="mk-dim">{fmt(c.referenceValue)}*</span>}</td>
+                <td className="num">
+                  {fmt(c.referenceValue)}
+                  {c.marketPrice !== null ? <span className="mk-ref-tag">nội bộ</span> : null}
+                </td>
                 <td className="num">{c.lastSold ? fmt(c.lastSold) : "—"}</td>
                 <td className="num">{c.avgSold ? fmt(c.avgSold) : "—"}</td>
                 <td className="num"><TrendBadge pct={c.trendPct} /></td>
@@ -268,39 +267,13 @@ export default async function MeMarketPage({
           </tbody>
         </table>
       </div>
-      <p className="player-sub">* Chưa có tin bán — hiện giá tham khảo của hệ thống.</p>
-      {rows.length === 0 ? <p className="tcg-empty">Không có thẻ nào khớp bộ lọc.</p> : null}
+      <p className="player-sub">* Chưa có tin bán — hiện giá tham chiếu. Nhãn “nội bộ” = giá do giao dịch trên chợ quyết định.</p>
+      {rows.length === 0 ? <p className="tcg-empty">Không có mẫu thẻ nào khớp bộ lọc (bảng chỉ liệt kê mẫu đã có hoạt động chợ).</p> : null}
       <nav className="tcg-pager">
         {page > 1 ? <Link href={qs({ page: String(page - 1) })}>← Trang trước</Link> : <span />}
         <span>Trang {page}/{totalPages} · {rows.length} thẻ</span>
         {page < totalPages ? <Link href={qs({ page: String(page + 1) })}>Trang sau →</Link> : <span />}
       </nav>
-
-      <h2 className="player-h2">Tin đang bán — mua ngay</h2>
-      <div className="tcg-grid">
-        {listings.map((l) => {
-          const info = cardInfo(l.instance.speciesId);
-          const own = l.sellerId === session.userId;
-          return (
-            <article className="tcg-card" key={l.id}>
-              <img src={`/cards/${l.instance.speciesId}.png`} alt={info?.name ?? l.instance.speciesId} loading="lazy" />
-              <div className="tcg-card-meta">
-                <strong>{info?.name ?? l.instance.speciesId}</strong>
-                <span>{RARITY_VI[info?.rarity ?? "Common"]} · Lv.{l.instance.level} +{l.instance.enhance}</span>
-                <span className="tcg-price">{fmt(l.price)} Coins</span>
-                {own ? <span className="tcg-num">Tin của bạn</span> : (
-                  <form method="post" action="/api/me/market">
-                    <input type="hidden" name="action" value="buy" />
-                    <input type="hidden" name="listingId" value={l.id} />
-                    <button type="submit" className="player-btn sm">Mua</button>
-                  </form>
-                )}
-              </div>
-            </article>
-          );
-        })}
-      </div>
-      {listings.length === 0 ? <p className="player-notice">Chợ đang trống — hãy là người đăng bán đầu tiên.</p> : null}
     </div>
   );
 }

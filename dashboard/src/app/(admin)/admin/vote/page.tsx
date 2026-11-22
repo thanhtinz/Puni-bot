@@ -83,7 +83,7 @@ export default async function AdminVotePage({
         <p>
           Trên trang quản lý bot ở top.gg (mục Webhooks), điền Webhook URL là{" "}
           <strong>/api/votes/topgg</strong> của tên miền web này (ví dụ
-          https://discord.bntshop.com/api/votes/topgg) và đặt Webhook
+          https://&lt;ten-mien-cua-bot&gt;/api/votes/topgg) và đặt Webhook
           Authorization trùng với biến môi trường TOPGG_WEBHOOK_SECRET của web.
         </p>
         <p>

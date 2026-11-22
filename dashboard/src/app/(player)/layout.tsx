@@ -3,6 +3,11 @@ import Link from "next/link";
 import "../globals.css";
 import { currentSession } from "@/lib/current-session";
 import { Burger } from "@/components/burger";
+import {
+  IconActivity, IconBag, IconChart, IconCoins, IconEmbed, IconFrame, IconGrid,
+  IconClock, IconHome, IconList, IconLogout, IconSpark, IconTrophy, IconUsers, IconWallet,
+} from "@/components/icons";
+import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -10,35 +15,90 @@ export const metadata = {
   description: "Hồ sơ, sổ dex, kho thẻ, bộ bài, chợ và trao đổi của người chơi Puni.",
 };
 
+const fmtCoins = (n: number) => n.toLocaleString("en-US", { maximumFractionDigits: 4 });
+
+async function playerBalance(userId: string): Promise<number | null> {
+  try {
+    const res = await db().query<{ balance: string }>(
+      `SELECT balance::text AS balance FROM economy_accounts WHERE user_id = $1`,
+      [userId],
+    );
+    return res.rows[0] ? Number(res.rows[0].balance) : 0;
+  } catch {
+    return null;
+  }
+}
+
 /** Player area shell (spec 6.24) — fully separate from the server
- *  dashboard and the owner admin panel. */
+ *  dashboard and the owner admin panel. Header rebuilt 2026-11-22:
+ *  one sticky white bar carrying the burger button (the drawer holds
+ *  every tab plus Đăng xuất), the brand block, the live Coins balance
+ *  pill and the user chip with Discord avatar. */
 export default async function PlayerLayout({ children }: { children: ReactNode }) {
   const session = await currentSession();
   if (!session) redirect("/api/auth/login");
+  const balance = await playerBalance(session.userId);
+  const avatarUrl = session.avatar
+    ? `https://cdn.discordapp.com/avatars/${session.userId}/${session.avatar}.png?size=64`
+    : null;
   return (
     <html lang="vi">
       <body className="player-body">
         <div className="player-shell">
-          <header className="player-top">
-            <Link href="/" className="player-brand">
-              <img src="/api/assets/logo" alt="Puni" className="logo-img brand-logo" />
-              Puni · Khu người chơi
-            </Link>
-            <span className="player-who">
-              {session.username} · <a href="/api/auth/logout">Đăng xuất</a>
-            </span>
-          </header>
-          <nav className="player-tabs" aria-label="Khu người chơi">
-            <Burger tone="light">
-            <Link href="/me" className="player-tab">Hồ Sơ</Link>
-            <Link href="/me/membership" className="player-tab">Hội Viên</Link>
-            <Link href="/me/dex" className="player-tab">Sổ Dex</Link>
-            <Link href="/me/cards" className="player-tab">Kho Thẻ</Link>
-            <Link href="/me/decks" className="player-tab">Bộ Bài</Link>
-            <Link href="/me/market" className="player-tab">Chợ Thẻ</Link>
-            <Link href="/me/trades" className="player-tab">Trao Đổi</Link>
-            </Burger>
-          </nav>
+          <div className="player-head">
+            <header className="player-top">
+              <div className="player-head-left">
+                <Burger
+                  tone="light"
+                  footer={
+                    <a href="/api/auth/logout" className="player-tab drawer-logout">
+                      <IconLogout size={16} />Đăng xuất
+                    </a>
+                  }
+                >
+                  <Link href="/me" className="player-tab"><IconHome size={16} />Hồ Sơ</Link>
+                  <Link href="/me/membership" className="player-tab"><IconSpark size={16} />Hội Viên</Link>
+                  <Link href="/me/dex" className="player-tab"><IconGrid size={16} />Sổ Dex</Link>
+                  <Link href="/me/cards" className="player-tab"><IconEmbed size={16} />Kho Thẻ</Link>
+                  <Link href="/me/showcase" className="player-tab"><IconFrame size={16} />Trưng Bày</Link>
+                  <Link href="/me/gacha" className="player-tab"><IconBag size={16} />Mở Thẻ</Link>
+                  <Link href="/me/shop" className="player-tab"><IconCoins size={16} />Shop</Link>
+                  <Link href="/me/battle" className="player-tab"><IconActivity size={16} />Đấu Thẻ</Link>
+                  <Link href="/me/tournament" className="player-tab"><IconTrophy size={16} />Giải Đấu</Link>
+                  <Link href="/me/decks" className="player-tab"><IconList size={16} />Bộ Bài</Link>
+                  <Link href="/me/market" className="player-tab"><IconChart size={16} />Thị Trường</Link>
+                  <Link href="/me/cho" className="player-tab"><IconWallet size={16} />Chợ Thẻ</Link>
+                  <Link href="/me/auction" className="player-tab"><IconClock size={16} />Đấu Giá</Link>
+                  <Link href="/me/trades" className="player-tab"><IconUsers size={16} />Trao Đổi</Link>
+                </Burger>
+                <Link href="/" className="player-brand">
+                  <img src="/api/assets/logo" alt="Puni" className="logo-img brand-logo player-logo" />
+                  <span className="player-brand-text">
+                    <strong>Puni</strong>
+                    <small>KHU NGƯỜI CHƠI</small>
+                  </span>
+                </Link>
+              </div>
+              <div className="player-head-right">
+                {balance !== null ? (
+                  <span className="player-balance" title="Số dư Coins của bạn">
+                    <IconCoins size={16} />
+                    {fmtCoins(balance)}
+                  </span>
+                ) : null}
+                <span className="player-userchip">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="" className="player-avatar" />
+                  ) : (
+                    <span className="player-avatar player-avatar-fallback">
+                      {(session.username ?? "?").slice(0, 1).toUpperCase()}
+                    </span>
+                  )}
+                  <span className="player-uname">{session.username}</span>
+                </span>
+              </div>
+            </header>
+          </div>
           {children}
         </div>
       </body>
