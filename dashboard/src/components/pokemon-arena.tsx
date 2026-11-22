@@ -276,7 +276,12 @@ export default function PokemonArena({
           <div className="poke-hpbar">
             <span className={hpTone(f.hp, f.card.maxHp)} style={{ width: `${Math.max(0, (f.hp / f.card.maxHp) * 100)}%` }} />
           </div>
-          <small>{Math.max(0, f.hp)} / {f.card.maxHp} HP · Năng lượng: {f.energy}</small>
+          <small>{Math.max(0, f.hp)} / {f.card.maxHp} HP</small>
+          <span className="poke-energy" aria-label={`Năng lượng: ${f.energy}`}>
+            {Array.from({ length: Math.min(f.energy, 10) }, (_, i) => (
+              <span key={i} className="poke-energy-dot" />
+            ))}
+          </span>
         </div>
         </div>
       </div>
@@ -301,7 +306,7 @@ export default function PokemonArena({
   };
 
   const renderPrizes = (n: number) => (
-    <span className="poke-prizes" aria-label={`Đã lấy ${n} thẻ thưởng`}>
+    <span className="poke-prize-stack" aria-label={`Đã lấy ${n} thẻ thưởng`}>
       {[0, 1, 2].map((i) => (
         <span key={i} className={`poke-prize${i < n ? " won" : ""}`} />
       ))}
@@ -332,29 +337,26 @@ export default function PokemonArena({
         </>
       ) : (
         <>
-          <div className={`poke-field${shakeKey ? " is-shaking" : ""}`} onAnimationEnd={() => setShakeKey(0)}>
-            <div className="poke-side is-b">
-              <div className="poke-side-head">
-                <span>Đối thủ</span>
-                {renderPrizes(prizes[1])}
-              </div>
-              {renderBench("b")}
-              {renderActive("b")}
+          <div className={`poke-stage${shakeKey ? " is-shaking" : ""}`} onAnimationEnd={() => setShakeKey(0)}>
+            <div className="poke-half foe">
+              <div className="poke-hud foe"><span>Đối thủ</span></div>
+              {renderPrizes(prizes[1])}
+              <div className="poke-bench-strip">{renderBench("b")}</div>
+              <div className="poke-spot">{renderActive("b")}</div>
             </div>
-            <div className="poke-log" aria-live="polite">
+            <div className="poke-vortex" aria-hidden />
+            <div className="poke-log pill" aria-live="polite">
               {finished && outcome ? (
                 <strong>{outcome.win ? "Thắng trận!" : "Thua trận"}</strong>
               ) : (
                 log || "Trận đấu bắt đầu!"
               )}
             </div>
-            <div className="poke-side is-a">
-              {renderActive("a")}
-              {renderBench("a")}
-              <div className="poke-side-head">
-                <span>Đội của bạn</span>
-                {renderPrizes(prizes[0])}
-              </div>
+            <div className="poke-half me">
+              <div className="poke-spot">{renderActive("a")}</div>
+              <div className="poke-bench-strip">{renderBench("a")}</div>
+              {renderPrizes(prizes[0])}
+              <div className="poke-hud me"><span>Đội của bạn</span></div>
             </div>
           </div>
           {!finished ? (

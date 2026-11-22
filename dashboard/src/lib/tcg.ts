@@ -101,6 +101,9 @@ export interface MarketRow {
   /** Price line: internal price history points (last 30), falling back
    * to daily average sold prices. Oldest first. */
   spark: number[];
+  /** Change of the price line over its window (last vs first point). */
+  changePct: number | null;
+  changeDelta: number | null;
 }
 
 interface MarketStat {
@@ -213,10 +216,93 @@ export async function marketOverview(): Promise<MarketRow[]> {
         soldCount: s.soldCount,
         trendPct: s.trendPct,
         spark: s.spark,
+        changePct:
+          s.spark.length >= 2 && s.spark[0] > 0
+            ? Math.round(((s.spark[s.spark.length - 1] - s.spark[0]) / s.spark[0]) * 1000) / 10
+            : null,
+        changeDelta:
+          s.spark.length >= 2 ? Math.round((s.spark[s.spark.length - 1] - s.spark[0]) * 10000) / 10000 : null,
       };
     });
   } catch {
     return [];
+  }
+}
+
+export interface SpeciesMarketDetail {
+  marketPrice: number | null;
+  floorPrice: number | null;
+  lastSold: number | null;
+  avgSold: number | null;
+  soldCount: number;
+  /** % change of the 7-day average sold price vs the previous 7 days. */
+  trendPct: number | null;
+  /** Internal price-history points (90 days, oldest first). */
+  history: { t: string; price: number }[];
+  /** Daily average sold prices (90 days) — the fallback price line. */
+  dailySales: { t: string; price: number }[];
+}
+
+/**
+ * Per-species market detail for the card page's MARKET block (the
+ * optcg.app-style panel): current internal price, floor, sale stats
+ * and the real price-history line from tcg_price_history.
+ */
+export async function speciesMarketDetail(speciesId: string): Promise<SpeciesMarketDetail> {
+  const empty: SpeciesMarketDetail = {
+    marketPrice: null, floorPrice: null, lastSold: null, avgSold: null,
+    soldCount: 0, trendPct: null, history: [], dailySales: [],
+  };
+  try {
+    const [sp, hist, daily, stat] = await Promise.all([
+      db().query(
+        `SELECT market_price_coins::text AS mp FROM game_species WHERE id = $1`,
+        [speciesId],
+      ),
+      db().query(
+        `SELECT price::text AS price, created_at FROM tcg_price_history
+         WHERE species_id = $1 AND created_at > now() - interval '90 days'
+         ORDER BY created_at`,
+        [speciesId],
+      ),
+      db().query(
+        `SELECT date_trunc('day', l.sold_at) AS day, AVG(l.price)::text AS avg_price
+         FROM tcg_listings l JOIN tcg_instances i ON i.code = l.instance_code
+         WHERE i.species_id = $1 AND l.status = 'sold' AND l.sold_at > now() - interval '90 days'
+         GROUP BY day ORDER BY day`,
+        [speciesId],
+      ),
+      db().query(
+        `SELECT MIN(l.price) FILTER (WHERE l.status = 'open')::text AS floor,
+                COUNT(*) FILTER (WHERE l.status = 'sold')::int AS sold_n,
+                AVG(l.price) FILTER (WHERE l.status = 'sold')::text AS avg_sold,
+                AVG(l.price) FILTER (WHERE l.status = 'sold' AND l.sold_at > now() - interval '7 days')::text AS avg_7d,
+                AVG(l.price) FILTER (WHERE l.status = 'sold' AND l.sold_at <= now() - interval '7 days'
+                                      AND l.sold_at > now() - interval '14 days')::text AS avg_prev7d,
+                (SELECT l2.price::text FROM tcg_listings l2
+                   JOIN tcg_instances i2 ON i2.code = l2.instance_code
+                  WHERE i2.species_id = $1 AND l2.status = 'sold'
+                  ORDER BY l2.sold_at DESC LIMIT 1) AS last_sold
+         FROM tcg_listings l JOIN tcg_instances i ON i.code = l.instance_code
+         WHERE i.species_id = $1`,
+        [speciesId],
+      ),
+    ]);
+    const s = stat.rows[0] ?? {};
+    const avg7 = s.avg_7d ? Number.parseFloat(s.avg_7d) : null;
+    const prev7 = s.avg_prev7d ? Number.parseFloat(s.avg_prev7d) : null;
+    return {
+      marketPrice: sp.rows[0]?.mp != null ? Number.parseFloat(sp.rows[0].mp) : null,
+      floorPrice: s.floor ? Number.parseInt(s.floor, 10) : null,
+      lastSold: s.last_sold ? Number.parseInt(s.last_sold, 10) : null,
+      avgSold: s.avg_sold ? Math.round(Number.parseFloat(s.avg_sold)) : null,
+      soldCount: s.sold_n ?? 0,
+      trendPct: avg7 && prev7 ? Math.round(((avg7 - prev7) / prev7) * 1000) / 10 : null,
+      history: hist.rows.map((r) => ({ t: new Date(r.created_at).toISOString(), price: Number.parseFloat(r.price) })),
+      dailySales: daily.rows.map((r) => ({ t: new Date(r.day).toISOString(), price: Math.round(Number.parseFloat(r.avg_price)) })),
+    };
+  } catch {
+    return empty;
   }
 }
 

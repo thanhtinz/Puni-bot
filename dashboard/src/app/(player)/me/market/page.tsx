@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { currentSession } from "@/lib/current-session";
 import { marketIndexSeries, marketOverview, marketSummary, RARITY_VI } from "@/lib/tcg";
+import CardArt from "@/components/card-art";
 import { listGameSets } from "@/lib/db";
 import { IconActivity, IconBag, IconChart, IconCoins, IconGrid, IconList, IconSpark } from "@/components/icons";
 
@@ -14,6 +15,18 @@ function TrendBadge({ pct }: { pct: number | null }) {
   return (
     <span className={up ? "trend up" : "trend down"}>
       {up ? "▲" : "▼"} {Math.abs(pct).toLocaleString("en-US", { maximumFractionDigits: 4 })}%
+    </span>
+  );
+}
+
+/** Price + change footer for a grid card, optcg.app style:
+ * "+120 (+18%)" in green when the price line rose, red when it fell. */
+function CardChange({ delta, pct }: { delta: number | null; pct: number | null }) {
+  if (pct === null) return <span className="mk-dim">Chưa có đường giá</span>;
+  const up = pct >= 0;
+  return (
+    <span className={up ? "trend up" : "trend down"}>
+      {up ? "▲" : "▼"} {delta !== null ? `${delta > 0 ? "+" : ""}${fmt(delta)} (${Math.abs(pct)}%)` : `${Math.abs(pct)}%`}
     </span>
   );
 }
@@ -224,50 +237,34 @@ export default async function MeMarketPage({
         <button type="submit" className="tcg-btn">Lọc</button>
       </form>
 
-      <div className="mk-table-wrap">
-        <table className="mk-table">
-          <thead>
-            <tr>
-              <th>Thẻ</th>
-              <th>Độ hiếm</th>
-              <th className="num">Giá sàn</th>
-              <th className="num">Tham chiếu</th>
-              <th className="num">Bán gần nhất</th>
-              <th className="num">TB đã bán</th>
-              <th className="num">7 ngày</th>
-              <th className="num">Tin / Đã bán</th>
-              <th>Đường giá</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pageRows.map((c) => (
-              <tr key={c.speciesId}>
-                <td>
-                  <span className="mk-card-cell">
-                    {c.spriteUrl ? <img src={c.spriteUrl} alt={c.name} loading="lazy" /> : null}
-                    <span>
-                      <strong>{c.name}</strong>
-                      <small>{setName.get(c.set) ?? c.set} · HP {c.hp} · ATK {c.atk}</small>
-                    </span>
+      <div className="mk-grid">
+        {pageRows.map((c) => {
+          const price = c.floorPrice ?? c.marketPrice ?? c.referenceValue;
+          const priceLabel = c.floorPrice ? "Giá sàn" : c.marketPrice !== null ? "Giá nội bộ" : "Tham khảo";
+          return (
+            <Link key={c.speciesId} href={`/me/shop/${c.speciesId}`} className="mk-card">
+              <div className="mk-card-art">
+                <CardArt src={c.spriteUrl} alt={c.name} rarity={c.rarity} />
+                <span className="mk-card-rarity">{RARITY_VI[c.rarity] ?? c.rarity}</span>
+              </div>
+              <div className="mk-card-body">
+                <strong className="mk-card-name">{c.name}</strong>
+                <small className="mk-card-sub">
+                  {setName.get(c.set) ?? c.set} · {c.listings} tin · đã bán {c.soldCount}
+                  {c.lastSold ? ` · gần nhất ${fmt(c.lastSold)}` : ""}
+                </small>
+                <div className="mk-card-price">
+                  <span>
+                    <strong>{fmt(price)}</strong> <small>Coins · {priceLabel}</small>
                   </span>
-                </td>
-                <td>{RARITY_VI[c.rarity] ?? c.rarity}</td>
-                <td className="num">{c.floorPrice ? `${fmt(c.floorPrice)}` : <span className="mk-dim">{fmt(c.referenceValue)}*</span>}</td>
-                <td className="num">
-                  {fmt(c.referenceValue)}
-                  {c.marketPrice !== null ? <span className="mk-ref-tag">nội bộ</span> : null}
-                </td>
-                <td className="num">{c.lastSold ? fmt(c.lastSold) : "—"}</td>
-                <td className="num">{c.avgSold ? fmt(c.avgSold) : "—"}</td>
-                <td className="num"><TrendBadge pct={c.trendPct} /></td>
-                <td className="num">{c.listings} / {c.soldCount}</td>
-                <td><Sparkline data={c.spark} /></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  <CardChange delta={c.changeDelta} pct={c.changePct} />
+                </div>
+                <Sparkline data={c.spark} w={220} h={30} />
+              </div>
+            </Link>
+          );
+        })}
       </div>
-      <p className="player-sub">* Chưa có tin bán — hiện giá tham chiếu. Nhãn “nội bộ” = giá do giao dịch trên chợ quyết định.</p>
       {rows.length === 0 ? <p className="tcg-empty">Không có mẫu thẻ nào khớp bộ lọc (bảng chỉ liệt kê mẫu đã có hoạt động chợ).</p> : null}
       <nav className="tcg-pager">
         {page > 1 ? <Link href={qs({ page: String(page - 1) })}>← Trang trước</Link> : <span />}

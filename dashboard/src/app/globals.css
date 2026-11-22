@@ -2427,3 +2427,89 @@ a.player-btn { display: inline-flex; align-items: center; text-decoration: none;
   .op-stage-slot { width: 60px; }
   .poke-dmg-counter { min-width: 32px; height: 32px; font-size: 0.8rem; }
 }
+
+/* Market grid + detail MARKET block (optcg.app style, 6.39f) */
+.mk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin: 14px 0; }
+.mk-card { display: block; background: #ffffff; border: 1px solid #dbe4f3; border-radius: 14px; overflow: hidden; text-decoration: none; color: #10254d; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+.mk-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(16, 37, 77, 0.18); }
+.mk-card-art { position: relative; aspect-ratio: 5 / 6; background: rgba(2, 8, 23, 0.35); overflow: hidden; }
+.mk-card-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mk-card-rarity { position: absolute; top: 8px; left: 8px; background: rgba(10, 28, 56, 0.85); color: #ffd83d; font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 999px; }
+.mk-card-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 5px; }
+.mk-card-name { font-size: 0.95rem; line-height: 1.25; }
+.mk-card-sub { color: #5a6b8c; font-size: 0.75rem; }
+.mk-card-price { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.mk-card-price strong { font-size: 1.05rem; }
+.mk-card-price small { opacity: 0.7; font-size: 0.7rem; }
+.mk-detail-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 10px 0; }
+.mk-detail-stats > div { background: rgba(167, 190, 230, 0.10); border: 1px solid rgba(167, 190, 230, 0.22); border-radius: 10px; padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; }
+.mk-detail-stats span { font-size: 0.72rem; opacity: 0.75; }
+.mk-detail-stats strong { font-size: 0.95rem; }
+.mk-range { display: flex; gap: 6px; margin: 8px 0; }
+.mk-range a { padding: 5px 12px; border-radius: 999px; border: 1px solid rgba(167, 190, 230, 0.35); text-decoration: none; font-size: 0.8rem; color: inherit; }
+.mk-range a.on { background: #ffd83d; color: #10254d; border-color: #ffd83d; font-weight: 700; }
+
+/* Market movers panels must shrink on phones: grid children default
+   to min-content width, which long card names blow past 390px. */
+.tcg-top2 > *, .tcg-panel, .tcg-row, .tcg-row-main { min-width: 0; }
+.tcg-row-main strong { overflow-wrap: anywhere; }
+
+/* Pokémon stage — full game field, TCG Live style (6.39g): the
+   field IS the screen. Bench strips lie along both edges, the two
+   Actives face off across a central vortex, Prize stacks stand at
+   the right edge of each half, HUD chips sit in the corners and the
+   log is a pill on the centre line. */
+.poke-stage { position: relative; display: flex; flex-direction: column; border-radius: 18px; overflow: hidden; min-height: 700px; border: 1px solid #263b63; background-color: #1c2b47; background-image: linear-gradient(rgba(6, 12, 28, 0.34), rgba(6, 12, 28, 0.34)), url("/poke-arena-bg-a.jpg"), url("/poke-arena-bg-b.jpg"); background-size: 100% 100%, 50.5% 100%, 50.5% 100%; background-position: center, left top, right top; background-repeat: no-repeat; }
+.poke-half { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; align-items: center; padding: 14px 52px 10px 14px; }
+.poke-half.me { padding: 10px 52px 14px 14px; }
+.poke-bench-strip { width: 100%; display: flex; justify-content: center; }
+.poke-half.foe .poke-bench-strip { transform: perspective(700px) rotateX(16deg); transform-origin: top center; }
+.poke-half.me .poke-bench-strip { margin-top: auto; transform: perspective(700px) rotateX(-16deg); transform-origin: bottom center; }
+.poke-stage .poke-bench { gap: 10px; }
+.poke-stage .poke-bench .poke-bench-card { width: 70px; background: rgba(8, 20, 38, 0.55); border: 1px solid rgba(148, 197, 255, 0.35); border-radius: 9px; padding: 4px; }
+.poke-stage .poke-bench-card small { color: #dbeafe; }
+.poke-spot { width: 100%; display: flex; justify-content: center; }
+.poke-half.foe .poke-spot { margin-top: auto; }
+.poke-stage .poke-active-stack { align-items: center; }
+.poke-stage .poke-active { flex-direction: column; width: auto; max-width: none; background: transparent; border: none; padding: 0; gap: 8px; margin: 0; }
+.poke-stage .poke-active .poke-active-art { width: 148px; box-shadow: 0 14px 28px rgba(0, 0, 0, 0.5); border: 2px solid rgba(255, 255, 255, 0.35); }
+.poke-stage .poke-active-info { background: rgba(8, 20, 38, 0.82); border: 1px solid rgba(148, 197, 255, 0.35); border-radius: 12px; padding: 8px 14px; width: 208px; align-items: center; text-align: center; backdrop-filter: blur(3px); }
+.poke-stage .poke-active-info strong { color: #fff; }
+.poke-stage .poke-active-info small { color: #c7d7f5; }
+.poke-stage .poke-type, .poke-stage .poke-status { align-self: center; }
+.poke-stage .poke-hpbar { width: 100%; background: rgba(255, 255, 255, 0.18); }
+.poke-energy { display: flex; gap: 3px; justify-content: center; min-height: 10px; }
+.poke-energy-dot { width: 9px; height: 9px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fde68a, #f59e0b 70%); border: 1px solid rgba(0, 0, 0, 0.3); }
+.poke-vortex { position: absolute; left: 50%; top: 50%; width: 360px; height: 360px; margin: -180px 0 0 -180px; border-radius: 50%; background: repeating-conic-gradient(from 0deg, rgba(168, 85, 247, 0.30) 0deg 14deg, rgba(88, 28, 135, 0.30) 14deg 28deg); -webkit-mask-image: radial-gradient(circle, #000 30%, transparent 68%); mask-image: radial-gradient(circle, #000 30%, transparent 68%); animation: vortexSpin 24s linear infinite; z-index: 0; pointer-events: none; }
+@keyframes vortexSpin { to { transform: rotate(360deg); } }
+.poke-log.pill { position: relative; z-index: 2; align-self: center; margin: -13px auto; background: rgba(8, 20, 38, 0.88); color: #eaf2ff; border: 1px solid rgba(148, 197, 255, 0.4); border-radius: 999px; padding: 7px 20px; font-size: 0.9rem; max-width: 92%; text-align: center; }
+.poke-hud { position: absolute; z-index: 2; background: rgba(8, 20, 38, 0.82); color: #fff; font-weight: 700; font-size: 0.85rem; border: 1px solid rgba(148, 197, 255, 0.4); border-radius: 999px; padding: 6px 14px; }
+.poke-hud.foe { top: 12px; left: 12px; }
+.poke-hud.me { bottom: 12px; left: 12px; }
+.poke-prize-stack { position: absolute; z-index: 2; right: 14px; display: flex; flex-direction: column; align-items: center; }
+.poke-half.foe .poke-prize-stack { top: 12px; }
+.poke-half.me .poke-prize-stack { bottom: 12px; }
+.poke-prize-stack .poke-prize { width: 30px; height: 42px; border-radius: 5px; margin-top: -16px; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4); }
+.poke-prize-stack .poke-prize:first-child { margin-top: 0; }
+@media (max-width: 620px) {
+  .poke-stage { min-height: 600px; }
+  .poke-half { padding-right: 40px; }
+  .poke-stage .poke-active .poke-active-art { width: 112px; }
+  .poke-stage .poke-active-info { width: 176px; padding: 6px 10px; }
+  .poke-stage .poke-bench .poke-bench-card { width: 52px; }
+  .poke-vortex { width: 250px; height: 250px; margin: -125px 0 0 -125px; }
+  .poke-prize-stack .poke-prize { width: 24px; height: 34px; margin-top: -12px; }
+}
+
+/* Full-field stages for Yu-Gi-Oh + One Piece (6.39g, same
+   treatment as the Pokémon stage): the mats/panels dissolve into
+   the field background — zones and playmat columns print directly
+   on the duel field / ship deck, HUD chips float on top. */
+.ygo-field { min-height: 700px; justify-content: space-between; }
+.ygo-mat.foe, .ygo-mat.me { background: transparent; border-color: transparent; }
+.op-field { min-height: 700px; justify-content: space-between; }
+.op-field .op-side { background: rgba(8, 20, 38, 0.38); border: 1px solid rgba(255, 255, 255, 0.14); backdrop-filter: blur(2px); }
+.op-field .op-side-label, .op-field .op-life-stack small, .op-field .op-don-area small { color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65); }
+@media (max-width: 620px) {
+  .ygo-field, .op-field { min-height: 600px; }
+}
