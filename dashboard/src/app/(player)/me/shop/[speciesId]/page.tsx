@@ -7,6 +7,7 @@ import TiltCard from "@/components/tilt-card";
 import SlabCard, { gradeForRarity } from "@/components/slab-card";
 import { shopSpeciesDetail } from "@/lib/shop";
 import { getSellRatePercent } from "@/lib/player";
+import { rulingsForSpecies } from "@/lib/rulings";
 
 export const dynamic = "force-dynamic";
 const fmt = (n: number) => n.toLocaleString("en-US", { maximumFractionDigits: 4 });
@@ -44,6 +45,7 @@ export default async function ShopSpeciesPage({
 
   const grade = gradeForRarity(detail.rarity);
   const sellBack = Math.round(detail.price * sellRate) / 100;
+  const rulings = await rulingsForSpecies(detail.speciesId, detail.setId).catch(() => []);
 
   return (
     <div className="player-body-inner">
@@ -105,6 +107,24 @@ export default async function ShopSpeciesPage({
               </button>
             </form>
           </div>
+
+          {rulings.length ? (
+            <section className="gacha-block">
+              <h2>Rulings — phán quyết chính thức</h2>
+              <ul className="ruling-list">
+                {rulings.map((r) => (
+                  <li key={r.id}>
+                    <strong>{r.title}</strong>
+                    <span className="ruling-scope">
+                      {r.scope === "species" ? "Ruling của lá này" : r.scope === "set" ? "Ruling của bộ" : "Ruling của game"}
+                    </span>
+                    <p>{r.body}</p>
+                    {r.source ? <p className="player-sub">Nguồn: {r.source}</p> : null}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
 
           <section className="gacha-block">
             <h2>Người chơi đang bán</h2>

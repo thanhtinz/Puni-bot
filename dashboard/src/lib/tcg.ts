@@ -456,10 +456,13 @@ export async function userWallet(userId: string): Promise<{ shards: number; pack
   }
 }
 
-export async function userDecks(userId: string): Promise<{ id: number; name: string; isActive: boolean; codes: string[] }[]> {
+export async function userDecks(userId: string): Promise<{
+  id: number; name: string; isActive: boolean; codes: string[];
+  isPublic: boolean; description: string; importCount: number;
+}[]> {
   try {
     const res = await db().query(
-      `SELECT d.id::text AS id, d.name, d.is_active,
+      `SELECT d.id::text AS id, d.name, d.is_active, d.is_public, d.description, d.import_count,
               COALESCE(array_agg(dc.instance_code) FILTER (WHERE dc.instance_code IS NOT NULL), '{}') AS codes
        FROM tcg_decks d LEFT JOIN tcg_deck_cards dc ON dc.deck_id = d.id
        WHERE d.user_id = $1 GROUP BY d.id ORDER BY d.id`,
@@ -467,6 +470,7 @@ export async function userDecks(userId: string): Promise<{ id: number; name: str
     );
     return res.rows.map((r) => ({
       id: Number.parseInt(r.id, 10), name: r.name, isActive: r.is_active, codes: r.codes ?? [],
+      isPublic: r.is_public ?? false, description: r.description ?? "", importCount: r.import_count ?? 0,
     }));
   } catch {
     return [];

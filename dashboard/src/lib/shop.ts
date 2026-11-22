@@ -182,6 +182,9 @@ export interface ShopGame {
 
 /** The 19 card families, keyed by their species-id prefix. */
 export const SHOP_GAMES: ShopGame[] = [
+  { prefix: "opjp", like: "opjp-%", name: "One Piece JP" },
+  { prefix: "pkmjp", like: "pkmjp-%", name: "Pokémon JP" },
+  { prefix: "gunjp", like: "gunjp-%", name: "Gundam JP" },
   { prefix: "op", like: "op%", name: "One Piece" },
   { prefix: "pkm", like: "pkm-%", name: "Pokémon" },
   { prefix: "mtg", like: "mtg-%", name: "Magic: The Gathering" },

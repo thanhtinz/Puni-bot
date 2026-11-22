@@ -231,7 +231,10 @@ async function loadPool(client: TxClient, perks: WebPerks | null, bannerPool: st
   }));
   if (!perks?.exclusivePets) pool = pool.filter((s) => !s.memberExclusive);
   if (bannerPool.length) pool = pool.filter((s) => bannerPool.includes(s.id));
-  else if (poolPrefix) pool = pool.filter((s) => s.id.startsWith(poolPrefix));
+  // Family boundary (spec 6.37): a JP edition prefix (pkmjp-, opjp-,
+  // gunjp-) is its own family and must not leak into the EN banner pool
+  // that shares its leading letters.
+  else if (poolPrefix) pool = pool.filter((s) => s.id.startsWith(poolPrefix) && !s.id.startsWith(`${poolPrefix}jp-`));
   return pool;
 }
 

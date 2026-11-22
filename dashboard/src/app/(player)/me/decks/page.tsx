@@ -63,6 +63,27 @@ export default async function MeDecksPage({
                 <button type="submit" className="player-btn sm">Thêm thẻ</button>
               </form>
             </div>
+            <div className="player-row">
+              {deck.isPublic ? (
+                <>
+                  <p className="player-ok-text">Đang công khai ở mục Tìm Bộ Bài · {deck.importCount} lượt dùng</p>
+                  <form method="post" action="/api/me/decks">
+                    <input type="hidden" name="action" value="unpublish" />
+                    <input type="hidden" name="deckId" value={deck.id} />
+                    <button type="submit" className="player-btn sm ghost">Huỷ công khai</button>
+                  </form>
+                </>
+              ) : errors.length === 0 ? (
+                <form method="post" action="/api/me/decks" className="player-inline-form">
+                  <input type="hidden" name="action" value="publish" />
+                  <input type="hidden" name="deckId" value={deck.id} />
+                  <input type="text" name="description" placeholder="Mô tả ngắn cho bộ bài (tuỳ chọn)" maxLength={200} />
+                  <button type="submit" className="player-btn sm">Công khai bộ này</button>
+                </form>
+              ) : (
+                <p className="player-sub">Bộ hợp lệ (đủ 30 thẻ) mới công khai cho người khác dùng được.</p>
+              )}
+            </div>
           </section>
         );
       })}

@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import "../../globals.css";
 import { currentSession } from "@/lib/current-session";
-import { IconActivity, IconBag, IconChart, IconCoins, IconGrid, IconHome, IconPaw, IconGlobe, IconSpark, IconUsers } from "@/components/icons";
+import { IconActivity, IconBag, IconChart, IconCoins, IconGrid, IconHome, IconPaw, IconGlobe, IconShield, IconSpark, IconUsers } from "@/components/icons";
 import { isOwner } from "@/lib/session";
 import { Burger } from "@/components/burger";
 
@@ -81,6 +81,9 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
               </Link>
               <Link href="/admin/pets" className="item">
                 <IconPaw /> Loài thẻ
+              </Link>
+              <Link href="/admin/rulings" className="item">
+                <IconShield /> Rulings
               </Link>
               <Link href="/admin/website" className="item">
                 <IconGlobe /> Trang web

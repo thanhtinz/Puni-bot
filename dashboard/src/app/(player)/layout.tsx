@@ -5,7 +5,7 @@ import { currentSession } from "@/lib/current-session";
 import { Burger } from "@/components/burger";
 import {
   IconActivity, IconBag, IconChart, IconCoins, IconEmbed, IconFrame, IconGrid,
-  IconClock, IconHome, IconList, IconLogout, IconSpark, IconTrophy, IconUsers, IconWallet,
+  IconClock, IconHome, IconList, IconLogout, IconSearch, IconSpark, IconTrophy, IconUsers, IconWallet,
 } from "@/components/icons";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";
@@ -66,6 +66,7 @@ export default async function PlayerLayout({ children }: { children: ReactNode }
                   <Link href="/me/battle" className="player-tab"><IconActivity size={16} />Đấu Thẻ</Link>
                   <Link href="/me/tournament" className="player-tab"><IconTrophy size={16} />Giải Đấu</Link>
                   <Link href="/me/decks" className="player-tab"><IconList size={16} />Bộ Bài</Link>
+                  <Link href="/me/deck-search" className="player-tab"><IconSearch size={16} />Tìm Bộ Bài</Link>
                   <Link href="/me/market" className="player-tab"><IconChart size={16} />Thị Trường</Link>
                   <Link href="/me/cho" className="player-tab"><IconWallet size={16} />Chợ Thẻ</Link>
                   <Link href="/me/auction" className="player-tab"><IconClock size={16} />Đấu Giá</Link>

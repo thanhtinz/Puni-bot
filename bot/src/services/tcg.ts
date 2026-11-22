@@ -369,12 +369,15 @@ export interface TcgBanner {
   enabled: boolean;
 }
 
-/** Pool membership: explicit list wins, then game prefix, else full catalog. */
+/** Pool membership: explicit list wins, then game prefix, else full catalog.
+ * Family boundary (spec 6.37): JP edition prefixes (pkmjp-, opjp-, gunjp-)
+ * are their own families and never leak into the EN banner pool that
+ * shares their leading letters. */
 export const inBannerPool = (b: TcgBanner, speciesId: string): boolean =>
   b.poolSpecies.length
     ? b.poolSpecies.includes(speciesId)
     : b.poolPrefix
-      ? speciesId.startsWith(b.poolPrefix)
+      ? speciesId.startsWith(b.poolPrefix) && !speciesId.startsWith(`${b.poolPrefix}jp-`)
       : true;
 
 export const bannerActive = (b: TcgBanner, now: Date): boolean =>
