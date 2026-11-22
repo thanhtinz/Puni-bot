@@ -963,6 +963,20 @@ table.plain tr:last-child td { border-bottom: none; }
 .drawer-body nav a { padding: 11px 12px; border-radius: var(--r-sm); color: inherit; font-weight: 600; }
 .drawer-body nav a:hover { background: rgba(127, 156, 209, 0.16); text-decoration: none; }
 .drawer-body .player-tab { display: block; padding: 11px 12px; }
+
+/* Collapsible nav group in the drawer (TCG dropdown, 2026-11-22) */
+.nav-group-head {
+  display: flex !important; align-items: center; gap: 7px;
+  width: 100%; background: none; border: 0; cursor: pointer;
+  font-family: inherit; text-align: left;
+}
+.nav-group-chev { margin-left: auto; flex: none; opacity: .65; transition: transform .18s ease; }
+.nav-group-chev.open { transform: rotate(90deg); }
+.nav-group-items {
+  display: flex; flex-direction: column; gap: 2px;
+  margin: 2px 0 4px 14px; padding-left: 10px;
+  border-left: 2px solid #e3ebff;
+}
 .drawer-foot { flex: none; padding: 12px; border-top: 1px solid rgba(127, 156, 209, 0.25); }
 .drawer.light .drawer-foot { border-top-color: #e4eaf6; }
 .drawer .who { margin: 0; padding: 0; border: 0; }

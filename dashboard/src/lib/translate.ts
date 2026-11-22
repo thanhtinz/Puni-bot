@@ -1,24 +1,46 @@
 /**
- * DeepL translation for synced rulings (spec 6.37 addendum).
+ * Machine translation for synced rulings (spec 6.37 addendum).
  *
- * Contract (DeepL API reference, read 2026-11-22): POST /v2/translate
- * with header `Authorization: DeepL-Auth-Key <key>` and a JSON body
- * { text: string[], source_lang: "EN", target_lang: "VI" }; the
- * response carries `translations` in the same order as the request.
- * Free-plan keys end in ":fx" and use api-free.deepl.com; all other
- * keys use api.deepl.com. One request may carry at most 128 KiB, so
- * callers batch. DEEPL_API_BASE overrides the host (tests).
+ * Two engines, chosen by environment, best first:
  *
- * Everything here fails open: no key, a network error, or a bad
- * response simply means "show the English original".
+ * 1. DeepL (DEEPL_API_KEY set). Contract from the DeepL API reference
+ *    (read 2026-11-22): POST /v2/translate with header
+ *    `Authorization: DeepL-Auth-Key <key>` and JSON { text: string[],
+ *    source_lang: "EN", target_lang: "VI" }; `translations` come back
+ *    in request order. Free-plan keys end in ":fx" and use
+ *    api-free.deepl.com. One request may carry at most 128 KiB.
+ *    Note: even the DeepL free plan demands a payment card on file.
+ *
+ * 2. LibreTranslate-compatible sidecar (LIBRETRANSLATE_URL set, e.g.
+ *    http://127.0.0.1:5000): POST /translate with JSON { q: string[],
+ *    source: "en", target: "vi", format: "text" } returns
+ *    { translatedText: string[] }. The repo ships a self-hosted
+ *    Argos Translate sidecar (tools/translate-sidecar) speaking this
+ *    shape — fully free, no card, no quota; quality is below DeepL.
+ *
+ * DEEPL_API_BASE overrides the DeepL host (tests). Everything fails
+ * open: no engine, a network error, or a bad response simply means
+ * "show the English original".
  */
 
 const MAX_BATCH_TEXTS = 50;
 const MAX_BATCH_CHARS = 90_000; // safely under DeepL's 128 KiB request cap
 const TIMEOUT_MS = 6_000;
+const LIBRE_TIMEOUT_MS = 60_000; // local CPU translation is slower
 
 export function translationConfigured(): boolean {
-  return Boolean(process.env.DEEPL_API_KEY);
+  return Boolean(process.env.DEEPL_API_KEY || process.env.LIBRETRANSLATE_URL);
+}
+
+/**
+ * How many distinct texts one page view may translate. DeepL is a
+ * fast hosted API, so a whole card (up to 100) is fine. The local
+ * sidecar translates on CPU at seconds per text, so a view takes at
+ * most 10 — rulings arrive ordered species-first, so the card's own
+ * rulings translate first and the rest follow on later views.
+ */
+export function translationViewCap(): number {
+  return process.env.DEEPL_API_KEY ? 100 : 10;
 }
 
 function deeplUrl(): string | null {
@@ -30,11 +52,10 @@ function deeplUrl(): string | null {
   return `${base}/v2/translate`;
 }
 
-/** Translate a list of English texts to Vietnamese, or return null. */
-export async function translateBatch(texts: string[]): Promise<string[] | null> {
+async function translateBatchDeepL(texts: string[]): Promise<string[] | null> {
   const key = process.env.DEEPL_API_KEY;
   const url = deeplUrl();
-  if (!key || !url || texts.length === 0) return null;
+  if (!key || !url) return null;
   try {
     const res = await fetch(url, {
       method: "POST",
@@ -51,15 +72,40 @@ export async function translateBatch(texts: string[]): Promise<string[] | null> 
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
     if (!res.ok) return null;
-    const data = (await res.json()) as {
-      translations?: { text?: string }[];
-    };
+    const data = (await res.json()) as { translations?: { text?: string }[] };
     const out = (data.translations ?? []).map((t) => t.text ?? "");
     if (out.length !== texts.length || out.some((t) => !t)) return null;
     return out;
   } catch {
     return null;
   }
+}
+
+async function translateBatchLibre(texts: string[]): Promise<string[] | null> {
+  const base = process.env.LIBRETRANSLATE_URL;
+  if (!base) return null;
+  try {
+    const res = await fetch(`${base.replace(/\/$/, "")}/translate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ q: texts, source: "en", target: "vi", format: "text" }),
+      signal: AbortSignal.timeout(LIBRE_TIMEOUT_MS),
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { translatedText?: string[] };
+    const out = data.translatedText ?? [];
+    if (out.length !== texts.length || out.some((t) => !t)) return null;
+    return out;
+  } catch {
+    return null;
+  }
+}
+
+/** Translate one batch with the configured engine, or return null. */
+export async function translateBatch(texts: string[]): Promise<string[] | null> {
+  if (texts.length === 0) return null;
+  if (process.env.DEEPL_API_KEY) return translateBatchDeepL(texts);
+  return translateBatchLibre(texts);
 }
 
 /**

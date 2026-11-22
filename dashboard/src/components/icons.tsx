@@ -144,6 +144,16 @@ export function IconEmbed({ size = 19, style }: IconProps) {
   );
 }
 
+export function IconCards({ size = 19, style }: IconProps) {
+  return (
+    <svg {...base(size)} style={style}>
+      <rect x="8" y="5" width="12" height="16" rx="2" transform="rotate(8 14 13)" />
+      <rect x="3.5" y="4" width="12" height="16" rx="2" fill="var(--card, #fff)" />
+      <path d="M6.5 9h6M6.5 12.5h6" />
+    </svg>
+  );
+}
+
 export function IconSpark({ size = 19, style }: IconProps) {
   return (
     <svg {...base(size)} style={style}>

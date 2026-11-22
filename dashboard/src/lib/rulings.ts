@@ -10,7 +10,7 @@
  */
 import { db } from "./db";
 import { shopGameOf } from "./shop";
-import { translateMany, translationConfigured } from "./translate";
+import { translateMany, translationConfigured, translationViewCap } from "./translate";
 
 export interface Ruling {
   id: number;
@@ -95,7 +95,7 @@ async function ensureRulingTranslations(rulings: Ruling[]): Promise<void> {
       (SYNC_SOURCES as readonly string[]).includes(r.source),
   );
   if (pending.length === 0) return;
-  const uniqueTexts = [...new Set(pending.map((r) => r.body))].slice(0, 100);
+  const uniqueTexts = [...new Set(pending.map((r) => r.body))].slice(0, translationViewCap());
   try {
     const translated = await translateMany(uniqueTexts);
     if (translated.size === 0) return;

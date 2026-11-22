@@ -3,8 +3,9 @@ import Link from "next/link";
 import "../globals.css";
 import { currentSession } from "@/lib/current-session";
 import { Burger } from "@/components/burger";
+import { NavGroup } from "@/components/nav-group";
 import {
-  IconActivity, IconBag, IconChart, IconCoins, IconEmbed, IconFrame, IconGrid,
+  IconActivity, IconBag, IconCards, IconChart, IconCoins, IconEmbed, IconFrame, IconGrid,
   IconClock, IconHome, IconList, IconLogout, IconSearch, IconSpark, IconTrophy, IconUsers, IconWallet,
 } from "@/components/icons";
 import { db } from "@/lib/db";
@@ -58,19 +59,29 @@ export default async function PlayerLayout({ children }: { children: ReactNode }
                 >
                   <Link href="/me" className="player-tab"><IconHome size={16} />Hồ Sơ</Link>
                   <Link href="/me/membership" className="player-tab"><IconSpark size={16} />Hội Viên</Link>
-                  <Link href="/me/dex" className="player-tab"><IconGrid size={16} />Sổ Dex</Link>
-                  <Link href="/me/cards" className="player-tab"><IconEmbed size={16} />Kho Thẻ</Link>
-                  <Link href="/me/showcase" className="player-tab"><IconFrame size={16} />Trưng Bày</Link>
-                  <Link href="/me/gacha" className="player-tab"><IconBag size={16} />Mở Thẻ</Link>
-                  <Link href="/me/shop" className="player-tab"><IconCoins size={16} />Shop</Link>
-                  <Link href="/me/battle" className="player-tab"><IconActivity size={16} />Đấu Thẻ</Link>
-                  <Link href="/me/tournament" className="player-tab"><IconTrophy size={16} />Giải Đấu</Link>
-                  <Link href="/me/decks" className="player-tab"><IconList size={16} />Bộ Bài</Link>
-                  <Link href="/me/deck-search" className="player-tab"><IconSearch size={16} />Tìm Bộ Bài</Link>
-                  <Link href="/me/market" className="player-tab"><IconChart size={16} />Thị Trường</Link>
-                  <Link href="/me/cho" className="player-tab"><IconWallet size={16} />Chợ Thẻ</Link>
-                  <Link href="/me/auction" className="player-tab"><IconClock size={16} />Đấu Giá</Link>
-                  <Link href="/me/trades" className="player-tab"><IconUsers size={16} />Trao Đổi</Link>
+                  <NavGroup
+                    icon={<IconCards size={16} />}
+                    label="TCG"
+                    paths={[
+                      "/me/dex", "/me/cards", "/me/showcase", "/me/gacha", "/me/shop",
+                      "/me/battle", "/me/tournament", "/me/decks", "/me/deck-search",
+                      "/me/market", "/me/cho", "/me/auction", "/me/trades",
+                    ]}
+                  >
+                    <Link href="/me/dex" className="player-tab"><IconGrid size={16} />Sổ Dex</Link>
+                    <Link href="/me/cards" className="player-tab"><IconEmbed size={16} />Kho Thẻ</Link>
+                    <Link href="/me/showcase" className="player-tab"><IconFrame size={16} />Trưng Bày</Link>
+                    <Link href="/me/gacha" className="player-tab"><IconBag size={16} />Mở Thẻ</Link>
+                    <Link href="/me/shop" className="player-tab"><IconCoins size={16} />Shop</Link>
+                    <Link href="/me/battle" className="player-tab"><IconActivity size={16} />Đấu Thẻ</Link>
+                    <Link href="/me/tournament" className="player-tab"><IconTrophy size={16} />Giải Đấu</Link>
+                    <Link href="/me/decks" className="player-tab"><IconList size={16} />Bộ Bài</Link>
+                    <Link href="/me/deck-search" className="player-tab"><IconSearch size={16} />Tìm Bộ Bài</Link>
+                    <Link href="/me/market" className="player-tab"><IconChart size={16} />Thị Trường</Link>
+                    <Link href="/me/cho" className="player-tab"><IconWallet size={16} />Chợ Thẻ</Link>
+                    <Link href="/me/auction" className="player-tab"><IconClock size={16} />Đấu Giá</Link>
+                    <Link href="/me/trades" className="player-tab"><IconUsers size={16} />Trao Đổi</Link>
+                  </NavGroup>
                 </Burger>
                 <Link href="/" className="player-brand">
                   <img src="/api/assets/logo" alt="Puni" className="logo-img brand-logo player-logo" />
