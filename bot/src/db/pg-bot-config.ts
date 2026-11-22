@@ -47,4 +47,45 @@ export class PgBotConfig {
     const raw = await this.get("ai_enabled");
     return raw !== false;
   }
+
+  /** Global bot on/off switch (Admin panel → Vận hành). Default: on.
+   *  When off, the dispatcher answers every non-owner command with the
+   *  maintenance message and AI chat stays silent. */
+  async getBotEnabled(): Promise<boolean> {
+    const raw = await this.get("bot_enabled");
+    return raw !== false;
+  }
+
+  /** Reply shown while the bot is switched off. */
+  async getMaintenanceMessage(): Promise<string> {
+    const raw = await this.get("maintenance_message");
+    if (typeof raw === "string" && raw.trim() !== "") return raw.trim().slice(0, 200);
+    return "Puni đang bảo trì một chút, bạn quay lại sau nhé!";
+  }
+
+  /** AI model override from the Admin panel; null = use the env model. */
+  async getAiModel(): Promise<string | null> {
+    const raw = await this.get("ai_model");
+    return typeof raw === "string" && raw.trim() !== "" ? raw.trim().slice(0, 80) : null;
+  }
+
+  /** Extra persona instructions from the Admin panel ("" = none). */
+  async getAiPersonaExtra(): Promise<string> {
+    const raw = await this.get("ai_persona_extra");
+    return typeof raw === "string" ? raw.slice(0, 1000) : "";
+  }
+
+  /** The shard writes its runtime status at startup so the Admin panel
+   *  can show facts only the bot process knows (AI key configured…). */
+  async setRuntimeStatus(status: Record<string, unknown>): Promise<void> {
+    try {
+      await this.pool.query(
+        `INSERT INTO bot_config (key, value, updated_at) VALUES ('runtime_status', $1::jsonb, now())
+         ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = now()`,
+        [JSON.stringify(status)],
+      );
+    } catch {
+      /* status reporting must never take the bot down */
+    }
+  }
 }

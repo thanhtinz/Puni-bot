@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { adminGate } from "@/lib/current-session";
 import { listGuildAdminRows } from "@/lib/db";
 import VerifyForm from "../verify-form";
@@ -58,7 +59,9 @@ export default async function AdminServersPage({
                   .map(([k]) => MODULE_LABELS[k] ?? k);
                 return (
                   <tr key={r.guild_id}>
-                    <td>{r.guild_id}</td>
+                    <td>
+                      <Link href={`/admin/servers/${r.guild_id}`}>{r.guild_id}</Link>
+                    </td>
                     <td>
                       <code>{r.prefix}</code>
                     </td>

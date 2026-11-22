@@ -256,3 +256,94 @@ export async function getEconomyChart(): Promise<EconomyChart | null> {
     return null;
   }
 }
+
+export interface LedgerRow {
+  id: number;
+  user_id: string;
+  delta: number;
+  balance_after: number;
+  source: string;
+  note: string | null;
+  created_at: string;
+}
+
+/** Owner manual balance adjustment (Admin panel → Người dùng). Mirrors
+ *  the bot's PgEconomyStore transaction exactly: lock the account row,
+ *  update the balance, append the ledger entry — all-or-nothing.
+ *  Negative results are refused so an account can never go below 0. */
+export async function adminAdjustBalance(
+  userId: string,
+  delta: number,
+  note: string,
+): Promise<{ balance: number } | { error: string }> {
+  const client = await db().connect();
+  try {
+    await client.query("BEGIN");
+    await client.query(
+      "INSERT INTO economy_accounts (user_id) VALUES ($1) ON CONFLICT (user_id) DO NOTHING",
+      [userId],
+    );
+    const res = await client.query<{ balance: string }>(
+      "SELECT balance FROM economy_accounts WHERE user_id = $1 FOR UPDATE",
+      [userId],
+    );
+    const current = Number.parseInt(res.rows[0]?.balance ?? "0", 10);
+    const next = current + delta;
+    if (next < 0) {
+      await client.query("ROLLBACK");
+      return { error: `Số dư hiện tại chỉ có ${current.toLocaleString("vi-VN")}, không trừ thêm được.` };
+    }
+    await client.query("UPDATE economy_accounts SET balance = $2, updated_at = now() WHERE user_id = $1", [
+      userId,
+      next,
+    ]);
+    await client.query(
+      `INSERT INTO economy_ledger (user_id, delta, balance_after, source, note) VALUES ($1, $2, $3, 'admin', $4)`,
+      [userId, delta, next, note.slice(0, 200)],
+    );
+    await client.query("COMMIT");
+    return { balance: next };
+  } catch (err) {
+    await client.query("ROLLBACK").catch(() => undefined);
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+export async function getUserEconomy(
+  userId: string,
+): Promise<{ balance: number; ledger: LedgerRow[] } | null> {
+  try {
+    const acc = await db().query<{ balance: string }>(
+      "SELECT balance FROM economy_accounts WHERE user_id = $1",
+      [userId],
+    );
+    const led = await db().query<LedgerRow>(
+      `SELECT id, user_id, delta::int AS delta, balance_after::int AS balance_after, source, note,
+              created_at::text AS created_at
+       FROM economy_ledger WHERE user_id = $1 ORDER BY id DESC LIMIT 20`,
+      [userId],
+    );
+    return {
+      balance: Number.parseInt(acc.rows[0]?.balance ?? "0", 10),
+      ledger: led.rows,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function listRecentLedger(limit = 50): Promise<LedgerRow[] | null> {
+  try {
+    const res = await db().query<LedgerRow>(
+      `SELECT id, user_id, delta::int AS delta, balance_after::int AS balance_after, source, note,
+              created_at::text AS created_at
+       FROM economy_ledger ORDER BY id DESC LIMIT $1`,
+      [limit],
+    );
+    return res.rows;
+  } catch {
+    return null;
+  }
+}

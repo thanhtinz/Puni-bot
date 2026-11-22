@@ -100,6 +100,8 @@ export function createBotClient(deps: {
   aiChat?: AiChatService;
   /** Owner master switch for AI chat (Admin panel); absent = enabled. */
   aiGloballyEnabled?: () => Promise<boolean>;
+  /** Owner global bot on/off switch (Admin panel → Vận hành). */
+  botGate?: () => Promise<{ off: boolean; message: string }>;
 }): Client {
   const { config, registry, settings } = deps;
   const client = new Client({
@@ -120,7 +122,7 @@ export function createBotClient(deps: {
     // a caller did not provide one.
     async () => 0,
     config.ownerDiscordId,
-    { cooldownStore: deps.cooldownStore },
+    { cooldownStore: deps.cooldownStore, botGate: deps.botGate },
   );
 
   const sender: ChannelSender = {
@@ -337,6 +339,8 @@ export function createBotClient(deps: {
       await msg.reply(
         embed ? { embeds: [embed], allowedMentions: { repliedUser: false } } : { content: outcome.result.text },
       );
+    } else if (outcome.kind === "maintenance") {
+      await msg.reply(outcome.message);
     } else if (outcome.kind === "cooldown") {
       const notice = await msg.reply(`⏳ Chờ ${outcome.secondsLeft}s nữa nhé!`);
       setTimeout(() => notice.delete().catch(() => undefined), 5000);
@@ -459,6 +463,8 @@ export function createBotClient(deps: {
         ...(embed ? { embeds: [embed] } : { content: outcome.result.text }),
         ephemeral: outcome.result.ephemeral ?? false,
       });
+    } else if (outcome.kind === "maintenance") {
+      await cmd.reply({ content: outcome.message, ephemeral: true });
     } else if (outcome.kind === "cooldown") {
       await cmd.reply({ content: `⏳ Chờ ${outcome.secondsLeft}s nữa nhé!`, ephemeral: true });
     } else if (outcome.kind === "forbidden") {

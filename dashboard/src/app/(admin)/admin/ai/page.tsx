@@ -17,6 +17,8 @@ export default async function AdminAiPage({
   }
   const enabledRaw = await getBotConfig<boolean>("ai_enabled").catch(() => null);
   const enabled = enabledRaw !== false;
+  const aiModel = (await getBotConfig<string>("ai_model").catch(() => null)) ?? "";
+  const aiPersonaExtra = (await getBotConfig<string>("ai_persona_extra").catch(() => null)) ?? "";
   const rows = await listGuildAdminRows().catch(() => []);
   const guildOn = rows.filter((r) => r.ai_chat?.enabled !== false).length;
   return (
@@ -40,16 +42,45 @@ export default async function AdminAiPage({
         <p>
           Khi tắt, Puni ngừng trả lời @mention ở MỌI server ngay cả khi server đó đang
           bật AI — dùng khi cần ngắt khẩn cấp (provider lỗi, chi phí tăng bất thường).
-          Khoá API và model được cấu hình ở tiến trình bot (biến môi trường
-          AI_API_KEY / AI_MODEL), không đặt trên web.
+          Riêng khoá API vẫn nằm ở tiến trình bot (biến môi trường AI_API_KEY) vì là
+          bí mật; model và chỉ dẫn tính cách thì chỉnh ngay tại trang này.
         </p>
         <form action="/api/admin/ai" method="post">
           <label className="check">
             <input type="checkbox" name="ai_enabled" defaultChecked={enabled} />
             <span>Bật AI trò chuyện trên toàn hệ thống</span>
           </label>
+          <div className="field" style={{ marginTop: 16 }}>
+            <label htmlFor="ai_model">Model AI</label>
+            <input
+              id="ai_model"
+              name="ai_model"
+              type="text"
+              defaultValue={aiModel}
+              maxLength={80}
+              placeholder="Để trống = dùng model mặc định của tiến trình bot"
+              style={{ maxWidth: 420 }}
+            />
+            <div className="hint">Bot đọc model mới ở mỗi câu trả lời, không cần khởi động lại.</div>
+          </div>
+          <div className="field">
+            <label htmlFor="ai_persona_extra">Chỉ dẫn thêm cho tính cách Puni</label>
+            <textarea
+              id="ai_persona_extra"
+              name="ai_persona_extra"
+              defaultValue={aiPersonaExtra}
+              maxLength={1000}
+              rows={4}
+              placeholder="Ví dụ: Luôn nhắc mọi người uống nước; đang mùa lễ hội nên nhắc đến sự kiện Giáng sinh…"
+              style={{ maxWidth: 640 }}
+            />
+            <div className="hint">
+              Chỉ dẫn này được thêm vào cuối tính cách gốc — quy tắc cứng (trả lời ngắn,
+              kết thúc "meo meo ~", an toàn) vẫn đứng trên.
+            </div>
+          </div>
           <button className="btn" type="submit">
-            Lưu công tắc
+            Lưu cấu hình AI
           </button>
         </form>
       </div>

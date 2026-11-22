@@ -83,9 +83,25 @@ async function main(): Promise<void> {
     cases: bot.cases,
     addCaseHook: bot.addCaseHook,
     aiChat,
-    aiGloballyEnabled: botConfig ? () => botConfig.getAiEnabled() : undefined,
+    // AI chat obeys BOTH its own master switch and the global bot switch.
+    aiGloballyEnabled: botConfig
+      ? async () => (await botConfig.getAiEnabled()) && (await botConfig.getBotEnabled())
+      : undefined,
+    botGate: botConfig
+      ? async () => ({
+          off: !(await botConfig.getBotEnabled()),
+          message: await botConfig.getMaintenanceMessage(),
+        })
+      : undefined,
   });
   await client.login(config.token);
+  if (botConfig) {
+    await botConfig.setRuntimeStatus({
+      startedAt: new Date().toISOString(),
+      aiConfigured: Boolean(config.ai.apiKey),
+      aiEnvModel: config.ai.model,
+    });
+  }
 }
 
 main().catch((err) => {

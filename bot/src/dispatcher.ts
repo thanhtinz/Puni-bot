@@ -33,6 +33,7 @@ export type DispatchOutcome =
   | { kind: "ignored" }
   | { kind: "forbidden" }
   | { kind: "cooldown"; secondsLeft: number }
+  | { kind: "maintenance"; message: string }
   | { kind: "error"; error: unknown };
 
 export interface ParsedPrefix {
@@ -84,15 +85,24 @@ export class InMemoryCooldownStore implements CooldownStore {
 
 export class Dispatcher {
   private cooldownStore: CooldownStore;
+  private botGate?: () => Promise<{ off: boolean; message: string }>;
 
   constructor(
     private registry: CommandRegistry,
     private settings: GuildSettingsProvider,
     private permissionOf: PermissionResolver,
     private ownerDiscordId: string,
-    opts: { cooldownStore?: CooldownStore; now?: () => number } = {},
+    opts: {
+      cooldownStore?: CooldownStore;
+      now?: () => number;
+      /** Owner master switch (Admin panel). When it reports off, every
+       *  non-owner invocation gets the maintenance reply; the bot owner
+       *  always passes. */
+      botGate?: () => Promise<{ off: boolean; message: string }>;
+    } = {},
   ) {
     this.cooldownStore = opts.cooldownStore ?? new InMemoryCooldownStore(opts.now);
+    this.botGate = opts.botGate;
   }
 
   async dispatchPrefix(input: {
@@ -154,6 +164,14 @@ export class Dispatcher {
     ctx: CommandContext,
     rankOverride?: PermissionRank,
   ): Promise<DispatchOutcome> {
+    // Gate 0: the owner's global on/off switch. The bot owner always
+    // passes so they can keep working while the bot is "off".
+    const isOwnerEarly = this.ownerDiscordId !== "" && ctx.userId === this.ownerDiscordId;
+    if (this.botGate && !isOwnerEarly) {
+      const gate = await this.botGate().catch(() => null);
+      if (gate?.off) return { kind: "maintenance", message: gate.message };
+    }
+
     if (ctx.guildId) {
       const guild = await this.settings.get(ctx.guildId);
       // Module switches.
