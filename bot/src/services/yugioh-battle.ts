@@ -28,6 +28,9 @@ export interface YgoCard {
   attribute?: string;
   race?: string;
   enhance?: number;
+  /** Link Monster: no DEF and no Level — it is always in Attack
+   * Position and battles resolve against its ATK only. */
+  link?: boolean;
 }
 
 export type YgoPosition = "attack" | "defense";
@@ -194,15 +197,18 @@ export function simulateYugiohBattle(
           // Walls (DEF far above ATK) belong in Defense Position; a
           // monster that cannot beat the opposing field also defends
           // when its DEF covers it; everything else attacks.
-          const position: YgoPosition =
-            effDef(pick.card) >= effAtk(pick.card) + 500 ? "defense"
+          const position: YgoPosition = pick.card.link
+            ? "attack"
+            : effDef(pick.card) >= effAtk(pick.card) + 500 ? "defense"
             : effAtk(pick.card) >= foeBestAtk ? "attack"
             : effDef(pick.card) > effAtk(pick.card) ? "defense"
             : "attack";
           me.field.push({ card: pick.card, position, summonedTurn: turn, attackedThisTurn: false });
           push({
             turn, side, type: "summon", card: pick.card.name, position,
-            text: `Triệu hồi ${pick.card.name} (ATK ${effAtk(pick.card)} / DEF ${effDef(pick.card)}) ở thế ${position === "attack" ? "công" : "thủ"}.`,
+            text: pick.card.link
+              ? `Triệu hồi ${pick.card.name} (ATK ${effAtk(pick.card)} · Link Monster) ở thế công.`
+              : `Triệu hồi ${pick.card.name} (ATK ${effAtk(pick.card)} / DEF ${effDef(pick.card)}) ở thế ${position === "attack" ? "công" : "thủ"}.`,
           });
         }
       }
@@ -210,6 +216,7 @@ export function simulateYugiohBattle(
       // ---- Position changes (not on the summon turn, once each) ----
       for (const m of me.field) {
         if (m.summonedTurn === turn) continue;
+        if (m.card.link) continue; // Link Monsters never change position
         const foeBestAtk = Math.max(0, ...foe.field.filter((x) => x.position === "attack").map((x) => effAtk(x.card)));
         if (m.position === "defense" && effAtk(m.card) > foeBestAtk) {
           m.position = "attack";

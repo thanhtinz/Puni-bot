@@ -57,6 +57,7 @@ export default function YugiohArena({
   const [hit, setHit] = useState<{ key: number; side: "a" | "b"; name: string } | null>(null);
   const [lunge, setLunge] = useState<{ key: number; side: "a" | "b"; name: string } | null>(null);
   const [shakeKey, setShakeKey] = useState(0);
+  const [turn, setTurn] = useState(1);
   const [lpFloat, setLpFloat] = useState<{ key: number; side: "a" | "b"; dmg: number } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -105,6 +106,7 @@ export default function YugiohArena({
     });
     setLp([e.lpA, e.lpB]);
     setLog(e.text);
+    setTurn(e.turn);
     if (animate) {
       if (e.type === "attack" && e.card && e.target) {
         setLunge({ key, side: e.side, name: e.card });
@@ -228,11 +230,13 @@ export default function YugiohArena({
               <CardArt src={v?.spriteUrl ?? ""} alt={m.name} className="ygo-mon-art" />
               <div className="ygo-mon-info">
                 <strong>{m.name}</strong>
-                <small>
-                  {m.position === "attack" ? `ATK ${v?.atk ?? "?"}` : `DEF ${v?.def ?? "?"}`}
-                  {v ? ` · Lv${v.level}` : ""}
-                </small>
-                <span className="ygo-pos">{m.position === "attack" ? "Thế công" : "Thế thủ"}</span>
+                <div className="ygo-statline">
+                  <span className="ygo-stat">
+                    {v?.link ? <b>{v?.atk ?? "?"}</b> : <><b>{v?.atk ?? "?"}</b><i>/</i><b>{v?.def ?? "?"}</b></>}
+                  </span>
+                  <span className="ygo-pos">{v?.link ? "Link" : m.position === "attack" ? "Thế công" : "Thế thủ"}</span>
+                </div>
+                <small>{v ? (v.link ? `Link Monster · ${v.attribute}` : `Lv${v.level} · ${v.attribute}`) : ""}</small>
               </div>
             </div>
           );
@@ -250,12 +254,37 @@ export default function YugiohArena({
           <span style={{ width: `${(value / 8000) * 100}%` }} />
         </div>
         <strong>{value.toLocaleString("en-US")} LP</strong>
-        {sides ? (
-          <small>Bài trên tay: {sides[sideKey].hand} · Bộ bài: {sides[sideKey].deck}</small>
-        ) : null}
         {lpFloat?.side === sideKey && !finished ? (
           <span className="ygo-lp-float" key={lpFloat.key}>-{lpFloat.dmg}</span>
         ) : null}
+      </div>
+    );
+  };
+
+  /** Spell/Trap zone row — framed empty slots behind the monsters,
+   * as on a real playmat (the engine is monster-only for now). */
+  const renderStRow = () => (
+    <div className="ygo-strow" aria-hidden>
+      {[0, 1, 2, 3, 4].map((i) => (
+        <div key={i} className="ygo-st-slot" />
+      ))}
+    </div>
+  );
+
+  /** Deck + hand piles at the edge of the mat, Cross Duel style. */
+  const renderPiles = (sideKey: "a" | "b") => {
+    if (!sides) return null;
+    const s = sides[sideKey];
+    return (
+      <div className="ygo-piles">
+        <div className="ygo-pile deck" title="Bộ bài còn lại">
+          <span>{s.deck}</span>
+          <small>Deck</small>
+        </div>
+        <div className="ygo-pile hand" title="Bài trên tay">
+          <span>{s.hand}</span>
+          <small>Tay</small>
+        </div>
       </div>
     );
   };
@@ -286,15 +315,34 @@ export default function YugiohArena({
       ) : (
         <>
           <div className={`ygo-field${shakeKey ? " is-shaking" : ""}`} onAnimationEnd={() => setShakeKey(0)}>
-            {renderLp("b", "Đối thủ")}
-            {renderHoloRow("b")}
-            {renderMonsters("b")}
-            <div className="poke-log" aria-live="polite">
-              {finished ? <strong>{outcome.win ? "Thắng trận!" : "Thua trận"}</strong> : log || "Trận đấu bắt đầu!"}
+            <div className="ygo-mat foe">
+              {renderLp("b", "Đối thủ")}
+              <div className="ygo-mat-main">
+                <div className="ygo-mat-zones">
+                  {renderStRow()}
+                  {renderHoloRow("b")}
+                  {renderMonsters("b")}
+                </div>
+                {renderPiles("b")}
+              </div>
             </div>
-            {renderHoloRow("a")}
-            {renderMonsters("a")}
-            {renderLp("a", "Bạn")}
+            <div className="ygo-divider">
+              <span className="ygo-turn-chip">Lượt {turn}</span>
+              <div className="poke-log" aria-live="polite">
+                {finished ? <strong>{outcome.win ? "Thắng trận!" : "Thua trận"}</strong> : log || "Trận đấu bắt đầu!"}
+              </div>
+            </div>
+            <div className="ygo-mat me">
+              <div className="ygo-mat-main">
+                <div className="ygo-mat-zones">
+                  {renderHoloRow("a")}
+                  {renderMonsters("a")}
+                  {renderStRow()}
+                </div>
+                {renderPiles("a")}
+              </div>
+              {renderLp("a", "Bạn")}
+            </div>
           </div>
           {!finished ? (
             <div className="poke-controls">

@@ -51,6 +51,7 @@ export default function OnePieceArena({
   const [hit, setHit] = useState<{ key: number; side: "a" | "b"; name: string } | null>(null);
   const [lunge, setLunge] = useState<{ key: number; side: "a" | "b"; name: string } | null>(null);
   const [shakeKey, setShakeKey] = useState(0);
+  const [trash, setTrash] = useState<{ a: number; b: number }>({ a: 0, b: 0 });
   const lastSide = useRef<"a" | "b" | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -117,6 +118,7 @@ export default function OnePieceArena({
     });
     setLife([e.lifeA, e.lifeB]);
     setLog(e.text);
+    if (e.type === "ko") setTrash((p) => ({ ...p, [e.side]: p[e.side] + 1 }));
     if (animate) {
       if (e.type === "attack" && e.card) {
         setLunge({ key, side: e.side, name: e.card });
@@ -168,6 +170,7 @@ export default function OnePieceArena({
       }
       setOutcome(data);
       setSides({ a: emptySide(), b: emptySide() });
+      setTrash({ a: 0, b: 0 });
       setLife([data.leaderA.life, data.leaderB.life]);
       setIdx(0);
       setHit(null);
@@ -189,37 +192,54 @@ export default function OnePieceArena({
     const lifeN = life[sideKey === "a" ? 0 : 1];
     const leaderHit = hit?.side === sideKey && hit?.name === leader.name && !finished;
     const leaderLunge = lunge?.side === sideKey && lunge?.name === leader.name && !finished;
+    const attachedDon = side.leaderDon + side.chars.reduce((s, c) => s + c.don, 0);
     return (
       <div className="op-side">
-        <div className="holo-center">
-          <HoloArt
-            src={leader.spriteUrl}
-            side={sideKey}
-            variant="crop"
-            size="leader"
-            attacking={leaderLunge}
-            hit={leaderHit}
-            dimmed={side.leaderRested}
-            vfxColor="#ef4444"
-            hitKey={leaderHit ? hit?.key : undefined}
-          />
-        </div>
-        <div
-          className={`op-leader${side.leaderRested ? " is-rested" : ""}${leaderHit ? " is-hit" : ""}${leaderLunge ? ` lunge-${sideKey}` : ""}`}
-        >
-          <CardArt src={leader.spriteUrl} alt={leader.name} className="op-leader-art" />
-          <div className="op-leader-info">
-            <strong>{leader.name}</strong>
-            <small>Leader · Power {leader.power.toLocaleString("en-US")}{side.leaderDon ? ` +${side.leaderDon * 1000} DON` : ""}</small>
-            <span className="op-life" aria-label={`Life còn ${lifeN}`}>
-              {Array.from({ length: Math.max(leader.life, lifeN) }, (_, i) => (
-                <span key={i} className={`op-life-pip${i < lifeN ? " on" : ""}`} />
-              ))}
+        <div className="op-mat">
+          <div className="op-leftcol">
+            <div className="op-life-stack" title="Life — lá úp cạnh Leader như playmat chính thức">
+              <div className="op-life-cards" aria-hidden>
+                {Array.from({ length: Math.min(Math.max(lifeN, 0), 5) }, (_, i) => (
+                  <span key={i} className="op-life-card" style={{ transform: `translateX(${i * 7}px) rotate(${(i - 2) * 4}deg)` }} />
+                ))}
+              </div>
               <small>Life {lifeN}</small>
-            </span>
-            <small>DON!! ×{side.donTotal}</small>
+            </div>
+            <div className="op-don-area" title="Khu DON!! — vàng là DON đang gắn, viền là DON sẵn sàng">
+              <div className="op-don-pips" aria-hidden>
+                {Array.from({ length: side.donTotal }, (_, i) => (
+                  <span key={i} className={`op-don-pip${i < attachedDon ? " attached" : ""}`} />
+                ))}
+              </div>
+              <small>DON!! ×{side.donTotal}{attachedDon ? ` · gắn ${attachedDon}` : ""}</small>
+            </div>
           </div>
-        </div>
+          <div className="op-centercol">
+            <div className="holo-center">
+              <HoloArt
+                src={leader.spriteUrl}
+                side={sideKey}
+                variant="crop"
+                size="leader"
+                attacking={leaderLunge}
+                hit={leaderHit}
+                dimmed={side.leaderRested}
+                vfxColor="#ef4444"
+                hitKey={leaderHit ? hit?.key : undefined}
+              />
+            </div>
+            <div className="op-leader-row">
+              <div
+                className={`op-leader${side.leaderRested ? " is-rested" : ""}${leaderHit ? " is-hit" : ""}${leaderLunge ? ` lunge-${sideKey}` : ""}`}
+              >
+                <CardArt src={leader.spriteUrl} alt={leader.name} className="op-leader-art" />
+                <div className="op-leader-info">
+                  <strong>{leader.name}</strong>
+                  <small>Leader · Power {leader.power.toLocaleString("en-US")}{side.leaderDon ? ` +${side.leaderDon * 1000} DON` : ""}</small>
+                </div>
+              </div>
+              <div className="op-stage-slot" aria-hidden>Stage</div>
+            </div>
         <div className="holo-row">
           {[0, 1, 2, 3, 4].map((slot) => {
             const c = side.chars[slot];
@@ -269,6 +289,18 @@ export default function OnePieceArena({
               </div>
             );
           })}
+          </div>
+          </div>
+          <div className="op-rightcol">
+            <div className="ygo-pile deck" title="DON!! Deck — còn lại trong chồng DON">
+              <span>{Math.max(0, 10 - side.donTotal)}</span>
+              <small>DON Deck</small>
+            </div>
+            <div className="ygo-pile hand" title="Trash — Character đã bị K.O.">
+              <span>{trash[sideKey]}</span>
+              <small>Trash</small>
+            </div>
+          </div>
         </div>
         <span className="op-side-label">{label}</span>
       </div>

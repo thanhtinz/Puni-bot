@@ -89,3 +89,17 @@ describe("yugioh duel simulation", () => {
     }
   });
 });
+
+test("link monsters: always attack position, never change to defense", () => {
+  const linkDeck = Array.from({ length: 12 }, (_, i) => ({
+    speciesId: `lk${i}`, name: `Link Spider ${i}`, atk: 1000 + i * 100, def: 0, level: 0, link: true,
+  }));
+  const wallDeck = Array.from({ length: 12 }, (_, i) => ({
+    speciesId: `wl${i}`, name: `Wall ${i}`, atk: 800, def: 3000, level: 4,
+  }));
+  const r = simulateYugiohBattle(linkDeck, wallDeck, "link-seed");
+  const bad = r.events.filter(
+    (e) => (e.type === "summon" || e.type === "position") && e.position === "defense" && e.card?.startsWith("Link Spider"),
+  );
+  assert.equal(bad.length, 0);
+});

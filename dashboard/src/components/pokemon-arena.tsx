@@ -266,6 +266,9 @@ export default function PokemonArena({
             {float.tag ? <em>{float.tag}</em> : null}
           </span>
         ) : null}
+        {!f.ko && f.card.maxHp - Math.max(0, f.hp) > 0 ? (
+          <span className="poke-dmg-counter" title="Sát thương đã nhận">{f.card.maxHp - Math.max(0, f.hp)}</span>
+        ) : null}
         <div className="poke-active-info">
           <strong>{f.card.name}</strong>
           <span className="poke-type">{f.card.type}</span>
