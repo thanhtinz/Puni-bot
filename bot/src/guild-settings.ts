@@ -5,6 +5,14 @@
  * columns in the DB, unused.
  */
 import type { CommandModule } from "@puni/shared";
+import { normalizeAiChatConfig, type AiChatConfig } from "./ai-config";
+
+export interface ReactionOverride {
+  enabled?: boolean;
+  tagText?: string;
+  soloText?: string;
+  cooldownSec?: number;
+}
 
 export interface GuildSettings {
   guildId: string;
@@ -12,6 +20,10 @@ export interface GuildSettings {
   prefix: string;
   /** Per-module switches; missing = enabled. */
   modules: Partial<Record<CommandModule, boolean>>;
+  /** Per-reaction overrides for this guild (spec 6.9). */
+  reactionOverrides: Record<string, ReactionOverride>;
+  /** AI chat (@mention replies) switch for this guild. */
+  aiChat: AiChatConfig;
 }
 
 export interface GuildSettingsProvider {
@@ -26,7 +38,13 @@ export class InMemoryGuildSettings implements GuildSettingsProvider {
   async get(guildId: string): Promise<GuildSettings> {
     let s = this.store.get(guildId);
     if (!s) {
-      s = { guildId, prefix: this.defaultPrefix, modules: {} };
+      s = {
+        guildId,
+        prefix: this.defaultPrefix,
+        modules: {},
+        reactionOverrides: {},
+        aiChat: normalizeAiChatConfig(undefined),
+      };
       this.store.set(guildId, s);
     }
     return s;

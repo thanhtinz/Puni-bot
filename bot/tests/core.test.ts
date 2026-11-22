@@ -15,15 +15,16 @@ test("reactions: exactly 69, kiss template matches the approved spec example", (
   assert.ok(getReaction("KISS"), "lookup is case-insensitive");
 });
 
-test("registry: game bot catalog assembled without collisions", () => {
+test("registry: full catalog assembled without collisions", () => {
   const settings = new InMemoryGuildSettings();
   const { registry } = buildBot({ settings });
-  // slash = prefix = 4 core + 4 economy + pass + orders + marry + 17 tcg
-  assert.equal(registry.slashCommands().length, 28);
-  assert.equal(registry.prefixCommands().length, 28);
+  // slash: 4 core + reaction + vote + 4 economy + pass + orders + marry + 6 games + masoi + 17 tcg
+  assert.equal(registry.slashCommands().length, 37);
+  // prefix: 4 core + 69 reactions + vote + 4 economy + pass + orders + marry + 6 games + masoi + 17 tcg
+  assert.equal(registry.prefixCommands().length, 105);
   assert.equal(registry.resolve("bal")?.name, "balance");
   assert.equal(registry.resolve("marry")?.name, "marry");
-  assert.equal(registry.resolve("kiss"), undefined); // reactions are gone (spec 6.28)
+  assert.equal(registry.resolve("kiss")?.module, "reaction");
 });
 
 test("parsePrefixMessage: prefix required, mentions extracted", () => {

@@ -114,7 +114,26 @@ export class Dispatcher {
      *  permissions); when present it replaces the resolver lookup. */
     rank?: PermissionRank;
   }): Promise<DispatchOutcome> {
-    if (!input.guildId) return { kind: "ignored" }; // prefix commands are guild-scoped
+    if (!input.guildId) {
+      // DM invocations: only commands that explicitly opt in
+      // (def.dmAllowed) may run, parsed with the default prefix.
+      const parsed = parsePrefixMessage(input.content, "!");
+      if (!parsed) return { kind: "ignored" };
+      const def = this.registry.resolve(parsed.name);
+      if (!def || !def.prefix || !def.dmAllowed) return { kind: "ignored" };
+      return this.invoke(
+        def,
+        {
+          userId: input.userId,
+          guildId: null,
+          channelId: input.channelId,
+          args: parsed.args,
+          mentions: parsed.mentions,
+          surface: "prefix",
+        },
+        input.rank,
+      );
+    }
     const guild = await this.settings.get(input.guildId);
     const parsed = parsePrefixMessage(input.content, guild.prefix);
     if (!parsed) return { kind: "ignored" };

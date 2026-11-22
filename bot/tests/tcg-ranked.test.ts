@@ -84,9 +84,12 @@ test("ranked battle: two deck owners fight, MMR moves, coins paid", async () => 
   assert.equal(pa.mmr + pb.mmr, 2000); // zero-sum
 });
 
-test("member gacha discount: tier-3 member pays 20% less per pull", async () => {
+test("member gacha discount: a tier configured with 20% discount pays 20% less per pull", async () => {
+  // The 2026-11-22 default tiers carry no gacha discount, but the
+  // mechanism stays (admin-configurable) — cover it with a custom tier.
+  const customTiers = [{ ...DEFAULT_MEMBERSHIP_TIERS[2], id: "pro", gachaDiscountPercent: 20 }];
   const perks = async (u: string) =>
-    u === "vip" ? effectivePerks(DEFAULT_MEMBERSHIP_TIERS, "hao-tam") : null;
+    u === "vip" ? effectivePerks(customTiers, "pro") : null;
   const { game, balances } = makeGame(perks);
   balances.set("vip", 100000);
   balances.set("free", 100000);

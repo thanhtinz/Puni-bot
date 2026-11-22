@@ -34,6 +34,9 @@ export interface TcgConfig {
   beginnerMaxPulls: number;
   /** Percent of a card's own value paid when selling it to the system. */
   sellRatePercent: number;
+  /** Coins per 1 USD of real market price (spec 6.29): a species with a
+   * market price (game_species.price_usd) is valued price x this rate. */
+  priceCoinsPerUsd: number;
 }
 
 export const DEFAULT_TCG_CONFIG: TcgConfig = {
@@ -44,6 +47,7 @@ export const DEFAULT_TCG_CONFIG: TcgConfig = {
   pityLegendary: 90,
   exchangePoints: 100,
   sellRatePercent: 60,
+  priceCoinsPerUsd: 1,
   marketFeePercent: 5,
   marketMinPrice: 10,
   deckSize: 30,
@@ -74,6 +78,7 @@ export function normalizeTcgConfig(raw: unknown): TcgConfig {
     exchangePoints: clampNum(r.exchangePoints, 1, 10000, DEFAULT_TCG_CONFIG.exchangePoints),
     marketFeePercent: clampNum(r.marketFeePercent, 0, 50, DEFAULT_TCG_CONFIG.marketFeePercent),
     sellRatePercent: clampNum(r.sellRatePercent, 10, 100, DEFAULT_TCG_CONFIG.sellRatePercent),
+    priceCoinsPerUsd: clampNum(r.priceCoinsPerUsd, 1, 1_000_000, DEFAULT_TCG_CONFIG.priceCoinsPerUsd),
     marketMinPrice: clampNum(r.marketMinPrice, 1, 1_000_000, DEFAULT_TCG_CONFIG.marketMinPrice),
     deckSize: clampNum(r.deckSize, 1, 100, DEFAULT_TCG_CONFIG.deckSize),
     deckMaxCopies: clampNum(r.deckMaxCopies, 1, 30, DEFAULT_TCG_CONFIG.deckMaxCopies),
@@ -99,10 +104,59 @@ export const BASE_VALUE: Record<TcgRarity, number> = {
  * level (+2% per level past 1) and enhancement (+15% per +1). Selling
  * to the system pays sellRatePercent of this.
  */
-export function cardValueCoins(rarity: TcgRarity, level: number, enhance: number): number {
-  const base = BASE_VALUE[rarity] ?? 0;
+/**
+ * Snap a money amount to 4 decimal places — the storage scale of
+ * NUMERIC(14,4) (migration 0025). Prices keep their exact cents
+ * (spec 6.29: no rounding to whole Coins); this only removes binary
+ * float noise, it never rounds a real price up or down to an integer.
+ */
+export function snapMoney(x: number): number {
+  return Math.round(x * 10000) / 10000;
+}
+
+/**
+ * Internal market price after one completed sale (spec 6.29): the
+ * imported API price is only the starting point — from then on the
+ * reference price follows OUR market. Blend: plain moving average for
+ * the first 10 sales, then an EMA (alpha 0.2); every single sale may
+ * move the reference at most ±25% (anti-manipulation clamp).
+ */
+export function nextMarketPrice(
+  current: number | null,
+  seedValue: number,
+  salePrice: number,
+  salesCount: number,
+): number {
+  const ref = current != null && current > 0 ? current : seedValue;
+  if (!(ref > 0)) return snapMoney(salePrice);
+  const blended =
+    salesCount < 10
+      ? (ref * salesCount + salePrice) / (salesCount + 1)
+      : ref + 0.2 * (salePrice - ref);
+  const clamped = Math.min(ref * 1.25, Math.max(ref * 0.75, blended));
+  return snapMoney(clamped);
+}
+
+export function cardValueCoins(
+  rarity: TcgRarity,
+  level: number,
+  enhance: number,
+  priceUsd?: number,
+  coinsPerUsd?: number,
+  marketPriceCoins?: number,
+): number {
+  // Value resolution (spec 6.29): the internal market price wins once
+  // the species has traded; before that the imported API price (the
+  // starting price) applies; species with neither fall back to the
+  // rarity table.
+  const base =
+    typeof marketPriceCoins === "number" && marketPriceCoins > 0
+      ? marketPriceCoins
+      : typeof priceUsd === "number" && priceUsd > 0
+        ? priceUsd * (coinsPerUsd ?? DEFAULT_TCG_CONFIG.priceCoinsPerUsd)
+        : (BASE_VALUE[rarity] ?? 0);
   const mult = 1 + Math.max(0, level - 1) * 0.02 + Math.max(0, enhance) * 0.15;
-  return Math.round(base * mult);
+  return snapMoney(base * mult);
 }
 export interface PityState {
   sinceEpic: number;
@@ -156,6 +210,10 @@ export interface TcgSpecies {
   memberExclusive?: boolean;
   /** Card set this species belongs to (spec 6.27). */
   setId?: string;
+  /** Real market price in USD (game_species.price_usd), when known. */
+  priceUsd?: number;
+  /** Internal market reference price in Coins (game_species.market_price_coins). */
+  marketPriceCoins?: number;
 }
 
 /** Pick a species of the rolled rarity; featured species weigh x5. */

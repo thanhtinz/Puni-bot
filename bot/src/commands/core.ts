@@ -56,7 +56,7 @@ export function createCoreCommands(deps: {
     slash: true,
     prefix: true,
     handler: async () => ({
-      text: `**Puni** — bot cộng đồng — bạn nhỏ của mọi server.\nPhiên bản: ${version}\nTrang chủ: https://discord.bntshop.com`,
+      text: `**Puni** — bot game thẻ bài TCG, economy và kết hôn.\nPhiên bản: ${version}`,
     }),
   };
 

@@ -1,5 +1,5 @@
 import type { Pool } from "pg";
-import { emptyPity, newInstanceCode, type CardInstance, type PityState, type TcgBanner, type TcgRarity } from "../services/tcg";
+import { emptyPity, newInstanceCode, nextMarketPrice, type CardInstance, type PityState, type TcgBanner, type TcgRarity } from "../services/tcg";
 import type { Deck, Listing, PullRecord, TcgStore, TcgWallet, Trade } from "../services/tcg-store";
 import type { Duel, DuelStatus, RankedProfile } from "../services/tcg-ranked";
 
@@ -256,6 +256,40 @@ export class PgTcgStore implements TcgStore {
       id: Number.parseInt(r.id, 10), sellerId: r.seller_id, instanceCode: r.instance_code,
       price: Number.parseInt(r.price, 10), status: r.status as Listing["status"], buyerId: r.buyer_id, createdAt: r.created_at,
     }));
+  }
+
+  async recordMarketSale(speciesId: string, salePrice: number, seedValue: number): Promise<void> {
+    const client = await this.pool.connect();
+    try {
+      await client.query("BEGIN");
+      const res = await client.query<{ market_price_coins: string | null; market_sales: number }>(
+        `SELECT market_price_coins::text AS market_price_coins, market_sales FROM game_species WHERE id = $1 FOR UPDATE`,
+        [speciesId],
+      );
+      const row = res.rows[0];
+      if (row) {
+        const next = nextMarketPrice(
+          row.market_price_coins != null ? Number(row.market_price_coins) : null,
+          seedValue,
+          salePrice,
+          row.market_sales ?? 0,
+        );
+        await client.query(
+          `UPDATE game_species SET market_price_coins = $1, market_sales = market_sales + 1 WHERE id = $2`,
+          [next, speciesId],
+        );
+        await client.query(
+          `INSERT INTO tcg_price_history (species_id, price, sale_price) VALUES ($1, $2, $3)`,
+          [speciesId, next, salePrice],
+        );
+      }
+      await client.query("COMMIT");
+    } catch (e) {
+      await client.query("ROLLBACK").catch(() => undefined);
+      throw e;
+    } finally {
+      client.release();
+    }
   }
 
   async closeListing(id: number, status: Listing["status"], buyerId?: string): Promise<void> {

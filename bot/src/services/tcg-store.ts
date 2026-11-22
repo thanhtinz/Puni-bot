@@ -8,6 +8,8 @@ import {
   MAX_LEVEL,
   advancePity,
   cardValueCoins,
+  nextMarketPrice,
+  snapMoney,
   bannerActive,
   emptyPity,
   newInstanceCode,
@@ -103,6 +105,9 @@ export interface TcgStore {
   closeListing(id: number, status: Listing["status"], buyerId?: string): Promise<void>;
   listingsOf(userId: string): Promise<Listing[]>;
   listingForInstance(code: string): Promise<Listing | null>;
+  /** Record one completed market sale into the species' internal
+   * market price (spec 6.29). seedValue = imported starting value. */
+  recordMarketSale(speciesId: string, salePrice: number, seedValue: number): Promise<void>;
   createTrade(fromUser: string, toUser: string, codes: string[], coins: number): Promise<Trade>;
   getTrade(id: number): Promise<Trade | null>;
   resolveTrade(id: number, status: Trade["status"]): Promise<void>;
@@ -233,6 +238,12 @@ export class InMemoryTcgStore implements TcgStore {
   async listingForInstance(code: string) {
     const l = this.listings.find((x) => x.instanceCode === code.toUpperCase() && x.status === "open");
     return l ? { ...l } : null;
+  }
+  private marketPrices = new Map<string, { price: number | null; sales: number }>();
+  async recordMarketSale(speciesId: string, salePrice: number, seedValue: number) {
+    const cur = this.marketPrices.get(speciesId) ?? { price: null, sales: 0 };
+    const next = nextMarketPrice(cur.price, seedValue, salePrice, cur.sales);
+    this.marketPrices.set(speciesId, { price: next, sales: cur.sales + 1 });
   }
   async createTrade(fromUser: string, toUser: string, codes: string[], coins: number) {
     const t: Trade = { id: this.seq++, fromUser, toUser, offerCodes: codes, offerCoins: coins, status: "pending", createdAt: new Date() };
@@ -497,8 +508,8 @@ export class TcgGameService {
     const species = catalog.find((s) => s.id === inst.speciesId);
     const rarity = (species?.rarity ?? "Common") as TcgRarity;
     const cfg = await this.deps.config();
-    const value = cardValueCoins(rarity, inst.level, inst.enhance);
-    const coins = Math.max(1, Math.floor((value * cfg.sellRatePercent) / 100));
+    const value = cardValueCoins(rarity, inst.level, inst.enhance, species?.priceUsd, cfg.priceCoinsPerUsd, species?.marketPriceCoins);
+    const coins = snapMoney((value * cfg.sellRatePercent) / 100);
     await this.deps.store.deleteInstance(inst.code);
     await this.deps.economy.credit(userId, coins, "tcg-sell", `Bán thẻ ${inst.code}`);
     return { kind: "ok", coins, value };

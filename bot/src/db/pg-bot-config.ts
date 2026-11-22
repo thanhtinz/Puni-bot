@@ -67,6 +67,12 @@ export class PgBotConfig {
     return normalizeTcgConfig(await this.get("tcg_config"));
   }
 
+  /** Vote config (Admin panel → Vote). */
+  async getVoteConfig(): Promise<import("../services/vote").VoteConfig> {
+    const { normalizeVoteConfig } = await import("../services/vote");
+    return normalizeVoteConfig(await this.get("vote_config"));
+  }
+
   /** Marriage ring tiers (spec 6.16.5); owner-editable prices. */
   async getRingTiers(): Promise<import("../services/marriage").RingTier[]> {
     const { normalizeRingTiers } = await import("../services/marriage");

@@ -5,9 +5,18 @@
  */
 import { CommandRegistry } from "@puni/shared";
 import { createCoreCommands } from "./commands/core";
+import { createReactionCommands } from "./commands/reactions";
+import { createVoteCommands } from "./commands/vote";
 import { createEconomyCommands } from "./commands/economy";
 import { createMembershipCommands } from "./commands/membership";
 import { createMarriageCommands, createCoupleDailyHook } from "./commands/marriage";
+import { createGameCommands } from "./commands/games";
+import { createChannelGameCommands } from "./commands/channel-games";
+import { createWerewolfCommands } from "./commands/werewolf";
+import { InMemoryWerewolfStore, type WerewolfStore } from "./services/werewolf-store";
+import { DEFAULT_WW_CONFIG, type WwConfig } from "./services/werewolf";
+import { InMemoryGameSessionStore, type GameSessionStore } from "./services/game-sessions";
+import { InMemoryChannelGameStore, type ChannelGameStore } from "./services/channel-games";
 import { createTcgCommands, createTcgGroupCommands } from "./commands/tcg";
 import { TcgGameService, InMemoryTcgStore, type TcgStore } from "./services/tcg-store";
 import { DEFAULT_TCG_CONFIG, type TcgConfig, type TcgSpecies } from "./services/tcg";
@@ -39,6 +48,10 @@ export interface BotDeps {
   gems: GemsWallet;
   marriage: MarriageStore;
   tcgStore: TcgStore;
+  /** Werewolf store — the shard tick advances phases + drains the
+   *  announcement outbox through it (spec 6.16.4). */
+  werewolf: WerewolfStore;
+  werewolfConfig: () => Promise<WwConfig>;
 }
 
 export function buildBot(deps: {
@@ -70,6 +83,14 @@ export function buildBot(deps: {
   tcgConfigSource?: () => Promise<TcgConfig>;
   /** Public dashboard base URL for card images in chat. */
   cardBaseUrl?: string;
+  gameSessionStore?: GameSessionStore;
+  channelGameStore?: ChannelGameStore;
+  /** Werewolf store + live config (spec 6.16.4). */
+  werewolfStore?: WerewolfStore;
+  werewolfConfigSource?: () => Promise<WwConfig>;
+  voteStore?: import("./services/vote").VoteStore;
+  voteConfigSource?: () => Promise<import("./services/vote").VoteConfig>;
+  voteBotIdSource?: () => string | null;
 }): BotDeps {
   const registry = new CommandRegistry();
   const economyConfig = deps.economyConfig ?? DEFAULT_ECONOMY_CONFIG;
@@ -132,6 +153,8 @@ export function buildBot(deps: {
   };
 
   const marriage = deps.marriageStore ?? new InMemoryMarriageStore();
+  const werewolfStore = deps.werewolfStore ?? new InMemoryWerewolfStore();
+  const werewolfConfig = deps.werewolfConfigSource ?? (async () => DEFAULT_WW_CONFIG);
   const ringTiers = deps.ringTiersSource ?? (async () => DEFAULT_RING_TIERS);
   const coupleDailyHook = createCoupleDailyHook({ store: marriage, tcgStore });
 
@@ -141,6 +164,13 @@ export function buildBot(deps: {
       settings: deps.settings,
       startedAt,
       version: deps.version ?? "0.1.0",
+    }),
+    ...createReactionCommands({ settings: deps.settings, botName: deps.botName ?? "Puni" }),
+    ...createVoteCommands({
+      voteStore: deps.voteStore,
+      voteConfigSource: deps.voteConfigSource,
+      voteBotIdSource: deps.voteBotIdSource,
+      currencyName: economyConfig.currencyName,
     }),
     ...createEconomyCommands({
       economy,
@@ -156,9 +186,25 @@ export function buildBot(deps: {
       ringTiers,
       currencyName: () => economyConfig.currencyName,
     }),
+    ...createGameCommands({
+      economy: tcgEconomy,
+      sessions: deps.gameSessionStore ?? new InMemoryGameSessionStore(),
+      currencyName: () => economyConfig.currencyName,
+    }),
+    ...createChannelGameCommands({
+      store: deps.channelGameStore ?? new InMemoryChannelGameStore(),
+    }),
+    ...createWerewolfCommands({
+      store: werewolfStore,
+      configSource: werewolfConfig,
+    }),
     ...createTcgCommands(tcgDeps),
     ...createTcgGroupCommands(tcgDeps),
   ];
   for (const def of defs) registry.register(def);
-  return { registry, economy, membership, gems, marriage, tcgStore };
+  return {
+    registry, economy, membership, gems, marriage, tcgStore,
+    werewolf: werewolfStore,
+    werewolfConfig,
+  };
 }

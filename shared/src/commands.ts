@@ -59,6 +59,11 @@ export interface CommandDef {
   slash: boolean;
   /** Expose as a prefix command (does not consume slash quota). */
   prefix: boolean;
+  /** May be invoked by prefix in a DM with the bot (default prefix),
+   *  for commands whose guild phase happens in private — e.g.
+   *  werewolf night actions (spec 6.16.4). Guild gates are skipped;
+   *  the handler receives guildId = null and must route by user. */
+  dmAllowed?: boolean;
   /** Cooldown per user in seconds (0 = none). */
   cooldownSec?: number;
   handler: CommandHandler;

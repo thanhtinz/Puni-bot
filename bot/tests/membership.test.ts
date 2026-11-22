@@ -34,33 +34,37 @@ test("normalize tiers: seed defaults when unset, junk rows dropped, values clamp
 
 test("effective perks: cumulative allowances, own-tier daily percent", () => {
   const tiers = DEFAULT_MEMBERSHIP_TIERS;
-  const t1 = effectivePerks(tiers, "dong-hanh");
-  assert.equal(t1?.dailyBonusPercent, 25);
-  assert.equal(t1?.exclusivePets, true);
-  const t3 = effectivePerks(tiers, "hao-tam");
+  const t1 = effectivePerks(tiers, "free");
+  assert.equal(t1?.dailyBonusPercent, 0);
+  assert.equal(t1?.exclusivePets, false);
+  const t2 = effectivePerks(tiers, "vip");
+  assert.equal(t2?.dailyBonusPercent, 50);
+  assert.equal(t2?.extraTeams, 1);
+  const t3 = effectivePerks(tiers, "premium");
   assert.equal(t3?.dailyBonusPercent, 100);
   assert.equal(t3?.extraTeams, 2);
   assert.equal(t3?.extraLootboxPerDay, 0);
-  assert.equal(t3?.exclusivePets, true);
-  // TCG benefits (spec 6.19b): own-tier percents, best fee below.
-  assert.equal(t1?.gachaDiscountPercent, 5);
-  assert.equal(t1?.marketFeePercent, 4);
-  assert.equal(t3?.gachaDiscountPercent, 20);
-  assert.equal(t3?.marketFeePercent, 0);
-  assert.equal(t3?.battleBonusPercent, 25);
-  assert.equal(t3?.xpBonusPercent, 25);
-  assert.equal(t3?.extraFreePacksPerDay, 1);
+  assert.equal(t3?.exclusivePets, false);
+  // TCG benefits (spec 6.19b): the 2026-11-22 tier design keeps the
+  // standard 5% market fee on every tier and no numeric TCG discounts.
+  assert.equal(t1?.gachaDiscountPercent, 0);
+  assert.equal(t1?.marketFeePercent, 5);
+  assert.equal(t3?.gachaDiscountPercent, 0);
+  assert.equal(t3?.marketFeePercent, 5);
+  assert.equal(t3?.battleBonusPercent, 0);
+  assert.equal(t3?.xpBonusPercent, 0);
+  assert.equal(t3?.extraFreePacksPerDay, 0);
   assert.equal(effectivePerks(tiers, "khong-co"), null);
 });
 
 test("store: grant stacks from current expiry, expiry deactivates, revoke works", async () => {
   const store = new InMemoryMembershipStore();
   const t0 = new Date("2026-01-01T00:00:00Z");
-  const rec = await store.grant({ userId: "u1", tierId: "ung-ho", days: 30, source: "manual", note: "", at: t0 });
+  const rec = await store.grant({ userId: "u1", tierId: "vip", days: 30, source: "manual", note: "", at: t0 });
   assert.equal(rec.expiresAt.toISOString(), "2026-01-31T00:00:00.000Z");
   // Renew 10 days later for 30 more: stacks from Jan 31, not from Jan 11.
   const t1 = new Date("2026-01-11T00:00:00Z");
-  const rec2 = await store.grant({ userId: "u1", tierId: "ung-ho", days: 30, source: "manual", note: "", at: t1 });
+  const rec2 = await store.grant({ userId: "u1", tierId: "vip", days: 30, source: "manual", note: "", at: t1 });
   assert.equal(rec2.expiresAt.toISOString(), "2026-03-02T00:00:00.000Z");
   assert.equal(rec2.startedAt.toISOString(), "2026-01-01T00:00:00.000Z");
   assert.ok(await store.getActive("u1", new Date("2026-02-15T00:00:00Z")));
@@ -72,8 +76,8 @@ test("store: grant stacks from current expiry, expiry deactivates, revoke works"
 test("daily bonus: member gets +50% on the whole daily, non-member unchanged, expired member unchanged", async () => {
   const store = new InMemoryMembershipStore();
   const now = new Date();
-  await store.grant({ userId: "member", tierId: "ung-ho", days: 30, source: "manual", note: "", at: now });
-  await store.grant({ userId: "expired", tierId: "hao-tam", days: 30, source: "manual", note: "", at: new Date(now.getTime() - 40 * 86_400_000) });
+  await store.grant({ userId: "member", tierId: "vip", days: 30, source: "manual", note: "", at: now });
+  await store.grant({ userId: "expired", tierId: "premium", days: 30, source: "manual", note: "", at: new Date(now.getTime() - 40 * 86_400_000) });
 
   const tiersSource = async () => DEFAULT_MEMBERSHIP_TIERS;
   const mk = () =>
@@ -96,7 +100,7 @@ test("pass command: member sees tier + expiry, guest sees the catalogue", async 
   const { registry, membership } = buildBot({ settings });
   await membership.grant({
     userId: "u-member",
-    tierId: "ung-ho",
+    tierId: "vip",
     days: 30,
     source: "manual",
     note: "",
@@ -106,11 +110,11 @@ test("pass command: member sees tier + expiry, guest sees the catalogue", async 
   assert.ok(pass);
   const ctxBase = { guildId: "g1", channelId: "c1", args: [], mentions: [], surface: "prefix" as const };
   const memberOut = await pass.handler({ ...ctxBase, userId: "u-member" });
-  assert.match(memberOut.text, /Người ủng hộ/);
+  assert.match(memberOut.text, /VIP/);
   assert.match(memberOut.text, /daily \+50%/);
   const guestOut = await pass.handler({ ...ctxBase, userId: "u-guest" });
   assert.match(guestOut.text, /chưa có gói hội viên/);
-  assert.match(guestOut.text, /Bạn đồng hành/);
+  assert.match(guestOut.text, /Free/);
 });
 
 test("orders command: empty history message, then lists orders with status labels", async () => {
@@ -125,8 +129,8 @@ test("orders command: empty history message, then lists orders with status label
   orders.add({
     code: "PUNI-TEST1",
     userId: "u-buyer",
-    tierId: "ung-ho",
-    tierName: "Người ủng hộ",
+    tierId: "vip",
+    tierName: "VIP",
     amount: 50000,
     days: 30,
     status: "paid",

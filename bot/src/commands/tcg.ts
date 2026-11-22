@@ -21,6 +21,7 @@ import {
   type TcgSpecies,
   type TcgStats,
   cardValueCoins,
+  snapMoney,
   type TcgRarity,
 } from "../services/tcg";
 import type { TcgGameService, TcgEconomyHooks } from "../services/tcg-store";
@@ -40,7 +41,7 @@ export interface TcgCommandDeps {
   now?: () => Date;
 }
 
-const fmt = (n: number) => n.toLocaleString("vi-VN");
+const fmt = (n: number) => n.toLocaleString("en-US", { maximumFractionDigits: 4 });
 const RARITY_TAG: Record<string, string> = {
   Common: "Thường", Uncommon: "Ít gặp", Rare: "Hiếm", Epic: "Sử thi",
   Legendary: "Huyền thoại", Mythical: "Thần thoại", Fabled: "Truyền thuyết",
@@ -467,7 +468,7 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
         const lines = [
           `**${sp?.name ?? inst.speciesId}** — ${RARITY_TAG[rarity]}`,
           `Mã thẻ: \`${inst.code}\` · Cấp ${inst.level} · Cường hoá +${inst.enhance} · Nguồn: ${inst.obtained}`,
-          `Giá trị của lá này: ${fmt(cardValueCoins(rarity as TcgRarity, inst.level, inst.enhance))} ${deps.currencyName()} · Bán cho hệ thống: ${fmt(Math.max(1, Math.floor((cardValueCoins(rarity as TcgRarity, inst.level, inst.enhance) * cfg.sellRatePercent) / 100)))} · Phân giải được ${BURN_SHARDS[rarity as keyof typeof BURN_SHARDS] ?? 1} Mảnh`,
+          `Giá trị của lá này: ${fmt(cardValueCoins(rarity as TcgRarity, inst.level, inst.enhance, sp?.priceUsd, cfg.priceCoinsPerUsd, sp?.marketPriceCoins))} ${deps.currencyName()} · Bán cho hệ thống: ${fmt(snapMoney((cardValueCoins(rarity as TcgRarity, inst.level, inst.enhance, sp?.priceUsd, cfg.priceCoinsPerUsd, sp?.marketPriceCoins) * cfg.sellRatePercent) / 100))} · Phân giải được ${BURN_SHARDS[rarity as keyof typeof BURN_SHARDS] ?? 1} Mảnh`,
           inst.locked ? "Đang khoá (không bán/trade/phân giải được)." : "Chưa khoá.",
           inst.favorite ? "Đã đánh dấu yêu thích." : "",
           sp?.evolvesTo ? `Tiến hoá thành: **${map.get(sp.evolvesTo)?.name ?? sp.evolvesTo}** (lệnh \`card evolve ${inst.code}\`)` : "",
@@ -691,6 +692,13 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
         await deps.store.updateInstance(l.instanceCode, { userId: ctx.userId });
         await deps.store.closeListing(l.id, "sold", ctx.userId);
         const inst = await deps.store.getInstance(l.instanceCode);
+        if (inst) {
+          const soldSpecies = map.get(inst.speciesId);
+          const seed = soldSpecies?.priceUsd
+            ? soldSpecies.priceUsd * cfg.priceCoinsPerUsd
+            : (BASE_VALUE[(soldSpecies?.rarity ?? "Common") as keyof typeof BASE_VALUE] ?? 0);
+          await deps.store.recordMarketSale(inst.speciesId, l.price, seed).catch(() => undefined);
+        }
         return { text: `Mua thành công: **${map.get(inst?.speciesId ?? "")?.name ?? "thẻ"}** (\`${l.instanceCode}\`) với giá **${fmt(l.price)}** ${deps.currencyName()}.` };
       }
       if (sub === "cancel") {
