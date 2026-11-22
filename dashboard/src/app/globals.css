@@ -26,6 +26,19 @@
   --shadow-md: 0 16px 34px -14px rgba(0, 0, 0, 0.45);
   --font-body: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
   --font-display: "Baloo 2", "Be Vietnam Pro", system-ui, sans-serif;
+  /* Layout tokens — one spacing/radius scale for every shell component
+     (layout audit: replaces the scattered literals across surfaces). */
+  --sp-1: 6px;
+  --sp-2: 10px;
+  --sp-3: 16px;
+  --sp-4: 20px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --r-sm: 11px;
+  --r-md: 14px;
+  --r-lg: 18px;
+  --panel-w: 780px;
+  --panel-w-wide: 1080px;
 }
 
 * { box-sizing: border-box; }
@@ -91,7 +104,7 @@ a:hover { text-decoration: underline; }
 .btn {
   display: inline-flex; align-items: center; gap: 8px;
   font-family: var(--font-display); font-weight: 700; font-size: 16px;
-  padding: 11px 22px; border-radius: 14px; border: none; cursor: pointer;
+  padding: 11px 22px; border-radius: var(--r-md); border: none; cursor: pointer;
   background: linear-gradient(120deg, #4c8dff, #2b63d8); color: #fff;
   box-shadow: 0 10px 22px -10px rgba(76, 141, 255, 0.6);
   transition: transform 0.15s ease, filter 0.15s ease;
@@ -106,7 +119,7 @@ a:hover { text-decoration: underline; }
 }
 .btn.secondary { background: var(--teal); color: #fff; box-shadow: 0 10px 22px -12px rgba(46, 107, 230, 0.8); }
 .btn.danger { background: var(--danger); color: #fff; }
-.btn.sm { padding: 8px 16px; font-size: 14.5px; border-radius: 11px; }
+.btn.sm { padding: 8px 16px; font-size: 14.5px; border-radius: var(--r-sm); }
 
 /* hero */
 .hero { padding: 92px 0 30px; }
@@ -270,9 +283,9 @@ table.plain tr:last-child td { border-bottom: none; }
 .shell { display: flex; min-height: 100vh; }
 .side { width: 248px; flex: none; padding: 24px 16px; display: flex; flex-direction: column; gap: 4px; }
 .side .brand { font-family: var(--font-display); font-size: 21px; font-weight: 800; margin: 2px 8px 20px; display: flex; align-items: center; gap: 10px; }
-.side a.item { padding: 10px 13px; border-radius: 11px; font-weight: 600; font-size: 15px; display: block; }
+.side a.item { padding: var(--sp-2) 13px; border-radius: var(--r-sm); font-weight: 600; font-size: 15px; display: block; }
 .side a.item:hover { text-decoration: none; }
-.content { flex: 1; padding: 30px 34px 64px; min-width: 0; }
+.content { flex: 1; padding: 30px 34px 64px; min-width: 0; line-height: 1.55; }
 .content h1 { font-size: 30px; margin: 0 0 6px; }
 
 .dash-body { background: #edf2fc; }
@@ -297,35 +310,64 @@ table.plain tr:last-child td { border-bottom: none; }
 
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; }
 .card {
-  background: #fff; border: 1px solid #e2ebe9; border-radius: 18px;
+  background: #fff; border: 1px solid #e2ebe9; border-radius: var(--r-lg);
   padding: 22px; box-shadow: 0 10px 26px -18px rgba(10, 28, 56, 0.35);
 }
 .card h3 { margin: 0 0 8px; font-size: 26px; }
 .card p { color: #5b7480; line-height: 1.55; margin: 0; }
 
 .panel {
-  background: #fff; border: 1px solid #e2ebe9; border-radius: 18px;
-  padding: 24px; margin-bottom: 20px; max-width: 780px;
+  background: #fff; border: 1px solid #e2ebe9; border-radius: var(--r-lg);
+  padding: var(--sp-5); margin-bottom: var(--sp-4); max-width: var(--panel-w);
   box-shadow: 0 10px 26px -18px rgba(10, 28, 56, 0.35);
 }
+/* Data panels (tables, charts) get the one wide width — no per-page
+   inline max-widths. */
+.panel.wide { max-width: var(--panel-w-wide); }
+/* A panel holding a wide table scrolls the table, never the page. */
+.panel:has(> table.plain) { overflow-x: auto; }
+.content > table.plain { display: block; overflow-x: auto; }
 .panel h2 { margin-top: 0; font-size: 22px; }
 .panel p { line-height: 1.6; color: #33525c; }
-.field { margin-bottom: 16px; }
+.field { margin-bottom: var(--sp-3); }
 .field label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 14.5px; }
 .field .hint { color: #71868e; font-size: 13px; margin-top: 5px; line-height: 1.5; }
-.field input[type="text"], .field input[type="password"], .field textarea, .field select {
-  width: 100%; padding: 11px 13px; border: 1.5px solid #d8e4e1; border-radius: 11px;
-  font-size: 15px; font-family: inherit; background: #fbfdfe; transition: border-color 0.15s ease, box-shadow 0.15s ease;
+/* One control look for every app-shell form (dashboard fields and
+   admin controls alike) — this block is the ONLY place that defines
+   input/select/textarea chrome; surface blocks below add extras only. */
+.field input[type="text"], .field input[type="number"], .field input[type="password"],
+.field input[type="search"], .field input[type="url"], .field input[type="email"],
+.field input[type="datetime-local"], .field textarea, .field select,
+.admin-content input[type="text"], .admin-content input[type="number"],
+.admin-content input[type="password"], .admin-content input[type="search"],
+.admin-content input[type="url"], .admin-content input[type="email"],
+.admin-content input[type="datetime-local"], .admin-content textarea, .admin-content select {
+  padding: 10px 13px;
+  border: 1.5px solid #c9d6ee;
+  border-radius: var(--r-sm);
+  font-size: 15px;
+  font-family: inherit;
+  color: #16283f;
+  background: #fbfcff;
+  max-width: 100%;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
-.field input:focus, .field textarea:focus, .field select:focus {
-  outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(46, 107, 230, 0.2);
+.field input, .field textarea, .field select { width: 100%; }
+.field input:hover, .field textarea:hover, .field select:hover,
+.admin-content input:hover, .admin-content textarea:hover, .admin-content select:hover { border-color: #a9bfe6; }
+.field input:focus, .field textarea:focus, .field select:focus,
+.admin-content input:focus, .admin-content textarea:focus, .admin-content select:focus {
+  outline: none; border-color: #2e6be6; background: #fff;
+  box-shadow: 0 0 0 3.5px rgba(46, 107, 230, 0.18);
 }
+.field input::placeholder, .field textarea::placeholder,
+.admin-content input::placeholder, .admin-content textarea::placeholder { color: #93a7c4; }
 .field textarea { min-height: 84px; resize: vertical; }
 .check { display: flex; gap: 9px; align-items: flex-start; margin-bottom: 10px; }
 .check input { margin-top: 3px; width: 17px; height: 17px; accent-color: var(--teal); }
 .saved {
   background: #e3f6e6; border: 1px solid #9ed3a2; color: #1e5c26;
-  padding: 13px 17px; border-radius: 12px; margin-bottom: 18px; max-width: 780px; font-weight: 600;
+  padding: 13px 17px; border-radius: 12px; margin-bottom: 18px; max-width: var(--panel-w); font-weight: 600;
 }
 .guild-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; max-width: 940px; }
 .guild-card {
@@ -386,7 +428,7 @@ table.plain tr:last-child td { border-bottom: none; }
 
 .sparkle { position: absolute; color: var(--accent); pointer-events: none; animation: twinkle 2.8s ease-in-out infinite; }
 .sparkle svg { display: block; }
-.hero { position: relative; }
+.hero { position: relative; overflow-x: clip; }
 
 .reveal { opacity: 0; transform: translateY(30px) scale(0.985); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1.3, 0.36, 1); }
 .reveal.in { opacity: 1; transform: translateY(0) scale(1); }
@@ -519,42 +561,10 @@ table.plain tr:last-child td { border-bottom: none; }
 .empty-note, .page-note { color: var(--muted); line-height: 1.65; }
 .page-note code { background: rgba(111, 168, 255, 0.14); padding: 1px 7px; border-radius: 7px; color: var(--accent-soft); }
 
-/* ---------------- admin form controls (complete pass) ----------------
-   Every control inside the admin content gets the same treatment —
-   including inputs outside .field wrappers and number/file inputs,
-   which previously fell back to raw browser defaults. */
-.admin-content input[type="text"],
-.admin-content input[type="number"],
-.admin-content input[type="password"],
-.admin-content input[type="search"],
-.admin-content input[type="url"],
-.admin-content input[type="email"],
-.admin-content input[type="datetime-local"],
-.admin-content select,
-.admin-content textarea {
-  padding: 10px 13px;
-  border: 1.5px solid #c9d6ee;
-  border-radius: 11px;
-  font-size: 15px;
-  font-family: inherit;
-  color: #16283f;
-  background: #fbfcff;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-  max-width: 100%;
-}
-.admin-content input:hover,
-.admin-content select:hover,
-.admin-content textarea:hover { border-color: #a9bfe6; }
-.admin-content input:focus,
-.admin-content select:focus,
-.admin-content textarea:focus {
-  outline: none;
-  border-color: #2e6be6;
-  background: #fff;
-  box-shadow: 0 0 0 3.5px rgba(46, 107, 230, 0.18);
-}
-.admin-content input::placeholder,
-.admin-content textarea::placeholder { color: #93a7c4; }
+/* ---------------- admin form extras ----------------------------
+   Only what the unified control rule does NOT cover: select arrow
+   room, number spinners, checkbox/radio sizing, file picker chrome,
+   and admin label alignment. */
 .admin-content select { padding-right: 34px; cursor: pointer; }
 .admin-content input[type="number"] { appearance: textfield; }
 .admin-content input[type="checkbox"],
@@ -596,11 +606,19 @@ table.plain tr:last-child td { border-bottom: none; }
 .buy-details p { margin: 6px 0; }
 .buy-status { font-weight: 700; color: var(--accent-soft) !important; }
 
-/* Even form layout (owner law: rows divide evenly — no ragged field
-   widths). Every .field inside an admin form flexes to an EQUAL share
-   of its row, and controls always fill their field, overriding the
-   per-field inline widths older forms carried. */
-.admin-content form .field { flex: 1 1 0; min-width: 150px; }
+/* Form layout system (owner law: rows divide evenly — no ragged
+   field widths). Fields in an admin form share their row equally,
+   controls always fill their field (beating per-field inline widths
+   older forms carried), and controls bottom-align so rows whose
+   labels wrap to two lines still share one input baseline. */
+.admin-content form .field {
+  flex: 1 1 0; min-width: 150px;
+  display: flex; flex-direction: column;
+}
+.admin-content form .field > label { margin-bottom: 7px; }
+.admin-content form .field > input,
+.admin-content form .field > select,
+.admin-content form .field > textarea { margin-top: auto; }
 .admin-content .field input,
 .admin-content .field select,
 .admin-content .field textarea {
@@ -608,13 +626,31 @@ table.plain tr:last-child td { border-bottom: none; }
   max-width: none !important;
 }
 
-/* Bottom-align controls inside a field so rows whose labels wrap to
-   two lines still line their inputs up on one baseline. */
-.admin-content form .field { display: flex; flex-direction: column; }
-.admin-content form .field > input,
-.admin-content form .field > select,
-.admin-content form .field > textarea { margin-top: auto; }
-.admin-content form .field > label { margin-bottom: 7px; }
+/* ---------------- responsive shells (tablet + mobile) -------------
+   Below 900px the app shells stack: the sidebar becomes a horizontal
+   strip on top, content takes the full width, and the public nav
+   compacts. Wide data lives in .panel.wide / scrollable tables. */
+@media (max-width: 900px) {
+  .shell { flex-direction: column; }
+  .side {
+    width: 100%; min-width: 0; flex-direction: row; align-items: center;
+    overflow-x: auto; padding: 12px 14px; gap: var(--sp-1);
+  }
+  .side .brand { margin: 0 10px 0 2px; white-space: nowrap; }
+  .side a.item { white-space: nowrap; }
+  .side .who { margin: 0 0 0 auto; white-space: nowrap; padding-left: 12px; }
+  .content { padding: var(--sp-4) var(--sp-3) 48px; }
+  .content h1 { font-size: 25px; }
+  .panel { padding: var(--sp-4); }
+  .pub-nav { gap: 12px; padding: 8px 8px 8px 14px; }
+  .pub-nav nav { gap: 14px; overflow-x: auto; scrollbar-width: none; }
+  .pub-nav nav a { white-space: nowrap; }
+  .pub-nav .who { display: none; }
+  .src-row { grid-template-columns: 96px 1fr 64px; gap: 8px; }
+  /* Public data tables scroll inside their frame on small screens. */
+  .pub-main table.plain { display: block; overflow-x: auto; }
+  .tcg-shell { border-radius: var(--r-lg); }
+}
 
 /* ---- TCG player area (spec 6.23): light app shell ----------------- */
 .tcg-shell {

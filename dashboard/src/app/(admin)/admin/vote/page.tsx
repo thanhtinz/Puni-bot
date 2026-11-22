@@ -98,7 +98,7 @@ export default async function AdminVotePage({
         </p>
       </div>
 
-      <div className="panel" style={{ maxWidth: 1080 }}>
+      <div className="panel wide">
         <h2>Lượt vote gần nhất</h2>
         {recent && recent.length > 0 ? (
           <table className="plain">

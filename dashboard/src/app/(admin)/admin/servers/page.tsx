@@ -45,7 +45,7 @@ export default async function AdminServersPage({
         <button className="btn" type="submit">Lọc</button>
         {query ? <span style={{ alignSelf: "center" }}>{shown.length}/{rows.length} server khớp</span> : null}
       </form>
-      <div className="panel" style={{ maxWidth: 980 }}>
+      <div className="panel wide">
         {shown.length === 0 ? (
           <p>Chưa có server nào lưu cấu hình.</p>
         ) : (

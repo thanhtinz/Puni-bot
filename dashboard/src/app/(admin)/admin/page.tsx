@@ -97,7 +97,7 @@ export default async function AdminOverviewPage({
       </div>
       {ecoChart && ecoChart.sources.length > 0 ? (
         <>
-          <div className="panel" style={{ maxWidth: 980 }}>
+          <div className="panel wide">
             <h2>Hoạt động economy — 14 ngày gần nhất</h2>
             <div className="chart-bars">
               {ecoChart.days.map((d) => {
@@ -121,7 +121,7 @@ export default async function AdminOverviewPage({
               {fmt(ecoChart.days.reduce((a, d) => a + d.burned, 0))}
             </p>
           </div>
-          <div className="panel" style={{ maxWidth: 980 }}>
+          <div className="panel wide">
             <h2>Cơ cấu theo nguồn tiền</h2>
             {ecoChart.sources.map((s) => {
               const max = Math.max(...ecoChart.sources.map((x) => x.tx), 1);
