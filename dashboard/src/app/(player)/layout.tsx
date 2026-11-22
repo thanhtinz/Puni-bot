@@ -64,7 +64,7 @@ export default async function PlayerLayout({ children }: { children: ReactNode }
                     label="TCG"
                     paths={[
                       "/me/dex", "/me/cards", "/me/showcase", "/me/gacha", "/me/shop",
-                      "/me/battle", "/me/pokemon", "/me/yugioh", "/me/onepiece", "/me/dragonball", "/me/tournament", "/me/decks", "/me/deck-search",
+                      "/me/battle", "/me/pokemon", "/me/yugioh", "/me/onepiece", "/me/dragonball", "/me/digimon", "/me/tournament", "/me/decks", "/me/deck-search",
                       "/me/market", "/me/cho", "/me/auction", "/me/trades", "/me/quests",
                     ]}
                   >
@@ -78,6 +78,7 @@ export default async function PlayerLayout({ children }: { children: ReactNode }
                     <Link href="/me/yugioh" className="player-tab"><IconShield size={16} />Đấu Yu-Gi-Oh</Link>
                     <Link href="/me/onepiece" className="player-tab"><IconGlobe size={16} />Đấu One Piece</Link>
                     <Link href="/me/dragonball" className="player-tab"><IconSpark size={16} />Đấu Dragon Ball</Link>
+                    <Link href="/me/digimon" className="player-tab"><IconActivity size={16} />Đấu Digimon</Link>
                     <Link href="/me/tournament" className="player-tab"><IconTrophy size={16} />Giải Đấu</Link>
                     <Link href="/me/decks" className="player-tab"><IconList size={16} />Bộ Bài</Link>
                     <Link href="/me/deck-search" className="player-tab"><IconSearch size={16} />Tìm Bộ Bài</Link>

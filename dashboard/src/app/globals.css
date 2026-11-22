@@ -2600,3 +2600,59 @@ a.player-btn { display: inline-flex; align-items: center; text-decoration: none;
 .arena-bleed .ygo-deckline { color: #c7d7f7; padding: 14px 14px 0; margin: 0; }
 .arena-bleed .poke-bench-card small { color: #d7e4fb; }
 .arena-bleed .poke-bench-card.big small:first-of-type { color: #eef4ff; }
+
+/* Digimon arena (spec 6.39i): simulator layout — Security/Deck/
+   Trash column, Battle Area centre, Breeding Area on the side, and
+   the shared Memory Gauge strip between the halves. Real cards
+   only; face-down stacks wear the Puni Digimon card back. */
+.dig-stage { position: relative; border: 1px solid #2b4a7f; border-radius: 18px; overflow: hidden; padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 8px; }
+.arena-bleed .dig-stage { border-radius: 0; border-left: none; border-right: none; border-top: none; min-height: max(620px, calc(100vh - 215px)); }
+.dig-stage.is-shaking { animation: dig-shake 0.3s ease; }
+@keyframes dig-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 60% { transform: translateX(4px); } }
+.dig-half { position: relative; display: grid; grid-template-columns: 86px 1fr 86px; gap: 10px; align-items: start; background: rgba(8, 20, 38, 0.42); border: 1px solid rgba(96, 165, 250, 0.22); border-radius: 14px; padding: 10px; flex: 1; }
+.dig-side-label { position: absolute; right: 10px; bottom: 6px; font-size: 0.72rem; font-weight: 700; color: #9fc2ff; letter-spacing: 0.04em; }
+.dig-half.foe .dig-side-label { top: 6px; bottom: auto; }
+.dig-leftcol, .dig-rightcol { display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
+.dig-security { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #dbeafe; }
+.dig-security small { font-size: 0.68rem; font-weight: 700; }
+.dig-security-stack { position: relative; width: 52px; height: 72px; }
+.dig-security-card { position: absolute; inset: 0; border-radius: 5px; border: 1px solid #c9a227; background-image: url("/cardbacks/digimon.jpg"); background-size: cover; background-position: center; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45); }
+.dig-pile { border-radius: 9px; border: 1px solid rgba(147, 178, 255, 0.4); background: rgba(10, 24, 48, 0.85); color: #eaf1ff; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px 2px; min-height: 52px; }
+.dig-pile strong { font-size: 1rem; line-height: 1.1; }
+.dig-pile small { font-size: 0.64rem; color: #9fc2ff; font-weight: 700; }
+.dig-pile.deck { background-image: linear-gradient(rgba(8, 14, 28, 0.42), rgba(8, 14, 28, 0.42)), url("/cardbacks/digimon.jpg"); background-size: cover; background-position: center; }
+.dig-fieldrow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.dig-mon { position: relative; display: flex; flex-direction: column; gap: 4px; }
+.dig-mon.empty { border: 1.5px dashed rgba(147, 178, 255, 0.35); border-radius: 9px; min-height: 120px; }
+.dig-mon-art { width: 100%; aspect-ratio: 63/88; border-radius: 8px; overflow: hidden; background: #dfe8fa; display: block; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4); }
+.dig-mon-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.dig-mon.is-suspended .dig-mon-art { transform: rotate(90deg) scale(0.74); opacity: 0.88; }
+.dig-mon.is-dying { opacity: 0.35; filter: grayscale(0.9); }
+.dig-mon.is-hit { animation: poke-shake 0.4s ease; }
+.dig-mon.lunge-a { animation: poke-lunge-up 0.55s ease; z-index: 4; }
+.dig-mon.lunge-b { animation: poke-lunge-down 0.55s ease; z-index: 4; }
+.dig-mon-chips { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; }
+.dig-dp { background: #b45309; color: #fff7e0; font-weight: 800; font-size: 0.68rem; border-radius: 999px; padding: 1px 7px; }
+.dig-lv { background: rgba(10, 24, 48, 0.85); color: #bcd3ff; font-weight: 700; font-size: 0.68rem; border-radius: 999px; padding: 1px 7px; border: 1px solid rgba(147, 178, 255, 0.4); }
+.dig-breeding { border: 1.5px dashed rgba(147, 178, 255, 0.4); border-radius: 9px; min-height: 104px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: #9fc2ff; padding: 4px; }
+.dig-breeding.filled { border-style: solid; background: rgba(10, 24, 48, 0.6); }
+.dig-breeding small { font-size: 0.64rem; font-weight: 700; text-align: center; }
+.dig-breeding-art { width: 52px; aspect-ratio: 63/88; border-radius: 6px; overflow: hidden; background: #dfe8fa; display: block; }
+.dig-breeding-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.dig-gauge { display: flex; align-items: center; gap: 10px; background: rgba(6, 14, 30, 0.88); border: 1px solid rgba(96, 165, 250, 0.35); border-radius: 12px; padding: 8px 12px; }
+.dig-gauge-end { font-weight: 800; font-size: 0.78rem; color: #fca5a5; }
+.dig-gauge-end.me { color: #93c5fd; }
+.dig-gauge-track { position: relative; flex: 1; height: 14px; border-radius: 999px; background: linear-gradient(90deg, #7f1d1d 0%, #334155 50%, #1d4ed8 100%); }
+.dig-gauge-zero { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 2px; background: rgba(255, 255, 255, 0.65); }
+.dig-gauge-marker { position: absolute; top: 50%; width: 20px; height: 20px; border-radius: 50%; background: #ffd83d; border: 2px solid #7c5e00; transform: translate(-50%, -50%); transition: left 0.45s ease; box-shadow: 0 0 10px rgba(255, 216, 61, 0.7); }
+.dig-gauge-label { font-size: 0.78rem; font-weight: 700; color: #dbeafe; white-space: nowrap; }
+.dig-log { text-align: center; background: #10254d; color: #eaf1ff; border-radius: 10px; padding: 8px 12px; font-size: 0.9rem; min-height: 38px; display: flex; align-items: center; justify-content: center; }
+.dig-stage { background-image: linear-gradient(rgba(6, 12, 24, 0.5), rgba(6, 12, 24, 0.5)), url("/dig-arena-bg-a.jpg"), url("/dig-arena-bg-b.jpg"); background-size: 100% 100%, 50% 100%, 50% 100%; background-position: center, left top, right top; background-repeat: no-repeat; }
+@media (max-width: 700px) {
+  .dig-half { grid-template-columns: 58px 1fr 58px; gap: 6px; padding: 7px; }
+  .dig-security-stack { width: 38px; height: 54px; }
+  .dig-mon.empty { min-height: 74px; }
+  .dig-breeding { min-height: 78px; }
+  .dig-breeding-art { width: 38px; }
+  .dig-gauge-label { white-space: normal; text-align: center; }
+}
