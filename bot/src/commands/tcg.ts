@@ -12,6 +12,7 @@ import {
   MAX_ENHANCE,
   MAX_LEVEL,
   bannerActive,
+  inBannerPool,
   enhanceCost,
   rarityRank,
   upgradeCost,
@@ -425,7 +426,7 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
         if (!banner || !bannerActive(banner, now())) return { text: "Banner không còn mở." };
         const species = (await speciesMap()).get(speciesId ?? "");
         if (!species) return { text: "Không tìm thấy loài thẻ đó. Xem danh sách bằng `collection <tên>`." };
-        if (banner.poolSpecies.length && !banner.poolSpecies.includes(species.id)) {
+        if (!inBannerPool(banner, species.id)) {
           return { text: "Loài này không nằm trong pool của banner." };
         }
         const pity = await deps.store.getPity(ctx.userId, id);

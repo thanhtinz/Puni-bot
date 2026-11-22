@@ -9,11 +9,11 @@ export class PgTcgStore implements TcgStore {
 
   async listBanners(): Promise<TcgBanner[]> {
     const res = await this.pool.query(
-      `SELECT id, name, kind, featured_species, pool_species, cost_coins::text AS cost, starts_at, ends_at, enabled FROM tcg_banners ORDER BY id`,
+      `SELECT id, name, kind, featured_species, pool_species, pool_prefix, cost_coins::text AS cost, starts_at, ends_at, enabled FROM tcg_banners ORDER BY id`,
     );
     return res.rows.map((r) => ({
       id: r.id, name: r.name, kind: r.kind, featuredSpecies: r.featured_species ?? [],
-      poolSpecies: r.pool_species ?? [], costCoins: Number.parseInt(r.cost, 10),
+      poolSpecies: r.pool_species ?? [], poolPrefix: r.pool_prefix ?? null, costCoins: Number.parseInt(r.cost, 10),
       startsAt: r.starts_at, endsAt: r.ends_at, enabled: r.enabled,
     }));
   }

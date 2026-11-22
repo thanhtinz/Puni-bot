@@ -96,36 +96,52 @@ export default async function MeGachaPage({
             {banners.map((b) => {
               const unit = b.kind === "beginner" ? cfg.beginnerCostCoins : b.costCoins || cfg.pullCostCoins;
               return (
-                <article className={`gacha-banner${b.imageUrl ? " has-art" : ""}`} key={b.id}>
+                <article className={`gacha-banner v2${b.imageUrl ? " has-art" : ""}`} key={b.id}>
+                  <div className="gb-body">
+                    {b.featuredSpecies.length ? <span className="gb-ribbon">RATE-UP</span> : null}
+                    <h3>{b.name}</h3>
+                    <p className="gb-meta">
+                      {fmt(unit)} Coins/lượt
+                      {b.endsAt ? ` · Kết thúc ${new Date(b.endsAt).toLocaleDateString("vi-VN")}` : ""}
+                    </p>
+                    {b.featuredSpecies.length ? (
+                      <div className="gb-featured">
+                        <span className="gb-thumbs">
+                          {b.featuredSpecies.slice(0, 2).map((s) => {
+                            const d = featuredDisplay.get(s);
+                            return d?.spriteUrl ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img key={s} src={d.spriteUrl} alt={d.name} />
+                            ) : null;
+                          })}
+                        </span>
+                        <span className="gb-featured-names">
+                          Rate-up: {b.featuredSpecies.map((s) => featuredDisplay.get(s)?.name ?? s).join(", ")}
+                        </span>
+                      </div>
+                    ) : null}
+                    <div className="gacha-actions">
+                      <form method="post" action="/api/me/gacha">
+                        <input type="hidden" name="kind" value="pull" />
+                        <input type="hidden" name="banner" value={b.id} />
+                        <input type="hidden" name="count" value="1" />
+                        <button type="submit" className="player-btn">Mở 1 · {fmt(unit)}</button>
+                      </form>
+                      <form method="post" action="/api/me/gacha">
+                        <input type="hidden" name="kind" value="pull" />
+                        <input type="hidden" name="banner" value={b.id} />
+                        <input type="hidden" name="count" value="10" />
+                        <button type="submit" className="player-btn">Mở 10 · {fmt(unit * 10)}</button>
+                      </form>
+                    </div>
+                    <p className="gb-note">Mở 10 đảm bảo ít nhất 1 thẻ Hiếm.</p>
+                  </div>
                   {b.imageUrl ? (
-                    <div className="gacha-banner-art">
+                    <div className="gb-art">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={b.imageUrl} alt="" />
                     </div>
                   ) : null}
-                  <div className="gacha-banner-body">
-                  <h3>{b.name}</h3>
-                  <p className="player-sub">
-                    {fmt(unit)} Coins/lượt
-                    {b.featuredSpecies.length ? ` · Rate-up: ${b.featuredSpecies.map((s) => featuredDisplay.get(s)?.name ?? s).join(", ")}` : ""}
-                    {b.endsAt ? ` · Kết thúc ${new Date(b.endsAt).toLocaleDateString("vi-VN")}` : ""}
-                  </p>
-                  <div className="gacha-actions">
-                    <form method="post" action="/api/me/gacha">
-                      <input type="hidden" name="kind" value="pull" />
-                      <input type="hidden" name="banner" value={b.id} />
-                      <input type="hidden" name="count" value="1" />
-                      <button type="submit" className="player-btn">Mở 1 · {fmt(unit)}</button>
-                    </form>
-                    <form method="post" action="/api/me/gacha">
-                      <input type="hidden" name="kind" value="pull" />
-                      <input type="hidden" name="banner" value={b.id} />
-                      <input type="hidden" name="count" value="10" />
-                      <button type="submit" className="player-btn">Mở 10 · {fmt(unit * 10)}</button>
-                    </form>
-                  </div>
-                  <p className="player-sub">Mở 10 đảm bảo ít nhất 1 thẻ Hiếm.</p>
-                  </div>
                 </article>
               );
             })}

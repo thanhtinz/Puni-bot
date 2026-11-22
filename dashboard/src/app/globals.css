@@ -1434,7 +1434,7 @@ table.plain tr:last-child td { border-bottom: none; }
   color: #141a26; font-size: 14.5px; line-height: 1.15;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.slab-label-main span { color: #5a6c8f; font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; }
+.slab-label-main span { color: #5a6c8f; font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .slab-label-grade { display: grid; gap: 1px; text-align: right; flex: none; }
 .slab-label-grade strong { color: #b3261c; font-size: 14.5px; line-height: 1.15; }
 .slab-label-grade span { color: #5a6c8f; font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; }
@@ -1828,4 +1828,208 @@ table.plain tr:last-child td { border-bottom: none; }
   .gacha-banner.has-art { flex-direction: column; }
   .gacha-banner-art { flex: none; }
   .gacha-banner-art img { width: 100%; height: 150px; min-height: 0; object-position: center 18%; }
+}
+
+/* Banner gacha v2 (Tín chê bản đầu chưa đẹp 2026-11-22): panel kiểu banner
+   game gacha — nền gradient có quầng sáng, gói nghiêng đổ bóng bên phải,
+   ruy băng RATE-UP + ảnh nhỏ 2 lá rate-up, nút to rõ. */
+.gacha-banners { grid-template-columns: repeat(auto-fit, minmax(430px, 1fr)); }
+.gacha-banner.v2 {
+  position: relative; overflow: hidden; display: flex; align-items: stretch;
+  min-height: 208px; padding: 22px 24px;
+  background:
+    radial-gradient(420px 200px at 88% 0%, rgba(255, 176, 32, .20), transparent 65%),
+    radial-gradient(500px 260px at 100% 110%, rgba(76, 141, 255, .22), transparent 60%),
+    linear-gradient(115deg, #0a1c38 0%, #0f2a52 55%, #173a6e 100%);
+}
+.gacha-banner.v2 .gb-body { flex: 1; min-width: 0; display: flex; flex-direction: column; position: relative; z-index: 1; }
+.gacha-banner.v2 h3 { font-size: 25px; line-height: 1.15; margin: 8px 0 4px; }
+.gb-ribbon {
+  align-self: flex-start; background: linear-gradient(90deg, #ffb020, #ff7847); color: #3a1503;
+  font-size: 11px; font-weight: 800; letter-spacing: .14em; padding: 4px 11px; border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(255, 140, 40, .35);
+}
+.gb-meta { color: #a7bee6; font-weight: 600; margin: 0 0 4px; }
+.gb-note { color: #7e97c4; font-size: 13px; margin: auto 0 0; padding-top: 10px; }
+.gb-featured { display: flex; align-items: center; gap: 12px; margin: 10px 0 14px; }
+.gb-thumbs { display: inline-flex; }
+.gb-thumbs img {
+  width: 42px; height: 59px; object-fit: cover; border-radius: 6px; display: block;
+  border: 1px solid rgba(255, 216, 61, .55); box-shadow: 0 6px 14px rgba(2, 8, 23, .45);
+}
+.gb-thumbs img:first-child { transform: rotate(-5deg); }
+.gb-thumbs img + img { transform: rotate(4deg); margin-left: -10px; }
+.gb-featured-names { color: #d7e4ff; font-size: 13.5px; font-weight: 600; }
+.gacha-banner.v2 .gacha-actions { margin-top: 2px; }
+.gacha-banner.v2 .player-btn { padding: 11px 20px; font-size: 15px; }
+.gb-art { flex: 0 0 auto; display: flex; align-items: center; padding-left: 10px; position: relative; z-index: 1; }
+.gb-art img {
+  height: 198px; width: auto; border-radius: 10px; display: block;
+  transform: rotate(5deg); filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .5));
+  transition: transform .25s ease;
+}
+.gacha-banner.v2:hover .gb-art img { transform: rotate(2deg) scale(1.03); }
+@media (max-width: 640px) {
+  /* Banner mobile bản 3 (Tín chê bản dải ảnh cắt gói 2026-11-22): dải
+     ngang gọn kiểu banner game mobile — gói NGUYÊN VẸN nghiêng bên
+     phải, chữ và nút thu gọn bên trái, không cắt xén ảnh gói. */
+  .gacha-banners { grid-template-columns: minmax(0, 1fr); }
+  .gacha-banner.v2 { flex-direction: row; align-items: center; padding: 16px; min-height: 0; }
+  .gacha-banner.v2 h3 { font-size: 19px; margin: 6px 0 2px; }
+  .gb-meta { font-size: 13px; }
+  .gb-featured { gap: 8px; margin: 8px 0 10px; }
+  .gb-thumbs img { width: 30px; height: 42px; }
+  .gb-featured-names {
+    font-size: 12px; display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .gacha-banner.v2 .gacha-actions { flex-wrap: wrap; gap: 8px; }
+  .gacha-banner.v2 .player-btn { padding: 9px 14px; font-size: 13.5px; }
+  .gb-note { font-size: 12px; padding-top: 8px; }
+  .gb-art { padding-left: 8px; }
+  .gb-art img { height: 148px; width: auto; transform: rotate(5deg); }
+}
+
+/* Shop TCG (spec 6.36): tab, bộ lọc kiểu sàn, lưới thẻ có hoạt ảnh,
+   thẻ nghiêng 3D + vệt sáng, khung nhựa trong (toploader) cho thẻ
+   Hiếm, slab nhựa trong cho thẻ Sử thi+, trang chi tiết và lớp phủ
+   hiện thẻ vừa mua. */
+.shop-tabs { display: flex; gap: 8px; margin: 14px 0 4px; }
+.shop-tabs a {
+  padding: 9px 20px; border-radius: 999px; font-weight: 700; font-size: 14.5px;
+  background: #eef3ff; color: #1c4fd6; text-decoration: none; border: 1px solid #d7e2f8;
+}
+.shop-tabs a.active { background: linear-gradient(135deg, #4c8dff, #2b63d8); color: #fff; border-color: transparent; }
+.shop-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 12px; }
+.shop-filters select, .shop-filters .shop-search {
+  font: inherit; font-size: 14px; padding: 9px 12px; border-radius: 10px;
+  border: 1px solid #ccd8f2; background: #fff; color: #10254d; max-width: 100%;
+}
+.shop-filters .shop-search { flex: 1 1 220px; min-width: 0; }
+.shop-reset { font-weight: 700; color: #b3261c; text-decoration: none; font-size: 14px; }
+.shop-featured-row {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 196px; gap: 14px;
+  overflow-x: auto; padding: 6px 2px 12px; scroll-snap-type: x proximity;
+}
+.shop-featured-row .shop-cell { scroll-snap-align: start; }
+.shop-grid > .shop-cell { animation: shop-card-in .45s cubic-bezier(.2, .7, .3, 1) both; }
+@keyframes shop-card-in {
+  from { opacity: 0; transform: translateY(14px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.shop-cell-art { display: block; text-decoration: none; }
+.shop-cell h3 a { color: inherit; text-decoration: none; }
+.shop-cell h3 a:hover { color: #1c4fd6; }
+.shop-pager { display: flex; align-items: center; gap: 16px; justify-content: center; margin-top: 18px; font-weight: 700; }
+.shop-pager a { color: #1c4fd6; text-decoration: none; }
+.shop-pager .off { color: #9db1d6; }
+
+/* Nghiêng 3D theo chuột + vệt sáng; sheen holo chạy liên tục cho thẻ hiếm. */
+.tilt {
+  position: relative; transform: perspective(700px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform .18s ease-out; transform-style: preserve-3d; border-radius: 12px;
+}
+.tilt-shine {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .18s;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, .28), transparent 45%);
+}
+.tilt:hover .tilt-shine { opacity: 1; }
+.tilt-sheen {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: .35; mix-blend-mode: screen;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 120, 200, .35) 42%, rgba(120, 220, 255, .35) 50%, rgba(255, 230, 120, .3) 58%, transparent 70%);
+  background-size: 260% 100%; animation: shop-holo 3.6s ease-in-out infinite alternate;
+}
+@keyframes shop-holo {
+  from { background-position: 110% 0; }
+  to { background-position: -30% 0; }
+}
+
+/* Khung nhựa trong cho thẻ Hiếm (toploader). */
+.toploader {
+  position: relative; padding: 7px; border-radius: 13px;
+  background: linear-gradient(140deg, rgba(168, 198, 248, .5), rgba(255, 255, 255, .18) 45%, rgba(140, 175, 235, .38));
+  border: 1.5px solid rgba(110, 150, 225, .5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .65), 0 10px 20px rgba(15, 35, 75, .18);
+  overflow: hidden;
+}
+.toploader::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, .35) 48%, transparent 62%);
+}
+.toploader .card-art { border-radius: 8px; overflow: hidden; display: block; }
+
+/* Slab bản Shop: vỏ nhựa TRONG sáng thay cho bản spotlight tối. */
+.slab.shop-slab {
+  background: linear-gradient(155deg, rgba(226, 236, 252, .96), rgba(178, 198, 232, .92) 55%, rgba(206, 220, 246, .95));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), inset 0 -2px 6px rgba(70, 100, 160, .25),
+    0 0 0 1.5px rgba(130, 160, 220, .55), 0 12px 24px rgba(15, 35, 75, .22);
+  animation: none;
+}
+
+/* Trang chi tiết thẻ. */
+.shop-detail { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 26px; align-items: start; margin-top: 12px; }
+.shop-detail-art { position: sticky; top: 86px; }
+.shop-stats { display: flex; gap: 8px; margin: 8px 0 0; }
+.shop-stats span {
+  background: #eef3ff; border: 1px solid #d7e2f8; color: #1c4fd6; font-weight: 800;
+  font-size: 13px; padding: 5px 12px; border-radius: 999px;
+}
+.shop-price-box {
+  background: #fff; border: 1px solid #e4e9f4; border-radius: 16px; padding: 16px 18px; margin-top: 14px;
+  display: grid; gap: 8px;
+}
+.shop-price-label { display: block; color: #5a6b8c; font-size: 12.5px; font-weight: 700; letter-spacing: .06em; }
+.shop-price-value { font-size: 26px; color: #10254d; }
+.shop-sales { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.shop-sales li {
+  display: flex; justify-content: space-between; gap: 12px; background: #fff;
+  border: 1px solid #e4e9f4; border-radius: 10px; padding: 8px 12px; font-weight: 700;
+}
+@media (max-width: 760px) {
+  .shop-detail { grid-template-columns: minmax(0, 1fr); }
+  .shop-detail-art { position: static; max-width: 320px; }
+}
+
+/* Lớp phủ hiện thẻ vừa mua: lật thẻ vào giữa màn hình. */
+.bought-overlay {
+  position: fixed; inset: 0; z-index: 90; display: flex; align-items: center; justify-content: center;
+  background: rgba(6, 17, 38, .66); backdrop-filter: blur(3px); padding: 20px;
+}
+.bought-card {
+  width: min(300px, 88vw); text-align: center; color: #eaf1ff;
+  animation: bought-flip .55s cubic-bezier(.2, .8, .3, 1.15) both;
+}
+.bought-card h3 { margin: 14px 0 4px; color: #fff; }
+.bought-card .player-sub { color: #a7bee6; }
+.bought-card .gacha-actions { justify-content: center; }
+@keyframes bought-flip {
+  from { opacity: 0; transform: perspective(800px) rotateY(88deg) scale(.85); }
+  to { opacity: 1; transform: perspective(800px) rotateY(0) scale(1); }
+}
+a.player-btn { display: inline-flex; align-items: center; text-decoration: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tilt { transform: none; transition: none; }
+  .tilt-sheen { animation: none; }
+  .shop-grid > .shop-cell { animation: none; }
+  .bought-card { animation: none; }
+}
+
+/* Lễ mở gói bản mới (spec 6.36): xé xong, mọi thẻ hiện mặt ngửa và
+   vút vào lần lượt theo thứ tự yếu → mạnh; nút Bỏ qua luôn sẵn. */
+.cascade-stage { position: relative; width: 100%; }
+.cascade-grid { width: 100%; }
+.cascade-card {
+  position: relative; opacity: 0;
+  animation: cascade-whoosh .55s cubic-bezier(.2, .9, .3, 1.25) both;
+}
+@keyframes cascade-whoosh {
+  0% { opacity: 0; transform: translate(-44vw, 14vh) rotate(var(--cw, 0deg)) scale(.55); filter: blur(3px); }
+  55% { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); filter: blur(0); }
+}
+.cascade-card .flip-rarity-chip { top: 8px; left: 8px; bottom: auto; transform: none; z-index: 2; }
+.cascade-skip { margin-top: 14px; }
+@media (prefers-reduced-motion: reduce) {
+  .cascade-card { animation: none; opacity: 1; }
 }

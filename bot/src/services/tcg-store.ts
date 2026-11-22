@@ -11,6 +11,7 @@ import {
   nextMarketPrice,
   snapMoney,
   bannerActive,
+  inBannerPool,
   emptyPity,
   newInstanceCode,
   pickSpecies,
@@ -129,8 +130,8 @@ export interface TcgStore {
 
 export class InMemoryTcgStore implements TcgStore {
   private banners: TcgBanner[] = [
-    { id: "standard", name: "Banner Chuẩn", kind: "standard", featuredSpecies: [], poolSpecies: [], costCoins: 500, startsAt: null, endsAt: null, enabled: true },
-    { id: "beginner", name: "Banner Tân Thủ", kind: "beginner", featuredSpecies: [], poolSpecies: [], costCoins: 250, startsAt: null, endsAt: null, enabled: true },
+    { id: "standard", name: "Banner Chuẩn", kind: "standard", featuredSpecies: [], poolSpecies: [], poolPrefix: null, costCoins: 500, startsAt: null, endsAt: null, enabled: true },
+    { id: "beginner", name: "Banner Tân Thủ", kind: "beginner", featuredSpecies: [], poolSpecies: [], poolPrefix: null, costCoins: 250, startsAt: null, endsAt: null, enabled: true },
   ];
   private pity = new Map<string, PityState>();
   private instances = new Map<string, CardInstance>();
@@ -370,9 +371,7 @@ export class TcgGameService {
     const catalog = pullPerks?.exclusivePets
       ? catalogAll
       : catalogAll.filter((s) => !s.memberExclusive);
-    const pool = banner.poolSpecies.length
-      ? catalog.filter((s) => banner.poolSpecies.includes(s.id))
-      : catalog;
+    const pool = catalog.filter((s) => inBannerPool(banner, s.id));
     if (pool.length === 0) return { kind: "error", message: "Danh mục thẻ đang trống." };
     const unitCost = banner.kind === "beginner" ? cfg.beginnerCostCoins : banner.costCoins || cfg.pullCostCoins;
     let cost = unitCost * count;

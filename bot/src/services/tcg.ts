@@ -361,11 +361,21 @@ export interface TcgBanner {
   kind: "standard" | "limited" | "event" | "beginner";
   featuredSpecies: string[];
   poolSpecies: string[];
+  /** Game banners: pool = every species whose id starts with this prefix (0035). */
+  poolPrefix: string | null;
   costCoins: number;
   startsAt: Date | null;
   endsAt: Date | null;
   enabled: boolean;
 }
+
+/** Pool membership: explicit list wins, then game prefix, else full catalog. */
+export const inBannerPool = (b: TcgBanner, speciesId: string): boolean =>
+  b.poolSpecies.length
+    ? b.poolSpecies.includes(speciesId)
+    : b.poolPrefix
+      ? speciesId.startsWith(b.poolPrefix)
+      : true;
 
 export const bannerActive = (b: TcgBanner, now: Date): boolean =>
   b.enabled && (!b.startsAt || b.startsAt <= now) && (!b.endsAt || b.endsAt > now);

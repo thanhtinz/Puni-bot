@@ -11,15 +11,18 @@ export default function SlabCard({
   setLine,
   grade,
   cert,
+  variant,
 }: {
   imageUrl: string;
   name: string;
   setLine: string;
   grade: string;
   cert: string;
+  /** "shop" = clear-plastic case for shop grids/details (spec 6.36). */
+  variant?: "shop";
 }) {
   return (
-    <div className="slab" role="img" aria-label={`${name}, ${grade}`}>
+    <div className={`slab${variant === "shop" ? " shop-slab" : ""}`} role="img" aria-label={`${name}, ${grade}`}>
       <div className="slab-label">
         <div className="slab-label-main">
           <strong>{name}</strong>
@@ -46,6 +49,8 @@ export function gradeForRarity(rarity: string): string | null {
       return "MINT 9";
     case "Legendary":
       return "NM-MT 8";
+    case "Epic":
+      return "NM 7";
     default:
       return null;
   }

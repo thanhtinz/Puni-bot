@@ -134,6 +134,28 @@ export async function buyPackWeb(userId: string, premium: boolean): Promise<TxRe
   });
 }
 
+/** Shared purchase core: debit + grant one fresh instance, atomically. */
+async function buySpeciesTx(
+  userId: string, speciesId: string, price: number,
+): Promise<{ ok: true; code: string; price: number } | { ok: false; error: string }> {
+  return withTx(async (client) => {
+    const paid = await adjustBalanceTx(
+      client, userId, -price, "tcg-shop", `Mua thẻ ${speciesId} ở Shop (web)`,
+    );
+    if (!paid) return { ok: false as const, error: "Không đủ Coins." };
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const code = newInstanceCode();
+      const res = await client.query(
+        `INSERT INTO tcg_instances (code, user_id, species_id, obtained) VALUES ($1, $2, $3, 'shop')
+         ON CONFLICT (code) DO NOTHING RETURNING code`,
+        [code, userId, speciesId],
+      );
+      if (res.rows.length) return { ok: true as const, code, price };
+    }
+    throw new Error("could not allocate instance code");
+  });
+}
+
 /** Buy one of today's featured cards. Price is recomputed server-side. */
 export async function buyFeaturedCardWeb(
   userId: string, speciesId: string,
@@ -147,20 +169,289 @@ export async function buyFeaturedCardWeb(
       return { ok: false, error: "Thẻ độc quyền chỉ dành cho hội viên." };
     }
   }
-  return withTx(async (client) => {
-    const paid = await adjustBalanceTx(
-      client, userId, -item.price, "tcg-shop", `Mua thẻ ${speciesId} ở Shop (web)`,
+  return buySpeciesTx(userId, speciesId, item.price);
+}
+
+/* ---------- TCGplayer-style singles catalog (spec 6.36) ---------- */
+
+export interface ShopGame {
+  prefix: string;
+  like: string;
+  name: string;
+}
+
+/** The 19 card families, keyed by their species-id prefix. */
+export const SHOP_GAMES: ShopGame[] = [
+  { prefix: "op", like: "op%", name: "One Piece" },
+  { prefix: "pkm", like: "pkm-%", name: "Pokémon" },
+  { prefix: "mtg", like: "mtg-%", name: "Magic: The Gathering" },
+  { prefix: "ygo", like: "ygo-%", name: "Yu-Gi-Oh!" },
+  { prefix: "dig", like: "dig-%", name: "Digimon" },
+  { prefix: "lor", like: "lor-%", name: "Disney Lorcana" },
+  { prefix: "dbf", like: "dbf-%", name: "Dragon Ball Fusion World" },
+  { prefix: "dbm", like: "dbm-%", name: "Dragon Ball Super Masters" },
+  { prefix: "ff", like: "ff-%", name: "Final Fantasy TCG" },
+  { prefix: "fab", like: "fab-%", name: "Flesh and Blood" },
+  { prefix: "gun", like: "gun-%", name: "Gundam Card Game" },
+  { prefix: "swu", like: "swu-%", name: "Star Wars: Unlimited" },
+  { prefix: "una", like: "una-%", name: "Union Arena" },
+  { prefix: "cfv", like: "cfv-%", name: "Cardfight!! Vanguard" },
+  { prefix: "myl", like: "myl-%", name: "Mitos y Leyendas" },
+  { prefix: "rift", like: "rift-%", name: "Riftbound" },
+  { prefix: "pal", like: "pal-%", name: "Palworld" },
+  { prefix: "cyb", like: "cyb-%", name: "Cyberpunk TCG" },
+  { prefix: "holo", like: "holo-%", name: "hololive OCG" },
+];
+
+export function shopGameOf(speciesId: string): ShopGame | null {
+  return (
+    SHOP_GAMES.find((g) =>
+      g.prefix === "op" ? speciesId.startsWith("op") : speciesId.startsWith(`${g.prefix}-`),
+    ) ?? null
+  );
+}
+
+/** Level-1 system value in SQL — mirrors cardValue() in player.ts.
+ *  __RATE__ is replaced with the Coins-per-USD parameter placeholder. */
+const VALUE_SQL = `CASE
+  WHEN s.market_price_coins > 0 THEN s.market_price_coins::float8
+  WHEN s.price_usd > 0 THEN s.price_usd::float8 * __RATE__::float8
+  ELSE CASE s.rarity
+    WHEN 'Common' THEN 50 WHEN 'Uncommon' THEN 150 WHEN 'Rare' THEN 500
+    WHEN 'Epic' THEN 2000 WHEN 'Legendary' THEN 9000 WHEN 'Mythical' THEN 20000
+    WHEN 'Fabled' THEN 50000 ELSE 0 END
+END`;
+
+const RARITY_RANK_SQL = `CASE s.rarity
+  WHEN 'Fabled' THEN 7 WHEN 'Mythical' THEN 6 WHEN 'Legendary' THEN 5
+  WHEN 'Epic' THEN 4 WHEN 'Rare' THEN 3 WHEN 'Uncommon' THEN 2 ELSE 1 END`;
+
+export interface CatalogCard {
+  speciesId: string;
+  name: string;
+  spriteUrl: string;
+  rarity: string;
+  setId: string;
+  setName: string;
+  memberExclusive: boolean;
+  price: number;
+}
+
+export interface CatalogQuery {
+  q?: string;
+  game?: string;
+  set?: string;
+  rarity?: string;
+  sort?: string;
+  page?: number;
+}
+
+export const CATALOG_PAGE_SIZE = 48;
+export const CATALOG_RARITIES = ["Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythical", "Fabled"] as const;
+
+export async function shopCatalog(
+  query: CatalogQuery,
+): Promise<{ rows: CatalogCard[]; total: number }> {
+  const rate = await getPriceCoinsPerUsd();
+  // Filter params come first ($1..$n) so the COUNT query — which does
+  // not need the rate — never carries an unreferenced parameter
+  // (PostgreSQL rejects those with 42P18).
+  const params: unknown[] = [];
+  const where: string[] = ["s.enabled"];
+  const game = SHOP_GAMES.find((g) => g.prefix === query.game);
+  if (game) {
+    params.push(game.like);
+    where.push(`s.id LIKE $${params.length}`);
+  }
+  if (query.set) {
+    params.push(query.set.slice(0, 80));
+    where.push(`s.set_id = $${params.length}`);
+  }
+  if (query.rarity && (CATALOG_RARITIES as readonly string[]).includes(query.rarity)) {
+    params.push(query.rarity);
+    where.push(`s.rarity = $${params.length}`);
+  }
+  if (query.q) {
+    params.push(`%${query.q.slice(0, 60)}%`);
+    where.push(`s.name ILIKE $${params.length}`);
+  }
+  const valueSql = VALUE_SQL.replaceAll("__RATE__", `$${params.length + 1}`);
+  const order =
+    query.sort === "price-asc"
+      ? `${valueSql} ASC, s.id`
+      : query.sort === "name"
+        ? `s.name ASC, s.id`
+        : query.sort === "rarity"
+          ? `${RARITY_RANK_SQL} DESC, ${valueSql} DESC, s.id`
+          : `${valueSql} DESC, s.id`;
+  const page = Math.max(1, Math.floor(query.page ?? 1));
+  const whereSql = where.join(" AND ");
+  try {
+    const countRes = await db().query(
+      `SELECT COUNT(*)::int AS n FROM game_species s WHERE ${whereSql}`,
+      params,
     );
-    if (!paid) return { ok: false as const, error: "Không đủ Coins." };
-    for (let attempt = 0; attempt < 6; attempt++) {
-      const code = newInstanceCode();
-      const res = await client.query(
-        `INSERT INTO tcg_instances (code, user_id, species_id, obtained) VALUES ($1, $2, $3, 'shop')
-         ON CONFLICT (code) DO NOTHING RETURNING code`,
-        [code, userId, speciesId],
-      );
-      if (res.rows.length) return { ok: true as const, code, price: item.price };
+    const total = (countRes.rows[0] as unknown as { n: number }).n;
+    params.push(rate, CATALOG_PAGE_SIZE, (page - 1) * CATALOG_PAGE_SIZE);
+    const res = await db().query(
+      `SELECT s.id, s.name, s.sprite_url, s.rarity, s.set_id,
+              COALESCE(g.name, s.set_id) AS set_name, s.member_exclusive,
+              ${valueSql} AS value_coins
+       FROM game_species s LEFT JOIN game_sets g ON g.id = s.set_id
+       WHERE ${whereSql}
+       ORDER BY ${order}
+       LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params,
+    );
+    const rows = (res.rows as unknown as Array<{
+      id: string; name: string; sprite_url: string | null; rarity: string; set_id: string;
+      set_name: string; member_exclusive: boolean; value_coins: number;
+    }>).map((r) => ({
+      speciesId: r.id,
+      name: r.name,
+      spriteUrl: r.sprite_url ?? "",
+      rarity: r.rarity,
+      setId: r.set_id,
+      setName: r.set_name,
+      memberExclusive: r.member_exclusive,
+      price: Math.round(Number(r.value_coins) * 10000) / 10000,
+    }));
+    return { rows, total };
+  } catch (e) {
+    console.error("shopCatalog failed:", e);
+    return { rows: [], total: 0 };
+  }
+}
+
+/** Sets that actually occur inside one game family (for the filter select). */
+export async function shopSets(gamePrefix: string): Promise<{ id: string; name: string; count: number }[]> {
+  const game = SHOP_GAMES.find((g) => g.prefix === gamePrefix);
+  if (!game) return [];
+  try {
+    const res = await db().query(
+      `SELECT s.set_id AS id, COALESCE(g.name, s.set_id) AS name, COUNT(*)::int AS count
+       FROM game_species s LEFT JOIN game_sets g ON g.id = s.set_id
+       WHERE s.enabled AND s.id LIKE $1
+       GROUP BY s.set_id, g.name ORDER BY count DESC, s.set_id`,
+      [game.like],
+    );
+    return res.rows.map((r) => ({ id: r.id, name: r.name, count: Number(r.count) }));
+  } catch {
+    return [];
+  }
+}
+
+export interface SpeciesDetail {
+  speciesId: string;
+  name: string;
+  spriteUrl: string;
+  rarity: string;
+  setId: string;
+  setName: string;
+  gameName: string;
+  memberExclusive: boolean;
+  baseHp: number | null;
+  baseAtk: number | null;
+  price: number;
+  priceUsd: number | null;
+  owned: number;
+  listings: { id: number; price: number; sellerId: string }[];
+  sales: { price: number; soldAt: Date }[];
+}
+
+export async function shopSpeciesDetail(
+  speciesId: string, userId: string,
+): Promise<SpeciesDetail | null> {
+  try {
+    const res = await db().query(
+      `SELECT s.id, s.name, s.sprite_url, s.rarity, s.set_id, COALESCE(g.name, s.set_id) AS set_name,
+              s.member_exclusive, s.base_hp, s.base_atk, s.price_usd, s.market_price_coins
+       FROM game_species s LEFT JOIN game_sets g ON g.id = s.set_id
+       WHERE s.id = $1 AND s.enabled`,
+      [speciesId],
+    );
+    const r = res.rows[0] as unknown as {
+      id: string; name: string; sprite_url: string | null; rarity: string; set_id: string;
+      set_name: string; member_exclusive: boolean; base_hp: number | null; base_atk: number | null;
+      price_usd: string | number | null; market_price_coins: string | number | null;
+    } | undefined;
+    if (!r) return null;
+    const rate = await getPriceCoinsPerUsd();
+    const ownedRes = await db().query(
+      `SELECT COUNT(*)::int AS n FROM tcg_instances WHERE user_id = $1 AND species_id = $2`,
+      [userId, speciesId],
+    );
+    const listRes = await db().query(
+      `SELECT l.id, l.price::text AS price, l.seller_id
+       FROM tcg_listings l JOIN tcg_instances i ON i.code = l.instance_code
+       WHERE i.species_id = $1 AND l.status = 'open'
+       ORDER BY l.price ASC LIMIT 6`,
+      [speciesId],
+    );
+    const salesRes = await db().query(
+      `SELECT l.price::text AS price, l.sold_at
+       FROM tcg_listings l JOIN tcg_instances i ON i.code = l.instance_code
+       WHERE i.species_id = $1 AND l.status = 'sold' AND l.sold_at IS NOT NULL
+       ORDER BY l.sold_at DESC LIMIT 8`,
+      [speciesId],
+    );
+    return {
+      speciesId: r.id,
+      name: r.name,
+      spriteUrl: r.sprite_url ?? "",
+      rarity: r.rarity,
+      setId: r.set_id,
+      setName: r.set_name,
+      gameName: shopGameOf(r.id)?.name ?? "",
+      memberExclusive: r.member_exclusive,
+      baseHp: r.base_hp,
+      baseAtk: r.base_atk,
+      price: cardValue(
+        r.rarity, 1, 0,
+        r.price_usd != null ? Number(r.price_usd) : undefined,
+        rate,
+        r.market_price_coins != null ? Number(r.market_price_coins) : undefined,
+      ),
+      priceUsd: r.price_usd != null ? Number(r.price_usd) : null,
+      owned: (ownedRes.rows[0] as unknown as { n: number }).n,
+      listings: (listRes.rows as unknown as Array<{ id: number; price: string; seller_id: string }>).map((l) => ({
+        id: l.id, price: Number(l.price), sellerId: l.seller_id,
+      })),
+      sales: (salesRes.rows as unknown as Array<{ price: string; sold_at: Date }>).map((s) => ({
+        price: Number(s.price), soldAt: s.sold_at,
+      })),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** Buy any catalog card at its server-computed system value (spec 6.36). */
+export async function buySingleCardWeb(
+  userId: string, speciesId: string,
+): Promise<{ ok: true; code: string; price: number } | { ok: false; error: string }> {
+  const res = await db().query(
+    `SELECT rarity, member_exclusive, price_usd, market_price_coins
+     FROM game_species WHERE id = $1 AND enabled`,
+    [speciesId],
+  );
+  const r = res.rows[0] as unknown as {
+    rarity: string; member_exclusive: boolean;
+    price_usd: string | number | null; market_price_coins: string | number | null;
+  } | undefined;
+  if (!r) return { ok: false, error: "Thẻ này không còn bán." };
+  if (r.member_exclusive) {
+    const perks = await userPerksWeb(userId);
+    if (!perks?.exclusivePets) {
+      return { ok: false, error: "Thẻ độc quyền chỉ dành cho hội viên." };
     }
-    throw new Error("could not allocate instance code");
-  });
+  }
+  const rate = await getPriceCoinsPerUsd();
+  const price = cardValue(
+    r.rarity, 1, 0,
+    r.price_usd != null ? Number(r.price_usd) : undefined,
+    rate,
+    r.market_price_coins != null ? Number(r.market_price_coins) : undefined,
+  );
+  return buySpeciesTx(userId, speciesId, price);
 }

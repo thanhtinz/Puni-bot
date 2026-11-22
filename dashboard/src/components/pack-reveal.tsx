@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import SlabCard, { gradeForRarity } from "@/components/slab-card";
 import CardArt from "@/components/card-art";
-import CardBack from "@/components/card-back";
 
 export interface RevealCard {
   code: string;
@@ -19,7 +18,11 @@ export interface RevealCard {
   setLabel: string;
 }
 
-type Phase = "sealed" | "tearing" | "flipping" | "done";
+type Phase = "sealed" | "tearing" | "cascade" | "done";
+
+/** Cascade pacing: one card whooshes in every STEP ms (spec 6.36). */
+const CASCADE_STEP_MS = 160;
+const CASCADE_ANIM_MS = 550;
 
 const RARITY_RANK = ["Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythical", "Fabled"];
 const rankOf = (r: string) => Math.max(0, RARITY_RANK.indexOf(r));
@@ -37,17 +40,16 @@ function packSetLabel(cards: RevealCard[]): string {
 }
 
 /**
- * Pack-opening ceremony the way real TCG apps do it (Pokémon TCG
- * Pocket / Master Duel): tear the foil pack, the cards fan out
- * face-down, then flip them ONE BY ONE — weakest first, the hit
- * last — with a rarity burst for Epic and a full-stage flash +
- * banner for Legendary and above. Ends on the summary (total
- * sell-back count-up, best-card spotlight, full grid).
- * Pure presentation — the pull itself already happened server-side.
+ * Pack-opening ceremony (spec 6.36, reworked per Tín): tear the foil
+ * pack, then EVERY card whooshes in face-up one after another on its
+ * own — weakest first, the hit last, with the rarity burst when the
+ * best card lands. A Skip button is available from the tear onward.
+ * Ends on the summary (total sell-back count-up, best-card
+ * spotlight, full grid). Pure presentation — the pull itself
+ * already happened server-side.
  */
 export default function PackReveal({ cards }: { cards: RevealCard[] }) {
   const [phase, setPhase] = useState<Phase>("sealed");
-  const [flipped, setFlipped] = useState(0);
   const [shown, setShown] = useState(0);
   const [burst, setBurst] = useState<{ key: number; rarity: string; rarityVi: string } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -86,39 +88,33 @@ export default function PackReveal({ cards }: { cards: RevealCard[] }) {
     return () => cancelAnimationFrame(raf);
   }, [phase, total]);
 
+  const skip = () => {
+    if (timer.current) clearTimeout(timer.current);
+    if (doneTimer.current) clearTimeout(doneTimer.current);
+    setPhase("done");
+  };
+
   const tear = () => {
     if (phase !== "sealed") return;
     setPhase("tearing");
     timer.current = setTimeout(() => {
       if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        setFlipped(order.length);
         setPhase("done");
-      } else {
-        setPhase("flipping");
+        return;
       }
+      setPhase("cascade");
+      // The hit lands last: fire its rarity burst as it whooshes in.
+      if (best && rankOf(best.rarity) >= 2) {
+        timer.current = setTimeout(
+          () => setBurst({ key: Date.now(), rarity: best.rarity, rarityVi: best.rarityVi }),
+          Math.max(0, (order.length - 1) * CASCADE_STEP_MS + 250),
+        );
+      }
+      doneTimer.current = setTimeout(
+        () => setPhase("done"),
+        order.length * CASCADE_STEP_MS + CASCADE_ANIM_MS + 500,
+      );
     }, 1000);
-  };
-
-  const flipNext = () => {
-    if (phase !== "flipping" || flipped >= order.length) return;
-    const card = order[flipped];
-    const next = flipped + 1;
-    setFlipped(next);
-    if (rankOf(card.rarity) >= 2) {
-      setBurst({ key: Date.now(), rarity: card.rarity, rarityVi: card.rarityVi });
-    }
-    if (next >= order.length) {
-      doneTimer.current = setTimeout(() => setPhase("done"), 1250);
-    }
-  };
-
-  const flipAll = () => {
-    if (phase !== "flipping") return;
-    setFlipped(order.length);
-    if (best && rankOf(best.rarity) >= 2) {
-      setBurst({ key: Date.now(), rarity: best.rarity, rarityVi: best.rarityVi });
-    }
-    doneTimer.current = setTimeout(() => setPhase("done"), 900);
   };
 
   return (
@@ -145,20 +141,21 @@ export default function PackReveal({ cards }: { cards: RevealCard[] }) {
                 <button type="button" className="rip-cta" onClick={tear}>
                   XÉ GÓI
                 </button>
-                <button
-                  type="button"
-                  className="rip-skip"
-                  onClick={() => { setFlipped(order.length); setPhase("done"); }}
-                >
+                <button type="button" className="rip-skip" onClick={skip}>
                   Bỏ qua, xem thẻ luôn
                 </button>
               </>
             ) : (
-              <div className="rip-tearing-label">Đang xé gói…</div>
+              <>
+                <div className="rip-tearing-label">Đang xé gói…</div>
+                <button type="button" className="rip-skip" onClick={skip}>
+                  Bỏ qua »
+                </button>
+              </>
             )}
           </>
-        ) : phase === "flipping" ? (
-          <div className="flip-stage" onClick={flipNext}>
+        ) : phase === "cascade" ? (
+          <div className="cascade-stage">
             {burst && rankOf(burst.rarity) >= 4 ? (
               <div key={burst.key} className={`flip-flash rarity-${burst.rarity.toLowerCase()}`} aria-hidden="true" />
             ) : null}
@@ -167,43 +164,33 @@ export default function PackReveal({ cards }: { cards: RevealCard[] }) {
                 {burst.rarityVi.toUpperCase()}!
               </div>
             ) : null}
-            <div className="flip-progress">
-              Đã lật {flipped}/{order.length} — lá tốt nhất nằm cuối gói
-            </div>
-            <div className="flip-fan">
-              {order.map((c, idx) => {
-                const isFlipped = idx < flipped;
-                const isNext = idx === flipped;
-                return (
-                  <div
-                    key={c.code}
-                    className={`flip-tile rarity-${c.rarity.toLowerCase()} ${isFlipped ? "is-flipped" : ""} ${isNext ? "is-next" : ""}`}
-                    style={{ transitionDelay: "0s" }}
-                  >
-                    <div className="flip-tile-inner">
-                      <div className="flip-face flip-back">
-                        <CardBack />
-                      </div>
-                      <div className="flip-face flip-front">
-                        <CardArt src={c.spriteUrl} alt={c.name} rarity={c.rarity} />
-                        {isFlipped && rankOf(c.rarity) >= 2 ? (
-                          <span className="flip-rarity-chip">{c.rarityVi}</span>
-                        ) : null}
-                      </div>
-                    </div>
-                    <div className="flip-name">{isFlipped ? c.name : "???"}</div>
+            <div className="flip-progress">Thẻ đang bay vào — lá tốt nhất vào cuối cùng</div>
+            <div className="tcg-grid reveal-grid cascade-grid">
+              {order.map((c, idx) => (
+                <article
+                  key={c.code}
+                  className={`tcg-card rarity-${c.rarity.toLowerCase()} reveal-card cascade-card`}
+                  style={{
+                    animationDelay: `${idx * (CASCADE_STEP_MS / 1000)}s`,
+                    ["--cw" as string]: `${((idx % 3) - 1) * 7}deg`,
+                  }}
+                >
+                  <CardArt src={c.spriteUrl} alt={c.name} rarity={c.rarity} />
+                  {rankOf(c.rarity) >= 2 ? (
+                    <span className="flip-rarity-chip">{c.rarityVi}</span>
+                  ) : null}
+                  <div className="tcg-card-meta">
+                    <strong>{c.name}</strong>
+                    <span>
+                      {c.rarityVi} · Bán lại {fmt(c.value)} Coins
+                    </span>
                   </div>
-                );
-              })}
+                </article>
+              ))}
             </div>
-            <div className="flip-actions" onClick={(e) => e.stopPropagation()}>
-              <button type="button" className="rip-cta" onClick={flipNext}>
-                {flipped === 0 ? "Lật lá đầu tiên" : "Lật lá tiếp theo"}
-              </button>
-              <button type="button" className="rip-skip" onClick={flipAll}>
-                Lật hết
-              </button>
-            </div>
+            <button type="button" className="rip-skip cascade-skip" onClick={skip}>
+              Bỏ qua »
+            </button>
           </div>
         ) : (
           <>

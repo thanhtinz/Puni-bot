@@ -133,6 +133,7 @@ export interface BannerRow {
   kind: string;
   featuredSpecies: string[];
   poolSpecies: string[];
+  poolPrefix: string | null;
   costCoins: number;
   endsAt: Date | null;
   imageUrl: string | null;
@@ -141,7 +142,7 @@ export interface BannerRow {
 export async function listActiveBannersWeb(): Promise<BannerRow[]> {
   try {
     const res = await db().query(
-      `SELECT id, name, kind, featured_species, pool_species, cost_coins::text AS cost, ends_at, image_url
+      `SELECT id, name, kind, featured_species, pool_species, pool_prefix, cost_coins::text AS cost, ends_at, image_url
        FROM tcg_banners
        WHERE enabled AND (starts_at IS NULL OR starts_at <= now()) AND (ends_at IS NULL OR ends_at > now())
        ORDER BY id`,
@@ -149,6 +150,7 @@ export async function listActiveBannersWeb(): Promise<BannerRow[]> {
     return res.rows.map((r) => ({
       id: r.id, name: r.name, kind: r.kind,
       featuredSpecies: r.featured_species ?? [], poolSpecies: r.pool_species ?? [],
+      poolPrefix: r.pool_prefix ?? null,
       costCoins: Number.parseInt(r.cost, 10), endsAt: r.ends_at,
       imageUrl: r.image_url ?? null,
     }));
@@ -220,7 +222,7 @@ type TxClient = {
   query: (sql: string, params?: unknown[]) => Promise<{ rows: Record<string, never>[]; rowCount?: number | null }>;
 };
 
-async function loadPool(client: TxClient, perks: WebPerks | null, bannerPool: string[]): Promise<PoolSpecies[]> {
+async function loadPool(client: TxClient, perks: WebPerks | null, bannerPool: string[], poolPrefix: string | null = null): Promise<PoolSpecies[]> {
   const res = await client.query(
     `SELECT id, rarity, member_exclusive FROM game_species WHERE enabled`,
   );
@@ -229,6 +231,7 @@ async function loadPool(client: TxClient, perks: WebPerks | null, bannerPool: st
   }));
   if (!perks?.exclusivePets) pool = pool.filter((s) => !s.memberExclusive);
   if (bannerPool.length) pool = pool.filter((s) => bannerPool.includes(s.id));
+  else if (poolPrefix) pool = pool.filter((s) => s.id.startsWith(poolPrefix));
   return pool;
 }
 
@@ -325,13 +328,13 @@ export async function pullWeb(userId: string, bannerId: string, count: 1 | 10): 
   try {
     await client.query("BEGIN");
     const bRes = await client.query(
-      `SELECT id, name, kind, featured_species, pool_species, cost_coins::text AS cost
+      `SELECT id, name, kind, featured_species, pool_species, pool_prefix, cost_coins::text AS cost
        FROM tcg_banners WHERE id = $1 AND enabled
          AND (starts_at IS NULL OR starts_at <= now()) AND (ends_at IS NULL OR ends_at > now())`,
       [bannerId],
     );
     const banner = bRes.rows[0] as unknown as
-      | { id: string; name: string; kind: string; featured_species: string[]; pool_species: string[]; cost: string }
+      | { id: string; name: string; kind: string; featured_species: string[]; pool_species: string[]; pool_prefix: string | null; cost: string }
       | undefined;
     if (!banner) { await client.query("ROLLBACK"); return { ok: false, error: "Banner này không còn mở." }; }
     if (banner.kind === "beginner") {
@@ -345,7 +348,7 @@ export async function pullWeb(userId: string, bannerId: string, count: 1 | 10): 
       }
     }
     const state = await lockPity(client as TxClient, userId, bannerId);
-    const pool = await loadPool(client as TxClient, perks, banner.pool_species ?? []);
+    const pool = await loadPool(client as TxClient, perks, banner.pool_species ?? [], banner.pool_prefix ?? null);
     if (pool.length === 0) { await client.query("ROLLBACK"); return { ok: false, error: "Danh mục thẻ đang trống." }; }
     const unitCost = banner.kind === "beginner"
       ? cfg.beginnerCostCoins
