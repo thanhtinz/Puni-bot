@@ -42,7 +42,19 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
           <div className="shell">
             <aside className="side admin-side">
               <div className="brand"><img src="/api/assets/logo" alt="Puni" className="logo-img brand-logo" /> Puni Admin</div>
-              <Burger>
+              <Burger
+                tone="dark"
+                footer={
+                  <div className="who" style={{ marginTop: "auto", fontSize: 13, color: "#8fb0e8" }}>
+                Chủ bot: <strong>{session.username}</strong>
+                <form action="/api/auth/logout" method="post" style={{ marginTop: 8 }}>
+                  <button className="btn secondary sm" type="submit">
+                    Đăng xuất
+                  </button>
+                </form>
+              </div>
+                }
+              >
               <Link href="/admin" className="item">
                 <IconHome /> Tổng quan
               </Link>
@@ -82,14 +94,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
               <Link href="/admin/website" className="item">
                 <IconGlobe /> Trang web
               </Link>
-              <div className="who" style={{ marginTop: "auto", fontSize: 13, color: "#8fb0e8" }}>
-                Chủ bot: <strong>{session.username}</strong>
-                <form action="/api/auth/logout" method="post" style={{ marginTop: 8 }}>
-                  <button className="btn secondary sm" type="submit">
-                    Đăng xuất
-                  </button>
-                </form>
-              </div>
+              
               </Burger>
             </aside>
             <main className="content admin-content">{children}</main>

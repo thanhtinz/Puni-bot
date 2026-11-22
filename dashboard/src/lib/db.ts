@@ -24,11 +24,12 @@ export interface GuildRow {
   logging: unknown;
   automod: unknown;
   ai_chat: unknown;
+  branding: unknown;
 }
 
 export async function getGuildRow(guildId: string): Promise<GuildRow | null> {
   const res = await db().query<GuildRow>(
-    `SELECT guild_id, prefix, modules, community, logging, automod, ai_chat
+    `SELECT guild_id, prefix, modules, community, logging, automod, ai_chat, branding
      FROM guild_settings WHERE guild_id = $1`,
     [guildId],
   );
@@ -45,6 +46,7 @@ export async function saveGuildSection(
     logging: unknown;
     automod: unknown;
     aiChat: unknown;
+    branding: unknown;
     modules: Record<string, boolean>;
   }>,
 ): Promise<void> {
@@ -56,10 +58,11 @@ export async function saveGuildSection(
     logging: patch.logging ?? current?.logging ?? {},
     automod: patch.automod ?? current?.automod ?? {},
     ai_chat: patch.aiChat ?? current?.ai_chat ?? {},
+    branding: patch.branding ?? current?.branding ?? {},
   };
   await db().query(
-    `INSERT INTO guild_settings (guild_id, prefix, modules, reaction_overrides, community, logging, automod, ai_chat, updated_at)
-     VALUES ($1, $2, $3, '{}'::jsonb, $4, $5, $6, $7, now())
+    `INSERT INTO guild_settings (guild_id, prefix, modules, reaction_overrides, community, logging, automod, ai_chat, branding, updated_at)
+     VALUES ($1, $2, $3, '{}'::jsonb, $4, $5, $6, $7, $8, now())
      ON CONFLICT (guild_id) DO UPDATE SET
        prefix = EXCLUDED.prefix,
        modules = EXCLUDED.modules,
@@ -67,6 +70,7 @@ export async function saveGuildSection(
        logging = EXCLUDED.logging,
        automod = EXCLUDED.automod,
        ai_chat = EXCLUDED.ai_chat,
+       branding = EXCLUDED.branding,
        updated_at = now()`,
     [
       guildId,
@@ -76,6 +80,7 @@ export async function saveGuildSection(
       JSON.stringify(next.logging),
       JSON.stringify(next.automod),
       JSON.stringify(next.ai_chat),
+      JSON.stringify(next.branding),
     ],
   );
 }
@@ -696,6 +701,31 @@ export async function getMembershipOrder(code: string): Promise<MembershipOrderR
     return res.rows[0] ?? null;
   } catch {
     return null;
+  }
+}
+
+export interface UserOrderRow {
+  code: string;
+  tier_name: string;
+  amount: number;
+  days: number;
+  status: string;
+  created_at: string;
+  paid_at: string | null;
+}
+
+/** One user's membership orders, newest first (player area). */
+export async function listUserOrders(userId: string, limit = 10): Promise<UserOrderRow[]> {
+  try {
+    const res = await db().query(
+      `SELECT code, tier_name, amount::text AS amount, days, status,
+              created_at::text AS created_at, paid_at::text AS paid_at
+       FROM membership_orders WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2`,
+      [userId, limit],
+    );
+    return res.rows.map((r) => ({ ...r, amount: Number.parseInt(r.amount, 10) }));
+  } catch {
+    return [];
   }
 }
 

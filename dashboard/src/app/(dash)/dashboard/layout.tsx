@@ -21,27 +21,28 @@ export default async function DashboardRootLayout({ children }: { children: Reac
             <div className="brand">
               <img src="/api/assets/logo" alt="Puni" className="logo-img brand-logo" /> Dashboard
             </div>
-            <Burger>
-            <Link href="/dashboard" className="item">
-              <IconServer /> Server của tôi
-            </Link>
-            <Link href="/me" className="item">
-              <IconHome /> Khu người chơi
-            </Link>
-            <Link href="/commands" className="item">
-              <IconList /> Danh sách lệnh
-            </Link>
-            <Link href="/" className="item">
-              <IconHome /> Về trang chủ
-            </Link>
-            <div className="who">
-              Đăng nhập: <strong>{session.username}</strong>
-              <form action="/api/auth/logout" method="post" style={{ marginTop: 8 }}>
-                <button className="btn secondary sm" type="submit">
-                  Đăng xuất
-                </button>
-              </form>
-            </div>
+            <Burger
+              tone="dark"
+              footer={
+                <div className="who">
+                  Đăng nhập: <strong>{session.username}</strong>
+                  <form action="/api/auth/logout" method="post" style={{ marginTop: 8 }}>
+                    <button className="btn secondary sm" type="submit">
+                      Đăng xuất
+                    </button>
+                  </form>
+                </div>
+              }
+            >
+              <Link href="/dashboard" className="item">
+                <IconServer /> Server của tôi
+              </Link>
+              <Link href="/commands" className="item">
+                <IconList /> Danh sách lệnh
+              </Link>
+              <Link href="/" className="item">
+                <IconHome /> Về trang chủ
+              </Link>
             </Burger>
           </aside>
           <main className="content">{children}</main>

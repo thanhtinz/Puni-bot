@@ -154,3 +154,30 @@ export function normalizeAiChatConfig(raw: unknown): AiChatConfig {
   const r = raw as Partial<AiChatConfig>;
   return { enabled: typeof r.enabled === "boolean" ? r.enabled : DEFAULT_AI_CHAT_CONFIG.enabled };
 }
+
+/* ---- White label branding (spec 6.25) ------------------------------ */
+
+export interface BrandingConfig {
+  /** Nickname the bot wears inside this guild ("" = default name). */
+  nickname: string;
+  /** Guild-member avatar as a data URI ("" = default avatar). */
+  avatarDataUri: string;
+}
+
+export const DEFAULT_BRANDING: BrandingConfig = { nickname: "", avatarDataUri: "" };
+
+export const AVATAR_DATA_URI_MAX = 280_000;
+
+/** Mirror of the bot's normalizeBranding — same JSONB contract. */
+export function normalizeBranding(raw: unknown): BrandingConfig {
+  if (!raw || typeof raw !== "object") return { ...DEFAULT_BRANDING };
+  const r = raw as Partial<BrandingConfig>;
+  const nickname = typeof r.nickname === "string" ? r.nickname.trim().slice(0, 32) : "";
+  const avatar =
+    typeof r.avatarDataUri === "string" &&
+    r.avatarDataUri.startsWith("data:image/") &&
+    r.avatarDataUri.length <= AVATAR_DATA_URI_MAX
+      ? r.avatarDataUri
+      : "";
+  return { nickname, avatarDataUri: avatar };
+}

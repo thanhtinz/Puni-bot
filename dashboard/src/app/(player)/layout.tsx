@@ -3,7 +3,6 @@ import Link from "next/link";
 import "../globals.css";
 import { currentSession } from "@/lib/current-session";
 import { Burger } from "@/components/burger";
-import { canManagePuni } from "@/lib/landing";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -16,7 +15,6 @@ export const metadata = {
 export default async function PlayerLayout({ children }: { children: ReactNode }) {
   const session = await currentSession();
   if (!session) redirect("/api/auth/login");
-  const managesPuni = await canManagePuni(session).catch(() => false);
   return (
     <html lang="vi">
       <body className="player-body">
@@ -31,14 +29,14 @@ export default async function PlayerLayout({ children }: { children: ReactNode }
             </span>
           </header>
           <nav className="player-tabs" aria-label="Khu người chơi">
-            <Burger>
+            <Burger tone="light">
             <Link href="/me" className="player-tab">Hồ Sơ</Link>
+            <Link href="/me/membership" className="player-tab">Hội Viên</Link>
             <Link href="/me/dex" className="player-tab">Sổ Dex</Link>
             <Link href="/me/cards" className="player-tab">Kho Thẻ</Link>
             <Link href="/me/decks" className="player-tab">Bộ Bài</Link>
             <Link href="/me/market" className="player-tab">Chợ Thẻ</Link>
             <Link href="/me/trades" className="player-tab">Trao Đổi</Link>
-            {managesPuni ? <Link href="/dashboard" className="player-tab">Quản Lý Server</Link> : null}
             </Burger>
           </nav>
           {children}

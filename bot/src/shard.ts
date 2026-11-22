@@ -7,6 +7,7 @@
  *  will not survive a restart in that mode. */
 import * as path from "node:path";
 import { Pool } from "pg";
+import { Events } from "discord.js";
 import Redis from "ioredis";
 import { loadConfig } from "./config";
 import { InMemoryGuildSettings, type GuildSettingsProvider } from "./guild-settings";
@@ -182,6 +183,35 @@ async function main(): Promise<void> {
     };
     void syncRoles();
     setInterval(() => void syncRoles(), 10 * 60 * 1000);
+  }
+
+  // White label sync (spec 6.25): apply per-guild nickname/avatar
+  // whenever the dashboard-side config fingerprint changes.
+  if (settings instanceof PgGuildSettings) {
+    const pgSettings = settings;
+    const syncBranding = async () => {
+      try {
+        const { normalizeBranding, brandingFingerprint, applyBranding } = await import("./branding");
+        for (const guild of client.guilds.cache.values()) {
+          try {
+            const state = await pgSettings.getBrandingState(guild.id);
+            const cfg = normalizeBranding(state.branding);
+            const fp = brandingFingerprint(cfg);
+            if (fp === state.applied) continue;
+            await applyBranding(client.rest as never, guild.id, cfg);
+            await pgSettings.setBrandingApplied(guild.id, fp);
+            console.log(`[puni] branding applied for guild ${guild.id}`);
+          } catch (err) {
+            console.warn(`[puni] branding sync failed for guild ${guild.id}`, err);
+          }
+        }
+      } catch (err) {
+        console.warn("[puni] branding sync failed", err);
+      }
+    };
+    client.on(Events.GuildCreate, () => void syncBranding());
+    void syncBranding();
+    setInterval(() => void syncBranding(), 10 * 60 * 1000);
   }
 }
 

@@ -10,6 +10,7 @@ import {
   normalizeAutomodConfig,
   normalizeCommunityConfig,
   normalizeLogConfig,
+  normalizeBranding,
   LOG_GROUPS,
   type CommunityConfig,
   type LogConfig,
@@ -98,6 +99,18 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ gui
     });
     await saveGuildSection(guildId, { automod });
     return back("/automod");
+  }
+
+  if (section === "branding") {
+    const current = normalizeBranding(row?.branding);
+    const nickname = formText(form, "nickname", 40).trim().slice(0, 32);
+    const removeAvatar = formBool(form, "remove_avatar");
+    const branding = normalizeBranding({
+      nickname,
+      avatarDataUri: removeAvatar ? "" : current.avatarDataUri,
+    });
+    await saveGuildSection(guildId, { branding });
+    return back("/branding");
   }
 
   return NextResponse.json({ error: "Section không hợp lệ." }, { status: 400 });

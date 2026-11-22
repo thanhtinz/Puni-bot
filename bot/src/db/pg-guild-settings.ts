@@ -63,6 +63,23 @@ export class PgGuildSettings implements GuildSettingsProvider {
     };
   }
 
+  /** White label state (spec 6.25): config + last applied fingerprint. */
+  async getBrandingState(guildId: string): Promise<{ branding: unknown; applied: string }> {
+    const res = await this.pool.query<{ branding: unknown; branding_applied: string }>(
+      `SELECT branding, branding_applied FROM guild_settings WHERE guild_id = $1`,
+      [guildId],
+    );
+    if (!res.rows.length) return { branding: {}, applied: "" };
+    return { branding: res.rows[0].branding ?? {}, applied: res.rows[0].branding_applied ?? "" };
+  }
+
+  async setBrandingApplied(guildId: string, fingerprint: string): Promise<void> {
+    await this.pool.query(
+      `UPDATE guild_settings SET branding_applied = $2 WHERE guild_id = $1`,
+      [guildId, fingerprint],
+    );
+  }
+
   async set(guildId: string, patch: Partial<GuildSettings>): Promise<GuildSettings> {
     const current = await this.get(guildId);
     const next: GuildSettings = { ...current, ...patch, guildId };
