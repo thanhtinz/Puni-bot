@@ -30,13 +30,15 @@ function TierSlot({ index, tier }: { index: number; tier?: MembershipTier }) {
           <label htmlFor={`${p}bonus`}>% cộng thêm daily</label>
           <input id={`${p}bonus`} name={`${p}bonus`} type="number" min={0} max={300} defaultValue={tier?.dailyBonusPercent ?? 0} style={{ maxWidth: 110 }} />
         </div>
+      </div>
+      <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
         <div className="field" style={{ margin: 0 }}>
           <label htmlFor={`${p}teams`}>Đội hình + (game)</label>
-          <input id={`${p}teams`} name={`${p}teams`} type="number" min={0} max={5} defaultValue={tier?.extraTeams ?? 0} style={{ maxWidth: 110 }} />
+          <input id={`${p}teams`} name={`${p}teams`} type="number" min={0} max={5} defaultValue={tier?.extraTeams ?? 0} />
         </div>
         <div className="field" style={{ margin: 0 }}>
           <label htmlFor={`${p}loot`}>Lootbox +/ngày (game)</label>
-          <input id={`${p}loot`} name={`${p}loot`} type="number" min={0} max={5} defaultValue={tier?.extraLootboxPerDay ?? 0} style={{ maxWidth: 110 }} />
+          <input id={`${p}loot`} name={`${p}loot`} type="number" min={0} max={5} defaultValue={tier?.extraLootboxPerDay ?? 0} />
         </div>
       </div>
       <label className="check" style={{ marginTop: 12 }}>
@@ -132,10 +134,10 @@ export default async function AdminMembershipPage({
         </p>
         <form action="/api/admin/membership/grant" method="post">
           <input type="hidden" name="action" value="grant" />
-          <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "end" }}>
+          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
             <div className="field" style={{ margin: 0 }}>
               <label htmlFor="user_id">Discord ID</label>
-              <input id="user_id" name="user_id" type="text" required style={{ minWidth: 220 }} />
+              <input id="user_id" name="user_id" type="text" required />
             </div>
             <div className="field" style={{ margin: 0 }}>
               <label htmlFor="tier_id">Gói</label>
@@ -149,20 +151,20 @@ export default async function AdminMembershipPage({
             </div>
             <div className="field" style={{ margin: 0 }}>
               <label htmlFor="days">Số ngày</label>
-              <input id="days" name="days" type="number" min={1} max={3650} defaultValue={30} required style={{ maxWidth: 110 }} />
+              <input id="days" name="days" type="number" min={1} max={3650} defaultValue={30} required />
             </div>
             <div className="field" style={{ margin: 0 }}>
               <label htmlFor="source">Nguồn</label>
-              <input id="source" name="source" type="text" defaultValue="manual" maxLength={40} style={{ maxWidth: 140 }} />
+              <input id="source" name="source" type="text" defaultValue="manual" maxLength={40} />
             </div>
-            <div className="field" style={{ margin: 0, flex: 1, minWidth: 180 }}>
-              <label htmlFor="note">Ghi chú</label>
-              <input id="note" name="note" type="text" maxLength={200} />
-            </div>
-            <button className="btn" type="submit">
-              Cấp hội viên
-            </button>
           </div>
+          <div className="field">
+            <label htmlFor="note">Ghi chú</label>
+            <input id="note" name="note" type="text" maxLength={200} />
+          </div>
+          <button className="btn" type="submit">
+            Cấp hội viên
+          </button>
         </form>
       </div>
 

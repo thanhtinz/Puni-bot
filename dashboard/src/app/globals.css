@@ -595,3 +595,23 @@ table.plain tr:last-child td { border-bottom: none; }
 .buy-qr { border-radius: 16px; background: #fff; padding: 10px; width: 260px; height: 260px; object-fit: contain; }
 .buy-details p { margin: 6px 0; }
 .buy-status { font-weight: 700; color: var(--accent-soft) !important; }
+
+/* Even form layout (owner law: rows divide evenly — no ragged field
+   widths). Every .field inside an admin form flexes to an EQUAL share
+   of its row, and controls always fill their field, overriding the
+   per-field inline widths older forms carried. */
+.admin-content form .field { flex: 1 1 0; min-width: 150px; }
+.admin-content .field input,
+.admin-content .field select,
+.admin-content .field textarea {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Bottom-align controls inside a field so rows whose labels wrap to
+   two lines still line their inputs up on one baseline. */
+.admin-content form .field { display: flex; flex-direction: column; }
+.admin-content form .field > input,
+.admin-content form .field > select,
+.admin-content form .field > textarea { margin-top: auto; }
+.admin-content form .field > label { margin-bottom: 7px; }

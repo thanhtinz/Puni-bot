@@ -48,6 +48,7 @@ export const DEFAULT_MEMBERSHIP_TIERS: MembershipTier[] = [
       "Daily nhận thêm +50% tiền",
       "Thêm 1 đội hình lưu sẵn trong game",
       "Mở khoá pet độc quyền dành cho hội viên",
+      "Vote trên top.gg nhận gấp đôi tiền thưởng",
     ],
   },
   {
@@ -64,6 +65,7 @@ export const DEFAULT_MEMBERSHIP_TIERS: MembershipTier[] = [
       "Thêm 2 đội hình lưu sẵn trong game",
       "Thêm 1 lootbox mỗi ngày trong game",
       "Huy hiệu đặc biệt trên thẻ profile game",
+      "Vote trên top.gg nhận gấp đôi tiền thưởng",
       "Thiết kế 1 pet riêng theo yêu cầu của bạn (liên hệ chủ bot)",
       "Được yêu cầu tuỳ biến 1 lệnh theo ý bạn (liên hệ chủ bot)",
     ],

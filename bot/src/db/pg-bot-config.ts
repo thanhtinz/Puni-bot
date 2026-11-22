@@ -62,6 +62,11 @@ export class PgBotConfig {
   }
 
   /** Fishing config (Admin panel → Câu cá). */
+  async getVoteConfig(): Promise<import("../services/vote").VoteConfig> {
+    const { normalizeVoteConfig } = await import("../services/vote");
+    return normalizeVoteConfig(await this.get("vote_config"));
+  }
+
   async getFarmConfig(): Promise<import("../services/farm").FarmConfig> {
     const { normalizeFarmConfig } = await import("../services/farm");
     return normalizeFarmConfig(await this.get("farm_config"));

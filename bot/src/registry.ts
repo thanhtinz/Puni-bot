@@ -5,6 +5,7 @@ import { createReactionCommands } from "./commands/reactions";
 import { createEconomyCommands } from "./commands/economy";
 import { createMembershipCommands } from "./commands/membership";
 import { createFishingCommands } from "./commands/fishing";
+import { createVoteCommands } from "./commands/vote";
 import {
   DEFAULT_FISHING_CONFIG,
   FishingService,
@@ -67,6 +68,9 @@ export function buildBot(deps: {
   fishingConfigSource?: () => Promise<FishingConfig>;
   /** Names for caught fish, from the owner-managed item catalogue. */
   fishNamesSource?: (rarity: string, isMember: boolean) => Promise<string[]>;
+  voteStore?: import("./services/vote").VoteStore;
+  voteConfigSource?: () => Promise<import("./services/vote").VoteConfig>;
+  voteBotIdSource?: () => string | null;
   /** Coins a user already earned from fishing today (daily cap). */
   fishingEarnedToday?: (userId: string) => Promise<number>;
 }): BotDeps {
@@ -103,6 +107,12 @@ export function buildBot(deps: {
     ...createReactionCommands({ settings: deps.settings, botName: deps.botName ?? "Puni" }),
     ...createEconomyCommands({ economy, currencyName: economyConfig.currencyName, gemsName: economyConfig.gemsName, gems }),
     ...createMembershipCommands({ membership, tiersSource, orders: deps.membershipOrders }),
+    ...createVoteCommands({
+      voteStore: deps.voteStore,
+      voteConfigSource: deps.voteConfigSource,
+      voteBotIdSource: deps.voteBotIdSource,
+      currencyName: economyConfig.currencyName,
+    }),
     ...createFishingCommands({
       fishing: new FishingService({
         configSource:

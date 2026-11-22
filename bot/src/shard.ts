@@ -35,6 +35,8 @@ async function main(): Promise<void> {
   let botConfig: PgBotConfig | undefined;
   let membershipStore: import("./services/membership").MembershipStore | undefined;
   let membershipOrders: import("./services/membership").MembershipOrderStore | undefined;
+  let voteStore: import("./services/vote").VoteStore | undefined;
+  let discordClient: { user: { id: string } | null } | undefined;
   let pgPool: Pool | undefined;
   if (config.databaseUrl) {
     const pool = new Pool({ connectionString: config.databaseUrl });
@@ -49,6 +51,8 @@ async function main(): Promise<void> {
     membershipStore = new PgMembershipStore(pool);
     const { PgMembershipOrderStore } = await import("./db/pg-membership-orders");
     membershipOrders = new PgMembershipOrderStore(pool);
+    const { PgVoteStore } = await import("./db/pg-vote-store");
+    voteStore = new PgVoteStore(pool);
     console.log("[puni] state: PostgreSQL");
   } else {
     console.warn("[puni] DATABASE_URL not set — IN-MEMORY state, data will NOT survive restart");
@@ -81,6 +85,9 @@ async function main(): Promise<void> {
     caseStore,
     membershipStore,
     membershipOrders,
+    voteStore,
+    voteConfigSource: botConfig ? () => botConfig.getVoteConfig() : undefined,
+    voteBotIdSource: () => discordClient?.user?.id ?? process.env.DISCORD_CLIENT_ID ?? null,
     fishingConfigSource: botConfig ? () => botConfig.getFishingConfig() : undefined,
     fishNamesSource: pgPool
       ? async (rarity: string, isMember: boolean) => {
@@ -128,6 +135,7 @@ async function main(): Promise<void> {
         })
       : undefined,
   });
+  discordClient = client;
   await client.login(config.token);
   if (botConfig) {
     await botConfig.setRuntimeStatus({

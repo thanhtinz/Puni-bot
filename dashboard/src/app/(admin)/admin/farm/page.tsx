@@ -79,23 +79,25 @@ export default async function AdminFarmPage({
           <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: 10 }}>
             <div className="field" style={{ margin: 0 }}>
               <label htmlFor="cseedc">Giá hạt (Coins)</label>
-              <input id="cseedc" name="seed_price_coins" type="number" min={0} defaultValue={editing?.seed_price_coins ?? 0} style={{ width: 140 }} />
+              <input id="cseedc" name="seed_price_coins" type="number" min={0} defaultValue={editing?.seed_price_coins ?? 0} />
             </div>
             <div className="field" style={{ margin: 0 }}>
               <label htmlFor="cseedg">Giá hạt (Gems)</label>
-              <input id="cseedg" name="seed_price_gems" type="number" min={0} defaultValue={editing?.seed_price_gems ?? 0} style={{ width: 140 }} />
-            </div>
-            <div className="field" style={{ margin: 0 }}>
-              <label htmlFor="cymin">Thu hoạch ít nhất</label>
-              <input id="cymin" name="yield_min" type="number" min={1} max={100} defaultValue={editing?.yield_min ?? 1} style={{ width: 110 }} />
-            </div>
-            <div className="field" style={{ margin: 0 }}>
-              <label htmlFor="cymax">Thu hoạch nhiều nhất</label>
-              <input id="cymax" name="yield_max" type="number" min={1} max={100} defaultValue={editing?.yield_max ?? 2} style={{ width: 110 }} />
+              <input id="cseedg" name="seed_price_gems" type="number" min={0} defaultValue={editing?.seed_price_gems ?? 0} />
             </div>
             <div className="field" style={{ margin: 0 }}>
               <label htmlFor="csell">Giá bán / đơn vị (Coins)</label>
-              <input id="csell" name="sell_price" type="number" min={0} defaultValue={editing?.sell_price ?? 0} style={{ width: 150 }} />
+              <input id="csell" name="sell_price" type="number" min={0} defaultValue={editing?.sell_price ?? 0} />
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: 10 }}>
+            <div className="field" style={{ margin: 0 }}>
+              <label htmlFor="cymin">Thu hoạch ít nhất</label>
+              <input id="cymin" name="yield_min" type="number" min={1} max={100} defaultValue={editing?.yield_min ?? 1} />
+            </div>
+            <div className="field" style={{ margin: 0 }}>
+              <label htmlFor="cymax">Thu hoạch nhiều nhất</label>
+              <input id="cymax" name="yield_max" type="number" min={1} max={100} defaultValue={editing?.yield_max ?? 2} />
             </div>
           </div>
           <div className="field">

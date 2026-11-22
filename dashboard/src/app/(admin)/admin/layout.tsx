@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import "../../globals.css";
 import { currentSession } from "@/lib/current-session";
-import { IconActivity, IconBag, IconChat, IconCoins, IconFish, IconGrid, IconHome, IconPaw, IconServer, IconGlobe, IconSpark, IconUsers } from "@/components/icons";
+import { IconActivity, IconBag, IconChart, IconChat, IconCoins, IconFish, IconGrid, IconHome, IconPaw, IconServer, IconGlobe, IconSpark, IconUsers } from "@/components/icons";
 import { isOwner } from "@/lib/session";
 
 export const metadata = { title: "Puni Admin" };
@@ -50,10 +50,13 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
               <Link href="/admin/economy" className="item">
                 <IconCoins /> Economy
               </Link>
-                            <Link href="/admin/membership" className="item">
+              <Link href="/admin/membership" className="item">
                 <IconSpark /> Membership
               </Link>
-<Link href="/admin/users" className="item">
+              <Link href="/admin/vote" className="item">
+                <IconChart /> Vote (top.gg)
+              </Link>
+              <Link href="/admin/users" className="item">
                 <IconUsers /> Người dùng
               </Link>
               <Link href="/admin/servers" className="item">

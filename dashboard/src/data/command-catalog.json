@@ -658,6 +658,16 @@
     "prefix": true
   },
   {
+    "name": "vote",
+    "aliases": [
+      "binhchon"
+    ],
+    "description": "Vote cho Puni trên top.gg và nhận tiền thưởng",
+    "module": "economy",
+    "slash": true,
+    "prefix": true
+  },
+  {
     "name": "fish",
     "aliases": [
       "cauca"

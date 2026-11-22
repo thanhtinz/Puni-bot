@@ -917,3 +917,108 @@ export async function deleteCrop(id: string): Promise<void> {
 export async function setCropEnabled(id: string, enabled: boolean): Promise<void> {
   await db().query(`UPDATE game_crops SET enabled = $2, updated_at = now() WHERE id = $1`, [id, enabled]);
 }
+
+/* ---------------- Votes (top.gg, spec 6.22) ------------------------ */
+
+export interface VoteStats {
+  total: number;
+  today: number;
+  earned: number;
+}
+
+export async function getVoteStats(): Promise<VoteStats | null> {
+  try {
+    const res = await db().query<{ total: string; today: string; earned: string }>(
+      `SELECT COUNT(*)::text AS total,
+              COUNT(*) FILTER (WHERE created_at >= date_trunc('day', now()))::text AS today,
+              COALESCE(SUM(reward), 0)::text AS earned
+       FROM vote_events`,
+    );
+    const r = res.rows[0];
+    return {
+      total: Number.parseInt(r?.total ?? "0", 10),
+      today: Number.parseInt(r?.today ?? "0", 10),
+      earned: Number.parseInt(r?.earned ?? "0", 10),
+    };
+  } catch {
+    return null;
+  }
+}
+
+export interface VoteRow {
+  user_id: string;
+  reward: string;
+  is_weekend: boolean;
+  created_at: string;
+}
+
+export async function listRecentVotes(limit = 30): Promise<VoteRow[] | null> {
+  try {
+    const res = await db().query<VoteRow>(
+      `SELECT user_id, reward::text AS reward, is_weekend, created_at::text AS created_at
+       FROM vote_events ORDER BY created_at DESC LIMIT $1`,
+      [limit],
+    );
+    return res.rows;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Accept a top.gg vote: dedupe against the 12-hour window, credit
+ * the economy and record the event — all in ONE transaction with an
+ * advisory lock per user, so webhook retries can never double-pay.
+ */
+export async function acceptVote(input: {
+  userId: string;
+  reward: number;
+  isWeekend: boolean;
+}): Promise<"credited" | "duplicate" | "disabled_zero"> {
+  const client = await db().connect();
+  try {
+    await client.query("BEGIN");
+    await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [`vote:${input.userId}`]);
+    const last = await client.query<{ created_at: Date }>(
+      `SELECT created_at FROM vote_events WHERE user_id = $1 ORDER BY created_at DESC LIMIT 1`,
+      [input.userId],
+    );
+    const prev = last.rows[0]?.created_at;
+    if (prev && Date.now() - prev.getTime() < 12 * 3600 * 1000) {
+      await client.query("ROLLBACK");
+      return "duplicate";
+    }
+    if (input.reward > 0) {
+      await client.query(
+        `INSERT INTO economy_accounts (user_id, balance) VALUES ($1, 0)
+         ON CONFLICT (user_id) DO NOTHING`,
+        [input.userId],
+      );
+      const bal = await client.query<{ balance: string }>(
+        `SELECT balance::text AS balance FROM economy_accounts WHERE user_id = $1 FOR UPDATE`,
+        [input.userId],
+      );
+      const next = Number.parseInt(bal.rows[0]?.balance ?? "0", 10) + input.reward;
+      await client.query(`UPDATE economy_accounts SET balance = $2 WHERE user_id = $1`, [
+        input.userId,
+        next,
+      ]);
+      await client.query(
+        `INSERT INTO economy_ledger (user_id, delta, balance_after, source, note)
+         VALUES ($1, $2, $3, 'vote', $4)`,
+        [input.userId, input.reward, next, input.isWeekend ? "Vote top.gg (cuối tuần)" : "Vote top.gg"],
+      );
+    }
+    await client.query(
+      `INSERT INTO vote_events (user_id, reward, is_weekend) VALUES ($1, $2, $3)`,
+      [input.userId, input.reward, input.isWeekend],
+    );
+    await client.query("COMMIT");
+    return input.reward > 0 ? "credited" : "disabled_zero";
+  } catch (err) {
+    await client.query("ROLLBACK").catch(() => undefined);
+    throw err;
+  } finally {
+    client.release();
+  }
+}
