@@ -17,6 +17,12 @@ interface DuelSide {
   deck: number;
 }
 
+/** Impact-burst colour per monster attribute (the attacker's). */
+const ATTR_COLORS: Record<string, string> = {
+  DARK: "#a855f7", LIGHT: "#facc15", FIRE: "#ef4444", WATER: "#3b82f6",
+  EARTH: "#d97706", WIND: "#22c55e", DIVINE: "#f59e0b",
+};
+
 const emptySide = (deckSize: number): DuelSide => ({
   monsters: [],
   hand: 5,
@@ -50,6 +56,7 @@ export default function YugiohArena({
   const [log, setLog] = useState("");
   const [hit, setHit] = useState<{ key: number; side: "a" | "b"; name: string } | null>(null);
   const [lunge, setLunge] = useState<{ key: number; side: "a" | "b"; name: string } | null>(null);
+  const [shakeKey, setShakeKey] = useState(0);
   const [lpFloat, setLpFloat] = useState<{ key: number; side: "a" | "b"; dmg: number } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -118,6 +125,7 @@ export default function YugiohArena({
     const base = e.type === "attack" || e.type === "destroy" || e.type === "summon" ? 700 : 380;
     timer.current = setTimeout(() => {
       applyEvent(e, idx, true);
+      if (e.type === "destroy") setShakeKey(idx + 1);
       setIdx(idx + 1);
     }, base / speed);
     return () => {
@@ -166,26 +174,33 @@ export default function YugiohArena({
     }
   };
 
-  /** Monster holograms projected above the zones (Solid Vision
-   * style): the art-only image hovers over a cone of light. */
+  /** Full-body monster holograms standing over the zones (Solid
+   * Vision style): the art-only image towers over a cone of light;
+   * hits burst in the ATTACKER's attribute colour. */
   const renderHoloRow = (sideKey: "a" | "b") => {
     if (!sides) return null;
     const side = sides[sideKey];
+    const attacker = lunge ? viewOf(lunge.side, lunge.name) : undefined;
+    const vfxColor = ATTR_COLORS[attacker?.attribute ?? ""] ?? "#38bdf8";
     return (
       <div className="holo-row">
         {[0, 1, 2, 3, 4].map((slot) => {
           const m = side.monsters[slot];
           if (!m) return <div key={slot} />;
           const v = viewOf(sideKey, m.name);
+          const isHit = hit?.side === sideKey && hit?.name === m.name && !finished;
           return (
             <HoloArt
               key={slot}
               src={v?.artUrl || v?.spriteUrl || ""}
               side={sideKey}
               variant="art"
+              size="lg"
               attacking={lunge?.side === sideKey && lunge?.name === m.name && !finished}
-              hit={hit?.side === sideKey && hit?.name === m.name && !finished}
+              hit={isHit}
               dying={!!m.dying}
+              vfxColor={vfxColor}
+              hitKey={isHit ? hit?.key : undefined}
             />
           );
         })}
@@ -270,7 +285,7 @@ export default function YugiohArena({
         </>
       ) : (
         <>
-          <div className="ygo-field">
+          <div className={`ygo-field${shakeKey ? " is-shaking" : ""}`} onAnimationEnd={() => setShakeKey(0)}>
             {renderLp("b", "Đối thủ")}
             {renderHoloRow("b")}
             {renderMonsters("b")}

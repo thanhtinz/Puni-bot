@@ -2255,7 +2255,7 @@ a.player-btn { display: inline-flex; align-items: center; text-decoration: none;
 .holo-wrap.holo-sm .holo-cone { width: 84px; height: 86px; bottom: 5px; }
 .holo-wrap.holo-sm .holo-ring { width: 76px; height: 13px; }
 .holo-wrap.is-empty { visibility: hidden; }
-.holo-wrap.is-dim { opacity: 0.45; filter: saturate(0.5); }
+.holo-wrap.is-dim { opacity: 0.62; filter: saturate(0.7); }
 .holo-art-frame { position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); width: 72px; height: 72px; border-radius: 10px; overflow: hidden; border: 2px solid rgba(56, 189, 248, 0.65); box-shadow: 0 0 14px rgba(56, 189, 248, 0.55), inset 0 0 12px rgba(56, 189, 248, 0.35); background: rgba(8, 47, 73, 0.35); animation: holoFloat 2.8s ease-in-out infinite, holoFlicker 3.9s linear infinite; z-index: 2; }
 .holo-art-frame img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(1.15) brightness(1.06); }
 .holo-art-frame::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(to bottom, rgba(125, 211, 252, 0.16) 0 2px, transparent 2px 5px); pointer-events: none; }
@@ -2269,6 +2269,52 @@ a.player-btn { display: inline-flex; align-items: center; text-decoration: none;
   .holo-wrap.holo-sm .holo-cone { width: 66px; height: 70px; }
   .holo-wrap.holo-sm .holo-ring { width: 60px; height: 11px; }
   .holo-art-frame { width: 58px; height: 58px; bottom: 20px; }
+}
+
+/* Per-game arena stages + full-body holograms + VFX (6.39d):
+   every game gets its own stage backdrop, monsters/characters
+   stand large as full-body projections, hits land with an
+   element-coloured impact burst and heavy moments shake the field. */
+.ygo-field { background-color: #0a1c38; background-image: url("/ygo-arena-bg-a.jpg"), url("/ygo-arena-bg-b.jpg"); background-size: 50.5% 100%, 50.5% 100%; background-position: left top, right top; background-repeat: no-repeat; border-color: #2b4a7a; }
+.op-field { background-color: #7c4a21; background-image: url("/op-arena-bg-a.jpg"), url("/op-arena-bg-b.jpg"); background-size: 50.5% 100%, 50.5% 100%; background-position: left top, right top; background-repeat: no-repeat; border-color: #a9743a; }
+.ygo-lp { background: rgba(240, 246, 255, 0.92); border-radius: 10px; padding: 6px 10px; backdrop-filter: blur(2px); }
+.op-side { background: rgba(255, 250, 238, 0.88); border-radius: 12px; padding: 10px 12px; backdrop-filter: blur(2px); }
+.holo-wrap.holo-lg { --lungeY: -22px; width: 176px; height: 198px; }
+.holo-wrap.holo-lg[data-side="b"] { --lungeY: 22px; }
+.holo-wrap.holo-lg .holo-cone { width: 150px; height: 152px; bottom: 6px; }
+.holo-wrap.holo-lg .holo-ring { width: 132px; height: 20px; }
+.holo-wrap.holo-lg .holo-art-frame { width: 148px; height: 148px; bottom: 36px; }
+.holo-wrap.holo-portrait { --lungeY: -20px; width: 148px; height: 198px; }
+.holo-wrap.holo-portrait[data-side="b"] { --lungeY: 20px; }
+.holo-wrap.holo-portrait .holo-cone { width: 128px; height: 152px; bottom: 6px; }
+.holo-wrap.holo-portrait .holo-ring { width: 116px; height: 18px; }
+.holo-wrap.holo-portrait .holo-art-frame { width: 120px; height: 156px; bottom: 36px; }
+.holo-wrap.holo-leader { --lungeY: -22px; width: 176px; height: 230px; }
+.holo-wrap.holo-leader[data-side="b"] { --lungeY: 22px; }
+.holo-wrap.holo-leader .holo-cone { width: 150px; height: 178px; bottom: 6px; }
+.holo-wrap.holo-leader .holo-ring { width: 134px; height: 20px; }
+.holo-wrap.holo-leader .holo-art-frame { width: 146px; height: 186px; bottom: 38px; }
+.holo-art-frame { animation: holoSpawn 0.45s ease, holoFloat 2.8s ease-in-out 0.45s infinite, holoFlicker 3.9s linear infinite; }
+.holo-wrap.is-attacking .holo-art-frame { animation: holoLungeY 0.45s ease; }
+.holo-wrap.is-hit .holo-art-frame { animation: holoHitShake 0.4s ease; filter: brightness(1.7) hue-rotate(-35deg); }
+.vfx-burst { position: absolute; left: 50%; top: 42%; width: 125%; aspect-ratio: 1; transform: translate(-50%, -50%); pointer-events: none; z-index: 4; filter: drop-shadow(0 0 6px currentColor); animation: vfxPop 0.45s ease-out forwards; }
+@keyframes vfxPop { 0% { transform: translate(-50%, -50%) scale(0.35) rotate(0deg); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.3) rotate(24deg); opacity: 0; } }
+.is-shaking { animation: fieldShake 0.35s ease; }
+@keyframes fieldShake { 20% { transform: translate(-5px, 2px); } 45% { transform: translate(5px, -2px); } 70% { transform: translate(-3px, -1px); } }
+@media (max-width: 620px) {
+  .holo-wrap.holo-lg { width: 116px; height: 134px; }
+  .holo-wrap.holo-lg .holo-cone { width: 100px; height: 104px; }
+  .holo-wrap.holo-lg .holo-ring { width: 90px; height: 14px; }
+  .holo-wrap.holo-lg .holo-art-frame { width: 94px; height: 94px; bottom: 26px; }
+  .holo-wrap.holo-portrait { width: 104px; height: 140px; }
+  .holo-wrap.holo-portrait .holo-cone { width: 90px; height: 108px; }
+  .holo-wrap.holo-portrait .holo-ring { width: 82px; height: 13px; }
+  .holo-wrap.holo-portrait .holo-art-frame { width: 84px; height: 110px; bottom: 26px; }
+  .holo-wrap.holo-leader { width: 118px; height: 154px; }
+  .holo-wrap.holo-leader .holo-cone { width: 102px; height: 120px; }
+  .holo-wrap.holo-leader .holo-ring { width: 92px; height: 14px; }
+  .holo-wrap.holo-leader .holo-art-frame { width: 96px; height: 122px; bottom: 27px; }
+  .holo-row .holo-wrap { transform: scale(0.8); margin-top: -12px; margin-bottom: -12px; }
 }
 
 /* Yu-Gi-Oh arena (spec 6.39) */
@@ -2323,3 +2369,9 @@ a.player-btn { display: inline-flex; align-items: center; text-decoration: none;
 .op-life small { font-weight: 700; color: #7a4b00; }
 .ygo-zone.is-rested .ygo-mon-art { transform: rotate(90deg) scale(0.82); }
 .ygo-zone.is-rested { opacity: 0.78; }
+
+/* Arena stage backdrops — these MUST stay after the base field
+   rules above (the base .ygo-field/.op-field use the background
+   shorthand, which would wipe an earlier background-image). */
+.ygo-field { background-color: #0a1c38; background-image: url("/ygo-arena-bg-a.jpg"), url("/ygo-arena-bg-b.jpg"); background-size: 50.5% 100%, 50.5% 100%; background-position: left top, right top; background-repeat: no-repeat; border-color: #2b4a7a; }
+.op-field { background-color: #7c4a21; background-image: url("/op-arena-bg-a.jpg"), url("/op-arena-bg-b.jpg"); background-size: 50.5% 100%, 50.5% 100%; background-position: left top, right top; background-repeat: no-repeat; border-color: #a9743a; }

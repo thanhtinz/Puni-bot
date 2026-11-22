@@ -4,15 +4,36 @@ import { useEffect, useState } from "react";
 import { artSrc } from "@/components/card-art";
 
 /**
- * Hologram projection of a card's artwork (spec 6.39): the art
- * hovers over a cone of light above its field slot, tinted and
- * flickering like a 3D projection — the way Yu-Gi-Oh's Solid Vision
- * and One Piece holograms work. It lunges when the card attacks,
- * flashes when hit and fades when destroyed. Yu-Gi-Oh has no
- * animated sprite library, so its monsters project their art-only
- * image (YGOPRODeck cropped art); One Piece projects a crop of the
- * card's character art. variant "art" shows the image as-is,
- * variant "crop" zooms into the artwork area of a full card.
+ * Impact burst VFX: an 8-ray star flash in the effect colour,
+ * played once per hit (remounted by key). Shared by every arena.
+ */
+export function VfxBurst({ color, burstKey }: { color?: string; burstKey: number }) {
+  const rays: Array<[number, number, number, number]> = [
+    [64, 50, 96, 50], [59.9, 59.9, 82.5, 82.5], [50, 64, 50, 96], [40.1, 59.9, 17.5, 82.5],
+    [36, 50, 4, 50], [40.1, 40.1, 17.5, 17.5], [50, 36, 50, 4], [59.9, 40.1, 82.5, 17.5],
+  ];
+  return (
+    <svg key={burstKey} className="vfx-burst" viewBox="0 0 100 100" style={{ color: color ?? "#fbbf24" }} aria-hidden>
+      {rays.map(([x1, y1, x2, y2], i) => (
+        <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="currentColor" strokeWidth={5} strokeLinecap="round" />
+      ))}
+      <circle cx={50} cy={50} r={9} fill="currentColor" />
+    </svg>
+  );
+}
+
+/**
+ * Full-body hologram projection of a card's artwork (spec 6.39):
+ * the art stands large over a cone of light above its field slot,
+ * tinted and flickering like a 3D projection — the way Yu-Gi-Oh's
+ * Solid Vision works. It materialises when the card enters the
+ * field, lunges when it attacks, bursts with an element-coloured
+ * impact flash when hit, fades when destroyed and dims when
+ * rested. Sizes: "lg" square art (Yu-Gi-Oh monsters), "portrait"
+ * character crop (One Piece characters), "leader" (One Piece
+ * leaders), "sm" compact. variant "art" shows the image as-is
+ * (YGO art-only images), variant "crop" zooms into the character
+ * artwork at the top of a full card (One Piece).
  */
 export default function HoloArt({
   src,
@@ -22,6 +43,9 @@ export default function HoloArt({
   dying,
   dimmed,
   variant,
+  size = "sm",
+  vfxColor,
+  hitKey,
 }: {
   src: string;
   side: "a" | "b";
@@ -30,15 +54,18 @@ export default function HoloArt({
   dying?: boolean;
   dimmed?: boolean;
   variant: "art" | "crop";
+  size?: "sm" | "lg" | "portrait" | "leader";
+  vfxColor?: string;
+  hitKey?: number;
 }) {
   const [err, setErr] = useState(false);
   useEffect(() => {
     setErr(false);
   }, [src]);
-  if (!src || err) return <div className="holo-wrap holo-sm is-empty" aria-hidden />;
+  if (!src || err) return <div className={`holo-wrap holo-${size} is-empty`} aria-hidden />;
   return (
     <div
-      className={`holo-wrap holo-sm${attacking ? " is-attacking" : ""}${hit ? " is-hit" : ""}${dying ? " is-dying" : ""}${dimmed ? " is-dim" : ""}`}
+      className={`holo-wrap holo-${size}${attacking ? " is-attacking" : ""}${hit ? " is-hit" : ""}${dying ? " is-dying" : ""}${dimmed ? " is-dim" : ""}`}
       data-side={side}
       aria-hidden
     >
@@ -47,6 +74,7 @@ export default function HoloArt({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={artSrc(src)} alt="" onError={() => setErr(true)} />
       </span>
+      {hit && hitKey !== undefined ? <VfxBurst color={vfxColor} burstKey={hitKey} /> : null}
       <div className="holo-ring" />
     </div>
   );

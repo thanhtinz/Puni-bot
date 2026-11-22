@@ -50,6 +50,7 @@ export default function OnePieceArena({
   const [log, setLog] = useState("");
   const [hit, setHit] = useState<{ key: number; side: "a" | "b"; name: string } | null>(null);
   const [lunge, setLunge] = useState<{ key: number; side: "a" | "b"; name: string } | null>(null);
+  const [shakeKey, setShakeKey] = useState(0);
   const lastSide = useRef<"a" | "b" | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -133,6 +134,7 @@ export default function OnePieceArena({
     const base = e.type === "attack" || e.type === "ko" || e.type === "play" ? 700 : 380;
     timer.current = setTimeout(() => {
       applyEvent(e, idx, true);
+      if (e.type === "ko" || e.type === "life") setShakeKey(idx + 1);
       setIdx(idx + 1);
     }, base / speed);
     return () => {
@@ -194,9 +196,12 @@ export default function OnePieceArena({
             src={leader.spriteUrl}
             side={sideKey}
             variant="crop"
+            size="leader"
             attacking={leaderLunge}
             hit={leaderHit}
             dimmed={side.leaderRested}
+            vfxColor="#ef4444"
+            hitKey={leaderHit ? hit?.key : undefined}
           />
         </div>
         <div
@@ -228,10 +233,13 @@ export default function OnePieceArena({
                 src={v?.spriteUrl ?? ""}
                 side={sideKey}
                 variant="crop"
+                size="portrait"
                 attacking={cLunge}
                 hit={cHit}
                 dying={!!c.dying}
                 dimmed={c.rested}
+                vfxColor="#f59e0b"
+                hitKey={cHit ? hit?.key : undefined}
               />
             );
           })}
@@ -292,7 +300,7 @@ export default function OnePieceArena({
         </>
       ) : (
         <>
-          <div className="ygo-field op-field">
+          <div className={`ygo-field op-field${shakeKey ? " is-shaking" : ""}`} onAnimationEnd={() => setShakeKey(0)}>
             {renderSide("b", "Đối thủ")}
             <div className="poke-log" aria-live="polite">
               {finished ? <strong>{outcome.win ? "Thắng trận!" : "Thua trận"}</strong> : log || "Trận đấu bắt đầu!"}

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import CardArt from "@/components/card-art";
+import { VfxBurst } from "@/components/holo-art";
 import type { PokemonOutcome, PokeTeamCard } from "@/lib/pokemon";
 import type { PokeEvent, PokeStatus } from "@/lib/pokemon-battle";
 
@@ -45,16 +46,25 @@ function hpTone(hp: number, max: number): string {
  * Pokémon attacks and flashes when it takes a hit. Species without a
  * mapped sprite simply show no projection.
  */
+const TYPE_COLORS: Record<string, string> = {
+  G: "#22c55e", W: "#3b82f6", R: "#f97316", L: "#eab308", P: "#a855f7",
+  F: "#c2410c", D: "#7c3aed", M: "#94a3b8", Y: "#ec4899", N: "#f59e0b", C: "#fbbf24",
+};
+
 function HoloProj({
   card,
   side,
   attacking,
   hit,
+  vfxColor,
+  hitKey,
 }: {
   card: PokeTeamCard;
   side: "a" | "b";
   attacking: boolean;
   hit: boolean;
+  vfxColor?: string;
+  hitKey?: number;
 }) {
   const [err, setErr] = useState(false);
   useEffect(() => {
@@ -76,6 +86,7 @@ function HoloProj({
           <img className="holo-reflect" src={src} alt="" />
         </>
       ) : null}
+      {hit && hitKey !== undefined ? <VfxBurst color={vfxColor} burstKey={hitKey} /> : null}
       <div className="holo-ring" />
     </div>
   );
@@ -105,6 +116,7 @@ export default function PokemonArena({
   const [error, setError] = useState("");
   const [float, setFloat] = useState<{ key: number; side: "a" | "b"; dmg: number; tag?: string } | null>(null);
   const [lunge, setLunge] = useState<{ key: number; side: "a" | "b" } | null>(null);
+  const [shakeKey, setShakeKey] = useState(0);
   const [log, setLog] = useState("");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -164,6 +176,7 @@ export default function PokemonArena({
           key, side: other(e.side), dmg: e.damage ?? 0,
           tag: e.modifier === "weakness" ? "Điểm yếu ×2!" : e.modifier === "resistance" ? "Bị kháng" : undefined,
         });
+        if ((e.damage ?? 0) >= 120) setShakeKey(key + 1);
       } else if (e.type === "confusion-self" || e.type === "status-tick") {
         setFloat({ key, side: e.side, dmg: e.damage ?? 0 });
       } else {
@@ -231,9 +244,18 @@ export default function PokemonArena({
     if (!f) return null;
     const isLunging = lunge?.side === sideKey && !finished;
     const isHit = float?.side === sideKey && !finished;
+    const foe = sides[other(sideKey)];
+    const foeType = foe.fighters[foe.active]?.card.type ?? "C";
     return (
       <div key={`${sideKey}-${side.active}-${lunge?.key ?? 0}`} className="poke-active-stack">
-        <HoloProj card={f.card} side={sideKey} attacking={isLunging} hit={isHit} />
+        <HoloProj
+          card={f.card}
+          side={sideKey}
+          attacking={isLunging}
+          hit={isHit}
+          vfxColor={TYPE_COLORS[foeType.charAt(0).toUpperCase()] ?? "#fbbf24"}
+          hitKey={float?.key}
+        />
         <div
           className={`poke-active${isLunging ? ` lunge-${sideKey}` : ""}${isHit ? " is-hit" : ""}${f.ko ? " is-ko" : ""}`}
         >
@@ -307,7 +329,7 @@ export default function PokemonArena({
         </>
       ) : (
         <>
-          <div className="poke-field">
+          <div className={`poke-field${shakeKey ? " is-shaking" : ""}`} onAnimationEnd={() => setShakeKey(0)}>
             <div className="poke-side is-b">
               <div className="poke-side-head">
                 <span>Đối thủ</span>
