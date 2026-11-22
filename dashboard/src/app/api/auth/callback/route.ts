@@ -1,6 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 import { exchangeCode } from "@/lib/discord";
 import { SESSION_COOKIE, createSessionToken } from "@/lib/session";
+import { db } from "@/lib/db";
+
+/**
+ * Post-login routing (spec 6.24, owner decision 2026-11-21): if the
+ * user manages at least one server where Puni is present (a
+ * guild_settings row exists), land on the server dashboard; everyone
+ * else lands on the player area /me.
+ */
+async function landingFor(guilds: { id: string; permissions: string }[]): Promise<string> {
+  const manageable = guilds.filter((g) => {
+    try {
+      const bits = BigInt(g.permissions);
+      return (bits & 0x8n) !== 0n || (bits & 0x20n) !== 0n;
+    } catch {
+      return false;
+    }
+  });
+  if (!manageable.length) return "/me";
+  try {
+    const res = await db().query<{ guild_id: string }>(
+      `SELECT guild_id FROM guild_settings WHERE guild_id = ANY($1)`,
+      [manageable.map((g) => g.id)],
+    );
+    return res.rows.length ? "/dashboard" : "/me";
+  } catch {
+    return "/dashboard";
+  }
+}
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +49,7 @@ export async function GET(req: NextRequest) {
       avatar: user.avatar,
       guilds,
     });
-    const res = NextResponse.redirect(new URL("/dashboard", url));
+    const res = NextResponse.redirect(new URL(await landingFor(guilds), url));
     res.cookies.set(SESSION_COOKIE, token, {
       httpOnly: true,
       sameSite: "lax",

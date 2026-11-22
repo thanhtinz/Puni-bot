@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 import {
   DEFAULT_TCG_CONFIG,
+  cardValueCoins,
   TCG_RARITIES,
   rollRarity,
   validateDeck,
@@ -9,6 +10,7 @@ import {
   type TcgSpecies,
 } from "../src/services/tcg";
 import { InMemoryTcgStore, TcgGameService } from "../src/services/tcg-store";
+import { simulateCardBattle } from "../src/services/tcg-battle";
 
 const catalog: TcgSpecies[] = TCG_RARITIES.flatMap((rarity) =>
   [1, 2, 3].map((i) => ({ id: `${rarity.toLowerCase()}-${i}`, name: `${rarity} ${i}`, rarity })),
@@ -128,5 +130,74 @@ describe("tcg cards + decks", () => {
     const tooManyCopies = [...ok.slice(0, 29), "species-0"];
     assert.ok(validateDeck(tooManyCopies, rules).some((e) => e.includes("tối đa")));
     assert.ok(validateDeck(ok.slice(0, 20), rules).some((e) => e.includes("đúng 30")));
+  });
+});
+
+describe("tcg card value, sell and battle (6.24)", () => {
+  test("card value scales with rarity, level and enhance", () => {
+    assert.equal(cardValueCoins("Common", 1, 0), 50);
+    assert.equal(cardValueCoins("Rare", 11, 0), 600); // 500 * 1.2
+    assert.equal(cardValueCoins("Epic", 1, 2), 2600); // 2000 * 1.3
+  });
+
+  test("sell pays sellRatePercent of value and removes the card", async () => {
+    const { store, economy, game } = makeGame();
+    const inst = await store.createInstance("u1", "rare-1", "gacha");
+    const out = await game.sellCard("u1", inst.code, new Set());
+    assert.equal(out.kind, "ok");
+    if (out.kind !== "ok") return;
+    assert.equal(out.value, 500);
+    assert.equal(out.coins, 300); // 60% of 500
+    assert.equal(await economy.balance("u1"), 100300);
+    assert.equal(await store.getInstance(inst.code), null);
+  });
+
+  test("sell refuses favorite cards", async () => {
+    const { store, game } = makeGame();
+    const inst = await store.createInstance("u1", "rare-1", "gacha");
+    await store.updateInstance(inst.code, { favorite: true });
+    const out = await game.sellCard("u1", inst.code, new Set());
+    assert.equal(out.kind, "error");
+    assert.ok(await store.getInstance(inst.code));
+  });
+
+  test("battle engine is deterministic with a seeded rng and terminates", () => {
+    const mk = (prefix: string) =>
+      Array.from({ length: 5 }, (_, i) => ({
+        code: `${prefix}${i}`, name: `${prefix}mon${i}`, speciesId: `${prefix}-${i}`,
+        maxHp: 300, atk: 50,
+      }));
+    let seed = 42;
+    const rng = () => {
+      seed = (seed * 1103515245 + 12345) % 2147483648;
+      return seed / 2147483648;
+    };
+    const r1 = simulateCardBattle(mk("a"), mk("b"), rng);
+    assert.ok(r1.rounds >= 1 && r1.rounds <= 40);
+    assert.ok(r1.log.length > 0);
+    assert.ok(["a", "b"].includes(r1.winner));
+  });
+
+  test("cardBattle needs an active deck with 5+ cards, then pays rewards", async () => {
+    const { store, economy, game } = makeGame(100000, () => 0.5);
+    const empty = await game.cardBattle("u1");
+    assert.equal(empty.kind, "error");
+    const codes: string[] = [];
+    for (let i = 0; i < 5; i++) {
+      const inst = await store.createInstance("u1", `common-${(i % 3) + 1}`, "gacha");
+      codes.push(inst.code);
+    }
+    const deck = await store.createDeck("u1", "Đội chính");
+    await store.setDeckCards(deck.id, codes);
+    await store.setActiveDeck("u1", deck.id);
+    const out = await game.cardBattle("u1");
+    assert.equal(out.kind, "ok");
+    if (out.kind !== "ok") return;
+    assert.equal(out.teamNames.length, 5);
+    assert.equal(out.enemyNames.length, 5);
+    assert.ok(out.coins > 0 && out.xp > 0);
+    assert.ok((await economy.balance("u1")) > 100000);
+    const after = await store.getInstance(codes[0]);
+    assert.equal(after?.xp, out.xp);
   });
 });

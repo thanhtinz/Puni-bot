@@ -20,6 +20,8 @@ import {
   type TcgConfig,
   type TcgSpecies,
   type TcgStats,
+  cardValueCoins,
+  type TcgRarity,
 } from "../services/tcg";
 import type { TcgGameService, TcgEconomyHooks } from "../services/tcg-store";
 import type { TcgStore } from "../services/tcg-store";
@@ -450,11 +452,12 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
       const sp = map.get(inst.speciesId);
       const rarity = sp?.rarity ?? "Common";
       if (sub === "view" || sub === "inspect") {
+        const cfg = await deps.config();
         const base = sp ? (BASE_VALUE[rarity as keyof typeof BASE_VALUE] ?? 0) : 0;
         const lines = [
           `**${sp?.name ?? inst.speciesId}** — ${RARITY_TAG[rarity]}`,
           `Mã thẻ: \`${inst.code}\` · Cấp ${inst.level} · Cường hoá +${inst.enhance} · Nguồn: ${inst.obtained}`,
-          `Giá trị tham khảo: ${fmt(base)} ${deps.currencyName()} · Phân giải được ${BURN_SHARDS[rarity as keyof typeof BURN_SHARDS] ?? 1} Mảnh`,
+          `Giá trị của lá này: ${fmt(cardValueCoins(rarity as TcgRarity, inst.level, inst.enhance))} ${deps.currencyName()} · Bán cho hệ thống: ${fmt(Math.max(1, Math.floor((cardValueCoins(rarity as TcgRarity, inst.level, inst.enhance) * cfg.sellRatePercent) / 100)))} · Phân giải được ${BURN_SHARDS[rarity as keyof typeof BURN_SHARDS] ?? 1} Mảnh`,
           inst.locked ? "Đang khoá (không bán/trade/phân giải được)." : "Chưa khoá.",
           inst.favorite ? "Đã đánh dấu yêu thích." : "",
           sp?.evolvesTo ? `Tiến hoá thành: **${map.get(sp.evolvesTo)?.name ?? sp.evolvesTo}** (lệnh \`card evolve ${inst.code}\`)` : "",
@@ -507,7 +510,13 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
         if (out.kind === "error") return { text: out.message };
         return { text: `Đã phân giải **${sp?.name ?? inst.speciesId}** → +${out.shards} Mảnh thẻ.` };
       }
-      return { text: "Dùng: `card view|inspect|favorite|lock|unlock|upgrade|enhance|evolve|burn <mã thẻ>` · `card search <tên>`" };
+      if (sub === "sell") {
+        const cfg = await deps.config();
+        const out = await deps.game.sellCard(ctx.userId, inst.code, await deckCodesOf(ctx.userId));
+        if (out.kind === "error") return { text: out.message };
+        return { text: `Đã bán **${sp?.name ?? inst.speciesId}** (\`${inst.code}\`) cho hệ thống → +${fmt(out.coins)} ${deps.currencyName()} (giá trị lá thẻ ${fmt(out.value)}, hệ thống mua ${cfg.sellRatePercent}%).` };
+      }
+      return { text: "Dùng: `card view|inspect|favorite|lock|unlock|upgrade|enhance|evolve|burn|sell <mã thẻ>` · `card search <tên>`" };
     },
   };
 
@@ -745,5 +754,31 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
     },
   };
 
-  return [gacha, card, deck, market, trade];
+  
+  const cardbattle: CommandDef = {
+    name: "cardbattle",
+    aliases: ["cbattle", "dauthe"],
+    description: "Battle thẻ bằng bộ bài đang dùng (5 thẻ đầu) với đội đối thủ tự động.",
+    module: "cozy",
+    permission: "everyone",
+    slash: true,
+    prefix: true,
+    cooldownSec: 20,
+    handler: async (ctx) => {
+      const out = await deps.game.cardBattle(ctx.userId);
+      if (out.kind === "error") return { text: out.message };
+      const lines = [
+        `**Battle thẻ** — Đội của bạn: ${out.teamNames.join(", ")}`,
+        `Đối thủ: ${out.enemyNames.join(", ")}`,
+        ...out.log,
+        out.win
+          ? `**Thắng sau ${out.rounds} hiệp!** +${fmt(out.coins)} ${deps.currencyName()} · Đội thẻ +${out.xp} XP`
+          : `**Thua sau ${out.rounds} hiệp.** +${fmt(out.coins)} ${deps.currencyName()} · Đội thẻ +${out.xp} XP`,
+        ...out.leveledUp.map((s) => `Lên cấp: ${s}`),
+      ];
+      return { text: lines.join("\n") };
+    },
+  };
+
+return [gacha, card, deck, market, trade, cardbattle];
 }

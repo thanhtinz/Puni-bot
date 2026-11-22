@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { currentSession } from "@/lib/current-session";
 import { manageableGuilds } from "@/lib/session";
 import { listConfiguredGuildIds } from "@/lib/db";
@@ -9,6 +10,9 @@ export default async function GuildPickerPage() {
   const session = await currentSession();
   if (!session) return null;
   const guilds = manageableGuilds(session);
+  // Player routing (spec 6.24): no manageable servers at all -> the
+  // player area is the right home, not an empty picker.
+  if (guilds.length === 0) redirect("/me");
   const configured = new Set(await listConfiguredGuildIds().catch(() => [] as string[]));
   return (
     <>

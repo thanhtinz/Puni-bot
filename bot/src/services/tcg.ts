@@ -32,6 +32,8 @@ export interface TcgConfig {
   deckMinSpecies: number;
   maxDecks: number;
   beginnerMaxPulls: number;
+  /** Percent of a card's own value paid when selling it to the system. */
+  sellRatePercent: number;
 }
 
 export const DEFAULT_TCG_CONFIG: TcgConfig = {
@@ -41,6 +43,7 @@ export const DEFAULT_TCG_CONFIG: TcgConfig = {
   pityEpic: 30,
   pityLegendary: 90,
   exchangePoints: 100,
+  sellRatePercent: 60,
   marketFeePercent: 5,
   marketMinPrice: 10,
   deckSize: 30,
@@ -70,6 +73,7 @@ export function normalizeTcgConfig(raw: unknown): TcgConfig {
     pityLegendary: clampNum(r.pityLegendary, 1, 5000, DEFAULT_TCG_CONFIG.pityLegendary),
     exchangePoints: clampNum(r.exchangePoints, 1, 10000, DEFAULT_TCG_CONFIG.exchangePoints),
     marketFeePercent: clampNum(r.marketFeePercent, 0, 50, DEFAULT_TCG_CONFIG.marketFeePercent),
+    sellRatePercent: clampNum(r.sellRatePercent, 10, 100, DEFAULT_TCG_CONFIG.sellRatePercent),
     marketMinPrice: clampNum(r.marketMinPrice, 1, 1_000_000, DEFAULT_TCG_CONFIG.marketMinPrice),
     deckSize: clampNum(r.deckSize, 1, 100, DEFAULT_TCG_CONFIG.deckSize),
     deckMaxCopies: clampNum(r.deckMaxCopies, 1, 30, DEFAULT_TCG_CONFIG.deckMaxCopies),
@@ -89,6 +93,17 @@ export const BASE_VALUE: Record<TcgRarity, number> = {
   Common: 50, Uncommon: 150, Rare: 500, Epic: 2000, Legendary: 9000, Mythical: 20000, Fabled: 50000,
 };
 
+
+/**
+ * A card INSTANCE's own Coins value (spec 6.24): rarity base scaled by
+ * level (+2% per level past 1) and enhancement (+15% per +1). Selling
+ * to the system pays sellRatePercent of this.
+ */
+export function cardValueCoins(rarity: TcgRarity, level: number, enhance: number): number {
+  const base = BASE_VALUE[rarity] ?? 0;
+  const mult = 1 + Math.max(0, level - 1) * 0.02 + Math.max(0, enhance) * 0.15;
+  return Math.round(base * mult);
+}
 export interface PityState {
   sinceEpic: number;
   sinceLegendary: number;
@@ -134,6 +149,9 @@ export interface TcgSpecies {
   rarity: TcgRarity;
   /** Next evolution species id, when any (game_species.evolves_to). */
   evolvesTo?: string;
+  /** Base stats for card battles (game_species.base_hp / base_atk). */
+  baseHp?: number;
+  baseAtk?: number;
 }
 
 /** Pick a species of the rolled rarity; featured species weigh x5. */

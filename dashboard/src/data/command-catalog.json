@@ -795,5 +795,16 @@
     "module": "cozy",
     "slash": true,
     "prefix": true
+  },
+  {
+    "name": "cardbattle",
+    "aliases": [
+      "cbattle",
+      "dauthe"
+    ],
+    "description": "Battle thẻ bằng bộ bài đang dùng (5 thẻ đầu) với đội đối thủ tự động.",
+    "module": "cozy",
+    "slash": true,
+    "prefix": true
   }
 ]

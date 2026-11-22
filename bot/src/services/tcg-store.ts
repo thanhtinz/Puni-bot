@@ -5,7 +5,9 @@
  */
 import {
   BURN_SHARDS,
+  MAX_LEVEL,
   advancePity,
+  cardValueCoins,
   bannerActive,
   emptyPity,
   newInstanceCode,
@@ -19,6 +21,7 @@ import {
   type TcgRarity,
   type TcgSpecies,
 } from "./tcg";
+import { battleStatsFor, simulateCardBattle, type BattleCardInput } from "./tcg-battle";
 
 export interface TcgWallet {
   shards: number;
@@ -388,5 +391,126 @@ export class TcgGameService {
     await this.deps.store.deleteInstance(inst.code);
     await this.deps.store.adjustWallet(userId, { shards });
     return { kind: "ok", shards };
+  }
+
+  /** Shared guards for destroying/leaving an instance (burn + sell). */
+  private async guardRemovable(
+    userId: string,
+    code: string,
+    deckCodes: Set<string>,
+  ): Promise<{ inst: CardInstance } | { error: string }> {
+    const inst = await this.deps.store.getInstance(code);
+    if (!inst || inst.userId !== userId) return { error: "Không tìm thấy thẻ đó trong kho của bạn." };
+    if (inst.locked) return { error: "Thẻ đang khoá — mở khoá trước." };
+    if (inst.favorite) return { error: "Thẻ đang đánh dấu yêu thích — bỏ yêu thích trước." };
+    if (deckCodes.has(inst.code)) return { error: "Thẻ đang nằm trong một bộ bài — gỡ khỏi bộ bài trước." };
+    if (await this.deps.store.listingForInstance(inst.code)) {
+      return { error: "Thẻ đang được bán trên chợ — huỷ tin đăng trước." };
+    }
+    return { inst };
+  }
+
+  /**
+   * Sell a card to the SYSTEM for Coins (spec 6.24) — pays
+   * sellRatePercent of the instance's own value. Distinct from burn
+   * (shards) and from the player market.
+   */
+  async sellCard(userId: string, code: string, deckCodes: Set<string>): Promise<
+    | { kind: "ok"; coins: number; value: number }
+    | { kind: "error"; message: string }
+  > {
+    const guarded = await this.guardRemovable(userId, code, deckCodes);
+    if ("error" in guarded) return { kind: "error", message: guarded.error };
+    const inst = guarded.inst;
+    const catalog = await this.deps.catalog();
+    const species = catalog.find((s) => s.id === inst.speciesId);
+    const rarity = (species?.rarity ?? "Common") as TcgRarity;
+    const cfg = await this.deps.config();
+    const value = cardValueCoins(rarity, inst.level, inst.enhance);
+    const coins = Math.max(1, Math.floor((value * cfg.sellRatePercent) / 100));
+    await this.deps.store.deleteInstance(inst.code);
+    await this.deps.economy.credit(userId, coins, "tcg-sell", `Bán thẻ ${inst.code}`);
+    return { kind: "ok", coins, value };
+  }
+
+  /**
+   * Card battle (spec 6.24): the first 5 cards of the ACTIVE deck
+   * fight an auto-generated rival team of similar power. Winners earn
+   * Coins + card XP (100 XP = +1 level, up to the cap).
+   */
+  async cardBattle(userId: string): Promise<
+    | {
+        kind: "ok";
+        win: boolean;
+        rounds: number;
+        log: string[];
+        coins: number;
+        xp: number;
+        teamNames: string[];
+        enemyNames: string[];
+        leveledUp: string[];
+      }
+    | { kind: "error"; message: string }
+  > {
+    const decks = await this.deps.store.listDecks(userId);
+    const active = decks.find((d) => d.isActive) ?? decks[0];
+    if (!active) {
+      return { kind: "error", message: "Bạn chưa có bộ bài nào — tạo bộ bài bằng lệnh `deck create` trước." };
+    }
+    if (active.codes.length < 5) {
+      return { kind: "error", message: `Bộ bài "${active.name}" mới có ${active.codes.length} thẻ — cần ít nhất 5 thẻ để battle.` };
+    }
+    const catalog = await this.deps.catalog();
+    const byId = new Map(catalog.map((s) => [s.id, s]));
+    const team: BattleCardInput[] = [];
+    const teamInstances: CardInstance[] = [];
+    for (const code of active.codes.slice(0, 5)) {
+      const inst = await this.deps.store.getInstance(code);
+      if (!inst || inst.userId !== userId) continue;
+      const sp = byId.get(inst.speciesId);
+      const stats = battleStatsFor(sp?.baseHp ?? 50, sp?.baseAtk ?? 50, inst.level, inst.enhance);
+      team.push({ code: inst.code, name: sp?.name ?? inst.speciesId, speciesId: inst.speciesId, ...stats });
+      teamInstances.push(inst);
+    }
+    if (team.length < 5) {
+      return { kind: "error", message: "Bộ bài đang dùng thiếu thẻ hợp lệ — kiểm tra lại bằng `deck view`." };
+    }
+    const avgLevel = teamInstances.reduce((s, i) => s + i.level, 0) / teamInstances.length;
+    const enemy: BattleCardInput[] = [];
+    const pool = catalog.filter((s) => s.baseHp !== undefined || true);
+    for (let i = 0; i < 5; i++) {
+      const sp = pool[Math.floor(this.rng() * pool.length)] ?? pool[0];
+      if (!sp) return { kind: "error", message: "Chưa có dữ liệu loài để tạo đối thủ." };
+      const lvl = Math.max(1, Math.round(avgLevel * (0.85 + this.rng() * 0.3)));
+      const stats = battleStatsFor(sp.baseHp ?? 50, sp.baseAtk ?? 50, lvl, 0);
+      enemy.push({ code: `enemy-${i}`, name: sp.name, speciesId: sp.id, ...stats });
+    }
+    const result = simulateCardBattle(team, enemy, () => this.rng());
+    const win = result.winner === "a";
+    const coins = win ? Math.round(120 + avgLevel * 15) : 25;
+    const xp = win ? 30 : 12;
+    const leveledUp: string[] = [];
+    for (const inst of teamInstances) {
+      let level = inst.level;
+      let totalXp = inst.xp + xp;
+      while (totalXp >= 100 && level < MAX_LEVEL) {
+        totalXp -= 100;
+        level += 1;
+      }
+      if (level > inst.level) leveledUp.push(`${byId.get(inst.speciesId)?.name ?? inst.speciesId} → Lv.${level}`);
+      await this.deps.store.updateInstance(inst.code, { xp: totalXp, level });
+    }
+    await this.deps.economy.credit(userId, coins, "tcg-battle", win ? "Thắng battle thẻ" : "Battle thẻ");
+    return {
+      kind: "ok",
+      win,
+      rounds: result.rounds,
+      log: result.log.slice(-14),
+      coins,
+      xp,
+      teamNames: team.map((c) => c.name),
+      enemyNames: enemy.map((c) => c.name),
+      leveledUp,
+    };
   }
 }

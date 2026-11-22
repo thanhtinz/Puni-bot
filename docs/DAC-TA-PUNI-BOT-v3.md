@@ -1192,6 +1192,47 @@ Tín lệnh tham khảo TRANG MEMBERSHIP PATREON CỦA OwO để làm tính năn
 - **Trang web người chơi** (bề mặt riêng cho user thường, KHÔNG phải trang admin): `/tcg` — chợ thẻ theo mẫu Tín gửi (thanh tab Thị trường · Cửa Hàng · Bộ Bài Người Chơi · Bảng Xếp Hạng · Cài Đặt, bộ lọc set/độ hiếm/sắp xếp, lưới thẻ có giá sàn chợ + giá trị phân giải, top tăng/giảm giá), `/tcg/collection` — bộ sưu tập của người đăng nhập, `/tcg/decks` — bộ bài của người đăng nhập. Dữ liệu thật từ cùng các bảng bot dùng.
 - **Cân bằng/chống lạm phát**: giá mở, tỉ lệ, pity, phí chợ, thưởng thành tựu/weekly đều là thông số tập trung (bot_config khoá `tcg_config`); phát hành Coins qua TCG bị trần bởi giá mở là sink chính + phí chợ 5% + burn không ra Coins.
 
+### 6.24 Khu người chơi riêng + battle thẻ + giá trị thẻ (Tín lệnh 2026-11-21 20:46)
+
+**Khu người chơi `/me`** — bề mặt web THỨ TƯ, tách biệt hoàn toàn với
+Dashboard quản trị server và Admin chủ bot (layout/menu riêng):
+- `/me` Hồ sơ: xem + TỰ SỬA thông tin profile (giới tính, ngày sinh,
+  sở thích, dòng trạng thái/mối quan hệ tự khai) — chính là các trường
+  hiện trên thẻ profile game (mẫu 6.17); kèm tổng quan ví Coins/Gems,
+  hội viên, hôn nhân (khi GĐ8 có dữ liệu).
+- `/me/dex` Sổ dex: lưới 411 loài, loài đã sở hữu (qua thẻ hoặc pet)
+  hiện màu + sprite, chưa có hiện bóng mờ; tiến độ x/411 theo hệ/độ hiếm.
+- `/me/cards` Kho thẻ: mọi bản thể thẻ của mình kèm GIÁ TRỊ RIÊNG,
+  bán ra Coins ngay trên web được.
+- `/me/decks` Đội hình/bộ bài: xem, đặt bộ đang dùng, sửa bộ bài
+  (thêm/gỡ thẻ, kiểm tra hợp lệ cùng luật với bot).
+- `/me/market` Chợ của tôi: tin bán của mình, đăng bán/huỷ, mua tin
+  người khác (ghi nợ/cộng tiền qua economy dùng chung, phí 5% như bot).
+- `/me/trades` Trao đổi: lời đề nghị đến/đi, chấp nhận/từ chối trên web.
+Mọi thao tác ở khu người chơi ghi vào CÙNG database bot đọc — một
+nguồn dữ liệu duy nhất, luật kiểm tra giống hệt phía bot.
+
+**Định tuyến sau đăng nhập** (Tín chốt 20:46): đăng nhập Discord xong,
+hệ thống quét danh sách server của người dùng — server nào họ có quyền
+quản trị VÀ Puni đang ở trong server đó thì đích đến là Dashboard setup
+bot; không có server nào như vậy thì vào thẳng khu người chơi `/me`.
+Vào nhầm khu vẫn qua lại được bằng menu.
+
+**Giá trị riêng của thẻ + bán ra Coins**: mỗi bản thể có giá trị Coins
+riêng = giá gốc theo độ hiếm × (1 + (cấp−1)×2% + cường hoá×15%). Lệnh
+`card sell <mã>` bán thẻ cho HỆ THỐNG nhận `sellRatePercent`% giá trị
+(mặc định 60%, chủ bot chỉnh trong cấu hình TCG) — khác phân giải ra
+Mảnh (burn) và khác chợ người chơi. Thẻ khoá/yêu thích/đang trong bộ
+bài/đang bán thì không bán được, giống luật burn. Giá trị riêng hiện ở
+`card inspect`, kho thẻ web và tổng giá trị bộ sưu tập.
+
+**Battle thẻ (TCG battle)** — bên cạnh battle thú kiểu OwO (GĐ9):
+dùng BỘ BÀI ĐANG DÙNG, lấy 5 thẻ đầu bộ làm đội hình; đấu tự động theo
+lượt với đội bot có sức mạnh tương đương: mỗi thẻ đánh theo chỉ số của
+loài + cấp + cường hoá, tích năng lượng để ra đòn mạnh; thắng nhận
+Coins + XP cho cả đội thẻ (thua nhận ít hơn). Lệnh `cardbattle`
+(module cozy, cooldown riêng). Đấu người chơi với người chơi để đợt sau.
+
 ## 7. LỘ TRÌNH TÁCH THEO GIAI ĐOẠN
 
 > **ĐÍNH CHÍNH LỚN (Tín chốt 2026-11-21 18:41 EST): BỎ HOÀN TOÀN HỆ THỐNG SHOP.** Puni từ nay là **bot cộng đồng thuần** — dữ liệu riêng biệt hoàn toàn, **không kết nối, không gọi API, không đụng chạm BNT Shop**. Theo đó: toàn bộ nội dung về Shop trong tài liệu này (mục 4 API `/api/bot/v1/`, 6.11, 6.12, 6.14, phần Shop của 6.15, luật ẩn Shop, reseller, Pass/ví/thanh toán theo server, board bán hàng) **HẾT HIỆU LỰC** và đã bị gỡ khỏi code ở đợt 2026-11-21 (xoá ShopApiClient, module "shop", `shop_enabled`, board store; migration 0007 xoá cột `shop_enabled` + bảng `board_state`; dashboard bỏ trang Reseller + panel Shop). GĐ1 (API phía Shop) giữ nguyên bên repo Shop nhưng bot này **không dùng nữa**. GĐ7 rút còn: web công khai + tuỳ biến thương hiệu theo server. Economy vẫn là tiền cộng đồng toàn cục của riêng Puni, không liên quan ví Shop nào.

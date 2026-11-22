@@ -92,14 +92,16 @@ async function main(): Promise<void> {
     tcgStore,
     tcgCatalogSource: pgPool
       ? async () => {
-          const res = await pgPool!.query<{ id: string; name: string; rarity: string; evolves_to: string | null }>(
-            `SELECT id, name, rarity, evolves_to FROM game_species WHERE enabled = true`,
+          const res = await pgPool!.query<{ id: string; name: string; rarity: string; evolves_to: string | null; base_hp: number; base_atk: number }>(
+            `SELECT id, name, rarity, evolves_to, base_hp, base_atk FROM game_species WHERE enabled = true`,
           );
           return res.rows.map((r) => ({
             id: r.id,
             name: r.name,
             rarity: r.rarity as import("./services/tcg").TcgRarity,
             evolvesTo: r.evolves_to ?? undefined,
+            baseHp: r.base_hp,
+            baseAtk: r.base_atk,
           }));
         }
       : undefined,
