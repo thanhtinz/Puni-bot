@@ -12,7 +12,7 @@ hay phụ thuộc vào bất kỳ hệ thống nào khác (chốt 2026-11-21: b�
 
 - `shared/` — `@puni/shared`: registry lệnh dùng chung slash + prefix, dữ liệu 69 reaction.
 - `bot/` — `@puni/bot`: tiến trình bot (shard/cluster theo đặc tả mục 2.5), dispatcher, economy toàn hệ thống.
-- `dashboard/` — web `discord.bntshop.com` (làm ở giai đoạn GĐ3).
+- `dashboard/` — web của bot (landing + khu người chơi + admin panel; tên miền riêng chờ chủ bot chốt).
 - `docs/` — đặc tả và tài liệu thiết kế.
 
 ## Chạy thử
