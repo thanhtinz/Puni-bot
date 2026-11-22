@@ -118,7 +118,8 @@ export default async function ShopSpeciesPage({
                     <span className="ruling-scope">
                       {r.scope === "species" ? "Ruling của lá này" : r.scope === "set" ? "Ruling của bộ" : "Ruling của game"}
                     </span>
-                    <p>{r.body}</p>
+                    <p>{r.bodyVi || r.body}</p>
+                    {r.bodyVi ? <p className="ruling-orig">Bản gốc tiếng Anh: {r.body}</p> : null}
                     {r.source ? <p className="player-sub">Nguồn: {r.source}</p> : null}
                   </li>
                 ))}

@@ -10,6 +10,7 @@
  */
 import { db } from "./db";
 import { shopGameOf } from "./shop";
+import { translateMany, translationConfigured } from "./translate";
 
 export interface Ruling {
   id: number;
@@ -19,6 +20,8 @@ export interface Ruling {
   scope: "species" | "set" | "game";
   title: string;
   body: string;
+  /** Vietnamese translation of a synced (English) ruling, once made. */
+  bodyVi: string;
   source: string;
   updatedAt: string;
 }
@@ -30,6 +33,7 @@ interface RulingRow {
   game_prefix: string;
   title: string;
   body: string;
+  body_vi: string | null;
   source: string;
   updated_at: string;
 }
@@ -43,12 +47,13 @@ function toRuling(r: RulingRow): Ruling {
     scope: r.species_id ? "species" : r.set_id ? "set" : "game",
     title: r.title,
     body: r.body,
+    bodyVi: r.body_vi ?? "",
     source: r.source ?? "",
     updatedAt: r.updated_at,
   };
 }
 
-const COLS = `id::text AS id, species_id, set_id, game_prefix, title, body, source, updated_at::text AS updated_at`;
+const COLS = `id::text AS id, species_id, set_id, game_prefix, title, body, body_vi, source, updated_at::text AS updated_at`;
 
 /** Rulings that apply to one card: its species, its set, its family. */
 export async function rulingsForSpecies(speciesId: string, setId: string): Promise<Ruling[]> {
@@ -62,9 +67,51 @@ export async function rulingsForSpecies(speciesId: string, setId: string): Promi
        ORDER BY CASE WHEN species_id = $1 THEN 0 WHEN set_id = $2 THEN 1 ELSE 2 END, id`,
       [speciesId, setId, family],
     );
-    return res.rows.map(toRuling);
+    const rulings = res.rows.map(toRuling);
+    await ensureRulingTranslations(rulings);
+    return rulings;
   } catch {
     return [];
+  }
+}
+
+/**
+ * On-demand Vietnamese translation (owner order 2026-11-22): the first
+ * time a card's rulings are viewed, translate the still-English synced
+ * rulings and cache them in body_vi — later views are pure cache hits.
+ * Only rows with a reserved sync source are eligible (they are the
+ * English ones); hand-entered rulings are already Vietnamese. The
+ * cache write is keyed by body text, so every printing that shares a
+ * ruling text is filled by the same translation. Fails open: any
+ * problem leaves the English original in place and a later view
+ * retries.
+ */
+async function ensureRulingTranslations(rulings: Ruling[]): Promise<void> {
+  if (!translationConfigured()) return;
+  const pending = rulings.filter(
+    (r) =>
+      !r.bodyVi &&
+      r.body.trim() !== "" &&
+      (SYNC_SOURCES as readonly string[]).includes(r.source),
+  );
+  if (pending.length === 0) return;
+  const uniqueTexts = [...new Set(pending.map((r) => r.body))].slice(0, 100);
+  try {
+    const translated = await translateMany(uniqueTexts);
+    if (translated.size === 0) return;
+    for (const [src, vi] of translated) {
+      await db().query(
+        `UPDATE tcg_rulings SET body_vi = $1
+         WHERE body = $2 AND body_vi IS NULL AND source = ANY($3::text[])`,
+        [vi, src, [...SYNC_SOURCES]],
+      );
+    }
+    for (const r of rulings) {
+      const vi = translated.get(r.body);
+      if (vi) r.bodyVi = vi;
+    }
+  } catch {
+    // Cache write failed — the page still renders, in English.
   }
 }
 
@@ -128,9 +175,13 @@ export async function createRuling(input: RulingInput): Promise<void> {
 }
 
 export async function updateRuling(id: number, input: RulingInput): Promise<void> {
+  // Editing the body invalidates any cached translation of the old
+  // text — clear body_vi when the text actually changes (a synced row
+  // will simply be re-translated on its next view).
   await db().query(
     `UPDATE tcg_rulings SET species_id = $2, set_id = $3, game_prefix = $4,
-            title = $5, body = $6, source = $7, updated_at = now()
+            title = $5, body = $6, source = $7, updated_at = now(),
+            body_vi = CASE WHEN body <> $6 THEN NULL ELSE body_vi END
      WHERE id = $1`,
     [id, input.speciesId, input.setId, input.gamePrefix, input.title, input.body, input.source],
   );

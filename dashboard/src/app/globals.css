@@ -2120,3 +2120,4 @@ a.player-btn { display: inline-flex; align-items: center; text-decoration: none;
 .ruling-list strong { color: #12234a; }
 .ruling-scope { display: inline-block; margin-left: 8px; background: #eef3ff; color: #27407c; border-radius: 999px; padding: 1px 9px; font-size: 0.72rem; font-weight: 700; white-space: nowrap; }
 .ruling-list p { margin: 6px 0 0; color: #33456b; line-height: 1.55; white-space: pre-wrap; }
+.ruling-list .ruling-orig { font-size: .82rem; color: #7c8db0; }
