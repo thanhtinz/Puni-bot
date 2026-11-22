@@ -25,6 +25,8 @@ export interface PokeTeamCard {
   speciesId: string;
   name: string;
   spriteUrl: string;
+  /** Showdown animated-sprite id for the hologram projection. */
+  slug: string | null;
   type: string;
   maxHp: number;
   moves: string[];
@@ -57,13 +59,14 @@ interface InstRow {
   retreat: number | null;
   moves: PokeFighter["moves"];
   sprite_url: string | null;
+  poke_slug: string | null;
   in_active_deck: boolean;
 }
 
 const INST_SQL = `
   SELECT i.code, i.level, i.xp, i.enhance, i.species_id,
          s.name AS sp_name, s.hp_real, s.poke_type, s.weakness,
-         s.resistance, s.retreat, s.moves, s.sprite_url,
+         s.resistance, s.retreat, s.moves, s.sprite_url, s.poke_slug,
          EXISTS (
            SELECT 1 FROM tcg_decks d
            JOIN tcg_deck_cards dc ON dc.deck_id = d.id
@@ -91,11 +94,12 @@ function toFighter(r: InstRow): PokeFighter {
   };
 }
 
-function toCard(f: PokeFighter, spriteUrl: string): PokeTeamCard {
+function toCard(f: PokeFighter, spriteUrl: string, slug: string | null = null): PokeTeamCard {
   return {
     speciesId: f.speciesId,
     name: f.name,
     spriteUrl,
+    slug,
     type: f.type,
     maxHp: pokeMaxHp(f),
     moves: f.moves.map((m) => m.name),
@@ -109,7 +113,7 @@ export async function pokemonTeamPreview(
   const rows = res.rows as unknown as InstRow[];
   return {
     ready: rows.length >= 5,
-    team: rows.map((r) => toCard(toFighter(r), String(r.sprite_url ?? ""))),
+    team: rows.map((r) => toCard(toFighter(r), String(r.sprite_url ?? ""), r.poke_slug)),
   };
 }
 
@@ -130,7 +134,7 @@ export async function pokemonBattleWeb(
 
   const npcRes = await db().query(
     `SELECT id, name, hp_real, poke_type, weakness, resistance, retreat,
-            moves, sprite_url
+            moves, sprite_url, poke_slug
      FROM game_species
      WHERE moves IS NOT NULL AND hp_real BETWEEN 50 AND 260
        AND (id LIKE 'pkm-%' OR id LIKE 'pkmjp-%')
@@ -203,8 +207,8 @@ export async function pokemonBattleWeb(
       coins,
       xp,
       leveledUp,
-      teamA: team.map((f, i) => toCard(f, String(rows[i]!.sprite_url ?? ""))),
-      teamB: enemy.map((f, i) => toCard(f, String(npcRows[i]!.sprite_url ?? ""))),
+      teamA: team.map((f, i) => toCard(f, String(rows[i]!.sprite_url ?? ""), rows[i]!.poke_slug)),
+      teamB: enemy.map((f, i) => toCard(f, String(npcRows[i]!.sprite_url ?? ""), (npcRows[i]!.poke_slug as string | null) ?? null)),
       events: result.events,
     };
   } catch {

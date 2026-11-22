@@ -2221,6 +2221,30 @@ a.player-btn { display: inline-flex; align-items: center; text-decoration: none;
   .poke-bench .poke-bench-card { width: 52px; }
 }
 
+/* Pokémon hologram projection (spec 6.39): the Active's animated
+   sprite hovers over a cone of light above its card. */
+.poke-active-stack { display: flex; flex-direction: column; align-items: center; width: 100%; }
+.holo-wrap { --lunge: 46px; position: relative; width: 170px; height: 138px; margin-bottom: -8px; animation: holoSpawn 0.45s ease; }
+.holo-wrap[data-side="b"] { --lunge: -46px; }
+.holo-cone { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); width: 132px; height: 122px; background: linear-gradient(to top, rgba(56, 189, 248, 0.4), rgba(56, 189, 248, 0.06) 68%, transparent); clip-path: polygon(36% 100%, 64% 100%, 100% 0, 0 0); }
+.holo-img { position: absolute; left: 50%; bottom: 30px; transform: translateX(-50%); height: 98px; max-width: 150px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.8)) saturate(1.3); animation: holoFloat 2.8s ease-in-out infinite, holoFlicker 3.7s linear infinite; z-index: 2; }
+.holo-reflect { position: absolute; left: 50%; bottom: 30px; height: 98px; max-width: 150px; object-fit: contain; image-rendering: pixelated; transform: translateX(-50%) translateY(96%) scaleY(-1); opacity: 0.25; filter: saturate(1.3); -webkit-mask-image: linear-gradient(to top, black, transparent 78%); mask-image: linear-gradient(to top, black, transparent 78%); z-index: 1; }
+.holo-ring { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 118px; height: 20px; border-radius: 50%; border: 2px solid rgba(56, 189, 248, 0.55); background: radial-gradient(ellipse, rgba(56, 189, 248, 0.28), transparent 70%); box-shadow: 0 0 18px rgba(56, 189, 248, 0.45), inset 0 0 12px rgba(56, 189, 248, 0.4); }
+.holo-wrap::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.07) 0 2px, transparent 2px 5px); pointer-events: none; }
+.holo-wrap.is-attacking .holo-img { animation: holoLunge 0.45s ease; }
+.holo-wrap.is-hit .holo-img { animation: holoHitShake 0.4s ease; filter: brightness(2.1) hue-rotate(-45deg) drop-shadow(0 0 10px rgba(248, 113, 113, 0.9)); }
+@keyframes holoFloat { 0%, 100% { margin-bottom: 0; } 50% { margin-bottom: 7px; } }
+@keyframes holoFlicker { 0%, 100% { opacity: 1; } 92% { opacity: 1; } 93% { opacity: 0.55; } 94% { opacity: 1; } 97% { opacity: 0.75; } 98% { opacity: 1; } }
+@keyframes holoLunge { 30% { transform: translateX(calc(-50% + var(--lunge))) scale(1.16); } }
+@keyframes holoHitShake { 0%, 100% { transform: translateX(-50%); } 25% { transform: translateX(calc(-50% - 7px)); } 60% { transform: translateX(calc(-50% + 6px)); } }
+@keyframes holoSpawn { from { opacity: 0; filter: blur(3px); } to { opacity: 1; filter: blur(0); } }
+@media (max-width: 620px) {
+  .holo-wrap { width: 128px; height: 106px; }
+  .holo-img, .holo-reflect { height: 74px; bottom: 24px; }
+  .holo-cone { width: 100px; height: 94px; }
+  .holo-ring { width: 92px; height: 16px; }
+}
+
 /* Yu-Gi-Oh arena (spec 6.39) */
 .ygo-deckline { color: #44598a; font-size: 0.88rem; margin: 0; }
 .ygo-field { display: flex; flex-direction: column; gap: 10px; background: linear-gradient(180deg, #fdfdff, #f3efff); border: 1px solid #ddd7fb; border-radius: 16px; padding: 14px; }

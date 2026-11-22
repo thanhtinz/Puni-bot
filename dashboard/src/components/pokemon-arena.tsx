@@ -39,6 +39,49 @@ function hpTone(hp: number, max: number): string {
 }
 
 /**
+ * Hologram projection of the Active Pokémon: its animated sprite
+ * hovers over a cone of light above the card like a 3D projection —
+ * floating, flickering, with a floor reflection. It lunges when the
+ * Pokémon attacks and flashes when it takes a hit. Species without a
+ * mapped sprite simply show no projection.
+ */
+function HoloProj({
+  card,
+  side,
+  attacking,
+  hit,
+}: {
+  card: PokeTeamCard;
+  side: "a" | "b";
+  attacking: boolean;
+  hit: boolean;
+}) {
+  const [err, setErr] = useState(false);
+  useEffect(() => {
+    setErr(false);
+  }, [card.speciesId]);
+  const src = card.slug && !err ? `/api/poke-sprite?slug=${card.slug}` : null;
+  return (
+    <div
+      className={`holo-wrap${attacking ? " is-attacking" : ""}${hit ? " is-hit" : ""}`}
+      data-side={side}
+      aria-hidden
+    >
+      <div className="holo-cone" />
+      {src ? (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="holo-img" src={src} alt="" onError={() => setErr(true)} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="holo-reflect" src={src} alt="" />
+        </>
+      ) : null}
+      <div className="holo-ring" />
+    </div>
+  );
+}
+
+/**
  * Pokémon arena (spec 6.39): replays the engine's event stream on a
  * proper TCG field — Active front and centre, Bench behind, Prize
  * pips on the side. Attackers lunge, damage numbers float, HP bars
@@ -189,10 +232,11 @@ export default function PokemonArena({
     const isLunging = lunge?.side === sideKey && !finished;
     const isHit = float?.side === sideKey && !finished;
     return (
-      <div
-        key={`${sideKey}-${side.active}-${lunge?.key ?? 0}`}
-        className={`poke-active${isLunging ? ` lunge-${sideKey}` : ""}${isHit ? " is-hit" : ""}${f.ko ? " is-ko" : ""}`}
-      >
+      <div key={`${sideKey}-${side.active}-${lunge?.key ?? 0}`} className="poke-active-stack">
+        <HoloProj card={f.card} side={sideKey} attacking={isLunging} hit={isHit} />
+        <div
+          className={`poke-active${isLunging ? ` lunge-${sideKey}` : ""}${isHit ? " is-hit" : ""}${f.ko ? " is-ko" : ""}`}
+        >
         <CardArt src={f.card.spriteUrl} alt={f.card.name} className="poke-active-art" />
         {isHit && float ? (
           <span className="poke-float" key={float.key}>
@@ -208,6 +252,7 @@ export default function PokemonArena({
             <span className={hpTone(f.hp, f.card.maxHp)} style={{ width: `${Math.max(0, (f.hp / f.card.maxHp) * 100)}%` }} />
           </div>
           <small>{Math.max(0, f.hp)} / {f.card.maxHp} HP · Năng lượng: {f.energy}</small>
+        </div>
         </div>
       </div>
     );
