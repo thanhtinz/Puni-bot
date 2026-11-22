@@ -36,6 +36,7 @@ async function main(): Promise<void> {
   let membershipStore: import("./services/membership").MembershipStore | undefined;
   let membershipOrders: import("./services/membership").MembershipOrderStore | undefined;
   let voteStore: import("./services/vote").VoteStore | undefined;
+  let tcgStore: import("./services/tcg-store").TcgStore | undefined;
   let discordClient: { user: { id: string } | null } | undefined;
   let pgPool: Pool | undefined;
   if (config.databaseUrl) {
@@ -53,6 +54,8 @@ async function main(): Promise<void> {
     membershipOrders = new PgMembershipOrderStore(pool);
     const { PgVoteStore } = await import("./db/pg-vote-store");
     voteStore = new PgVoteStore(pool);
+    const { PgTcgStore } = await import("./db/pg-tcg-store");
+    tcgStore = new PgTcgStore(pool);
     console.log("[puni] state: PostgreSQL");
   } else {
     console.warn("[puni] DATABASE_URL not set — IN-MEMORY state, data will NOT survive restart");
@@ -86,6 +89,22 @@ async function main(): Promise<void> {
     membershipStore,
     membershipOrders,
     voteStore,
+    tcgStore,
+    tcgCatalogSource: pgPool
+      ? async () => {
+          const res = await pgPool!.query<{ id: string; name: string; rarity: string; evolves_to: string | null }>(
+            `SELECT id, name, rarity, evolves_to FROM game_species WHERE enabled = true`,
+          );
+          return res.rows.map((r) => ({
+            id: r.id,
+            name: r.name,
+            rarity: r.rarity as import("./services/tcg").TcgRarity,
+            evolvesTo: r.evolves_to ?? undefined,
+          }));
+        }
+      : undefined,
+    tcgConfigSource: botConfig ? () => botConfig.getTcgConfig() : undefined,
+    cardBaseUrl: process.env.PUBLIC_BASE_URL ?? "",
     voteConfigSource: botConfig ? () => botConfig.getVoteConfig() : undefined,
     voteBotIdSource: () => discordClient?.user?.id ?? process.env.DISCORD_CLIENT_ID ?? null,
     membershipTiersSource: botConfig ? () => botConfig.getMembershipTiers() : undefined,

@@ -5,6 +5,9 @@ import { createReactionCommands } from "./commands/reactions";
 import { createEconomyCommands } from "./commands/economy";
 import { createMembershipCommands } from "./commands/membership";
 import { createVoteCommands } from "./commands/vote";
+import { createTcgCommands, createTcgGroupCommands } from "./commands/tcg";
+import { TcgGameService, InMemoryTcgStore, type TcgStore } from "./services/tcg-store";
+import { DEFAULT_TCG_CONFIG, type TcgConfig, type TcgSpecies } from "./services/tcg";
 import {
   DEFAULT_MEMBERSHIP_TIERS,
   InMemoryMembershipStore,
@@ -57,6 +60,14 @@ export function buildBot(deps: {
   membershipTiersSource?: () => Promise<import("./services/membership").MembershipTier[]>;
   /** Membership order history store (spec 6.19) for `orders`. */
   membershipOrders?: import("./services/membership").MembershipOrderStore;
+  /** TCG store (spec 6.23); in-memory when absent. */
+  tcgStore?: TcgStore;
+  /** TCG species catalog (game_species); empty = TCG unavailable. */
+  tcgCatalogSource?: () => Promise<TcgSpecies[]>;
+  /** Live TCG config (Admin-editable later); defaults when absent. */
+  tcgConfigSource?: () => Promise<TcgConfig>;
+  /** Public dashboard base URL for card images in chat. */
+  cardBaseUrl?: string;
   voteStore?: import("./services/vote").VoteStore;
   voteConfigSource?: () => Promise<import("./services/vote").VoteConfig>;
   voteBotIdSource?: () => string | null;
@@ -84,6 +95,38 @@ export function buildBot(deps: {
   const enforcer = new LateBindingEnforcer();
   const startedAt = Date.now();
 
+  const tcgStore = deps.tcgStore ?? new InMemoryTcgStore();
+  const tcgCatalog = deps.tcgCatalogSource ?? (async () => [] as TcgSpecies[]);
+  const tcgConfig = deps.tcgConfigSource ?? (async () => DEFAULT_TCG_CONFIG);
+  const tcgEconomy = {
+    debit: async (userId: string, amount: number, source: string, note?: string) => {
+      try {
+        await economy.debit(userId, amount, source, note ?? "");
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    credit: async (userId: string, amount: number, source: string, note?: string) => {
+      await economy.credit(userId, amount, source, note ?? "");
+    },
+    balance: (userId: string) => economy.getBalance(userId),
+  };
+  const tcgDeps = {
+    game: new TcgGameService({
+      store: tcgStore,
+      catalog: tcgCatalog,
+      config: tcgConfig,
+      economy: tcgEconomy,
+    }),
+    store: tcgStore,
+    catalog: tcgCatalog,
+    config: tcgConfig,
+    economy: tcgEconomy,
+    currencyName: () => economyConfig.currencyName,
+    cardBaseUrl: deps.cardBaseUrl ?? "",
+  };
+
   const defs = [
     ...createCoreCommands({
       registry,
@@ -100,6 +143,8 @@ export function buildBot(deps: {
       voteBotIdSource: deps.voteBotIdSource,
       currencyName: economyConfig.currencyName,
     }),
+    ...createTcgCommands(tcgDeps),
+    ...createTcgGroupCommands(tcgDeps),
     ...createModerationCommands({ cases }),
     ...createEnforcementCommands({ cases, enforcer }),
   ];

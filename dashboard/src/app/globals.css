@@ -615,3 +615,94 @@ table.plain tr:last-child td { border-bottom: none; }
 .admin-content form .field > select,
 .admin-content form .field > textarea { margin-top: auto; }
 .admin-content form .field > label { margin-bottom: 7px; }
+
+/* ---- TCG player area (spec 6.23): light app shell ----------------- */
+.tcg-shell {
+  background: #f4f6fb;
+  color: #1c2a44;
+  border-radius: 26px;
+  padding: 18px clamp(14px, 3vw, 34px) 30px;
+  margin: 18px auto 34px;
+  max-width: 1180px;
+  box-shadow: 0 24px 60px rgba(4, 16, 40, 0.35);
+}
+.tcg-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  background: #fff;
+  border: 1px solid #e4e9f4;
+  border-radius: 999px;
+  padding: 6px;
+  margin-bottom: 20px;
+}
+.tcg-tab {
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #40506e;
+  text-decoration: none;
+}
+.tcg-tab:hover { background: #eef3ff; color: #1c4fd6; }
+.tcg-head h1 { font-size: 1.7rem; margin: 4px 0 6px; color: #12234a; }
+.tcg-head p { color: #5a6b8c; line-height: 1.55; max-width: 760px; }
+.tcg-head code, .tcg-body code {
+  background: #e8edf9; border-radius: 6px; padding: 1px 6px; font-size: 0.88em;
+}
+.tcg-top2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 18px 0; }
+@media (max-width: 760px) { .tcg-top2 { grid-template-columns: 1fr; } }
+.tcg-panel {
+  background: #fff; border: 1px solid #e4e9f4; border-radius: 18px; padding: 16px 18px;
+}
+.tcg-panel h2 { font-size: 1.05rem; margin: 0 0 10px; color: #12234a; }
+.tcg-panel p { color: #5a6b8c; line-height: 1.55; }
+.tcg-h2 { color: #12234a; margin: 22px 0 12px; }
+.tcg-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 0; border-bottom: 1px solid #eef1f8;
+}
+.tcg-row:last-child { border-bottom: none; }
+.tcg-row img { width: 40px; height: 56px; object-fit: cover; border-radius: 6px; }
+.tcg-row-main { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.tcg-row-main span { color: #7488ab; font-size: 0.86rem; }
+.tcg-badge {
+  background: #eef3ff; color: #1c4fd6; font-weight: 700; font-size: 0.8rem;
+  border-radius: 999px; padding: 4px 10px; white-space: nowrap;
+}
+.tcg-rank {
+  width: 30px; height: 30px; border-radius: 50%; background: #ffd83d; color: #5b4300;
+  display: inline-flex; align-items: center; justify-content: center; font-weight: 800;
+}
+.tcg-filters {
+  display: flex; gap: 12px; flex-wrap: wrap; align-items: end;
+  background: #fff; border: 1px solid #e4e9f4; border-radius: 16px; padding: 12px 14px; margin-bottom: 18px;
+}
+.tcg-filters label { display: flex; flex-direction: column; gap: 5px; font-size: 0.8rem; font-weight: 700; color: #7488ab; }
+.tcg-filters input, .tcg-filters select {
+  border: 1.5px solid #d5def0; border-radius: 10px; padding: 9px 12px; font: inherit; color: #1c2a44; background: #fbfcff;
+}
+.tcg-btn {
+  background: linear-gradient(135deg, #4c8dff, #2b63d8); color: #fff; font-weight: 700;
+  border: none; border-radius: 999px; padding: 10px 22px; cursor: pointer; text-decoration: none; display: inline-block;
+}
+.tcg-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px;
+}
+.tcg-card {
+  background: #fff; border: 1px solid #e4e9f4; border-radius: 16px; overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.tcg-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(28, 63, 140, 0.14); }
+.tcg-card img { width: 100%; aspect-ratio: 750 / 1050; object-fit: cover; display: block; }
+.tcg-card-meta { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px 12px; }
+.tcg-card-meta span { color: #7488ab; font-size: 0.84rem; }
+.tcg-card-meta .tcg-price { color: #9a6a00; font-weight: 700; }
+.tcg-card-meta .tcg-num { color: #a5b4cf; font-size: 0.78rem; }
+.tcg-empty { color: #7488ab; background: #fff; border: 1px dashed #cfdaf2; border-radius: 14px; padding: 16px; }
+.tcg-pager { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; color: #5a6b8c; }
+.tcg-pager a { color: #1c4fd6; font-weight: 700; text-decoration: none; }
+.tcg-deck-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; }
+.tcg-deck-strip figure { margin: 0; width: 86px; flex: 0 0 auto; text-align: center; }
+.tcg-deck-strip img { width: 86px; aspect-ratio: 750 / 1050; object-fit: cover; border-radius: 8px; }
+.tcg-deck-strip figcaption { font-size: 0.72rem; color: #5a6b8c; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

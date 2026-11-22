@@ -666,5 +666,134 @@
     "module": "economy",
     "slash": true,
     "prefix": true
+  },
+  {
+    "name": "tcg",
+    "aliases": [],
+    "description": "Trung tâm game thẻ TCG: số dư, gói, bộ sưu tập",
+    "module": "cozy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "inventory",
+    "aliases": [
+      "kho",
+      "tui"
+    ],
+    "description": "Kho thẻ và vật phẩm TCG",
+    "module": "cozy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "collection",
+    "aliases": [
+      "bosuutap"
+    ],
+    "description": "Bộ sưu tập thẻ: tiến độ loài và độ hiếm",
+    "module": "cozy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "currency",
+    "aliases": [
+      "tiente"
+    ],
+    "description": "Xem số dư tiền tệ và nguyên liệu TCG",
+    "module": "cozy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "weekly",
+    "aliases": [
+      "quatuan"
+    ],
+    "description": "Nhận thưởng TCG hàng tuần: 3 gói + Coins + Mảnh",
+    "module": "cozy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "achievements",
+    "aliases": [
+      "thanhtuu"
+    ],
+    "description": "Thành tựu TCG và phần thưởng",
+    "module": "cozy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "leaderboard",
+    "aliases": [
+      "bxh"
+    ],
+    "description": "Bảng xếp hạng nhà sưu tập TCG",
+    "module": "cozy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "settings",
+    "aliases": [
+      "caidat"
+    ],
+    "description": "Cài đặt cá nhân TCG: settings [private|trade] [on|off]",
+    "module": "cozy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "gacha",
+    "aliases": [
+      "triehoi"
+    ],
+    "description": "Gacha TCG: gacha [single|multi|banner|history|pity|rates|exchange|free|pack]",
+    "module": "cozy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "card",
+    "aliases": [
+      "the"
+    ],
+    "description": "Quản lý thẻ: card [view|search|favorite|lock|unlock|upgrade|enhance|evolve|burn] <mã>",
+    "module": "cozy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "deck",
+    "aliases": [
+      "bobai"
+    ],
+    "description": "Bộ bài: deck [create|view|edit|delete|set-active|validate|share|import]",
+    "module": "cozy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "market",
+    "aliases": [
+      "cho"
+    ],
+    "description": "Chợ thẻ: market [browse|sell|buy|cancel|my-listings]",
+    "module": "cozy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "trade",
+    "aliases": [
+      "traodoi"
+    ],
+    "description": "Trao đổi trực tiếp: trade [offer|accept|reject|history]",
+    "module": "cozy",
+    "slash": true,
+    "prefix": true
   }
 ]

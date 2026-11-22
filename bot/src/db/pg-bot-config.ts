@@ -61,6 +61,12 @@ export class PgBotConfig {
     return typeof raw === "string" && /^\d{5,25}$/.test(raw) ? raw : "";
   }
 
+  /** TCG config (spec 6.23). */
+  async getTcgConfig(): Promise<import("../services/tcg").TcgConfig> {
+    const { normalizeTcgConfig } = await import("../services/tcg");
+    return normalizeTcgConfig(await this.get("tcg_config"));
+  }
+
   /** Vote config (Admin panel → Vote). */
   async getVoteConfig(): Promise<import("../services/vote").VoteConfig> {
     const { normalizeVoteConfig } = await import("../services/vote");

@@ -1,0 +1,4112 @@
+[
+ {
+  "slug": "agnsher",
+  "name": "Agnsher",
+  "rarity": "Uncommon",
+  "element": "Fire",
+  "hp": 40,
+  "types": "Lửa, Nước",
+  "number": "001/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "bearloch",
+  "name": "Bearloch",
+  "rarity": "Uncommon",
+  "element": "Metal",
+  "hp": 80,
+  "types": "Kim loại, Cây",
+  "number": "002/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "chrome_robo",
+  "name": "Chrome Robo",
+  "rarity": "Uncommon",
+  "element": "Metal",
+  "hp": 40,
+  "types": "Kim loại",
+  "number": "003/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "d0llf1n",
+  "name": "D0Llf1N",
+  "rarity": "Uncommon",
+  "element": "Water",
+  "hp": 80,
+  "types": "Nước",
+  "number": "004/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "dark_robo",
+  "name": "Dark Robo",
+  "rarity": "Uncommon",
+  "element": "Metal",
+  "hp": 40,
+  "types": "Kim loại",
+  "number": "005/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "f7u1t3ra",
+  "name": "F7U1T3Ra",
+  "rarity": "Uncommon",
+  "element": "Grass",
+  "hp": 40,
+  "types": "Cây",
+  "number": "006/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "foxko",
+  "name": "Foxko",
+  "rarity": "Uncommon",
+  "element": "Fire",
+  "hp": 60,
+  "types": "Lửa, Cây",
+  "number": "007/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "l3gk0",
+  "name": "L3Gk0",
+  "rarity": "Uncommon",
+  "element": "Grass",
+  "hp": 60,
+  "types": "Cây",
+  "number": "008/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "mk01_alpha",
+  "name": "Mk01 Alpha",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 70,
+  "types": "Kim loại",
+  "number": "009/411",
+  "evolvesTo": "mk01_delta"
+ },
+ {
+  "slug": "mk01_beta",
+  "name": "Mk01 Beta",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 70,
+  "types": "Kim loại",
+  "number": "010/411",
+  "evolvesTo": "mk01_delta"
+ },
+ {
+  "slug": "mk01_delta",
+  "name": "Mk01 Delta",
+  "rarity": "Epic",
+  "element": "Metal",
+  "hp": 80,
+  "types": "Kim loại",
+  "number": "011/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "mk01_gamma",
+  "name": "Mk01 Gamma",
+  "rarity": "Epic",
+  "element": "Metal",
+  "hp": 80,
+  "types": "Kim loại",
+  "number": "012/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "mk01_omega",
+  "name": "Mk01 Omega",
+  "rarity": "Epic",
+  "element": "Metal",
+  "hp": 80,
+  "types": "Kim loại",
+  "number": "013/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "mk01_proto",
+  "name": "Mk01 Proto",
+  "rarity": "Common",
+  "element": "Metal",
+  "hp": 60,
+  "types": "Kim loại",
+  "number": "014/411",
+  "evolvesTo": "mk01_alpha"
+ },
+ {
+  "slug": "r0ck1tt3n",
+  "name": "R0Ck1Tt3N",
+  "rarity": "Uncommon",
+  "element": "Fighting",
+  "hp": 60,
+  "types": "Đất",
+  "number": "015/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "rocktot",
+  "name": "Rocktot",
+  "rarity": "Uncommon",
+  "element": "Fighting",
+  "hp": 80,
+  "types": "Đất",
+  "number": "016/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "xeon",
+  "name": "Xeon",
+  "rarity": "Uncommon",
+  "element": "Metal",
+  "hp": 40,
+  "types": "Kim loại",
+  "number": "017/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "xeon_2",
+  "name": "Xeon 2",
+  "rarity": "Uncommon",
+  "element": "Metal",
+  "hp": 40,
+  "types": "Kim loại",
+  "number": "018/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "rockitten",
+  "name": "Rockitten",
+  "rarity": "Common",
+  "element": "Fighting",
+  "hp": 50,
+  "types": "Đất",
+  "number": "019/411",
+  "evolvesTo": "rockat"
+ },
+ {
+  "slug": "rockat",
+  "name": "Rockat",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 60,
+  "types": "Đất",
+  "number": "020/411",
+  "evolvesTo": "jemuar"
+ },
+ {
+  "slug": "jemuar",
+  "name": "Jemuar",
+  "rarity": "Epic",
+  "element": "Fighting",
+  "hp": 70,
+  "types": "Đất, Vũ trụ",
+  "number": "021/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "nut",
+  "name": "Nut",
+  "rarity": "Common",
+  "element": "Metal",
+  "hp": 80,
+  "types": "Kim loại",
+  "number": "022/411",
+  "evolvesTo": "bolt"
+ },
+ {
+  "slug": "bolt",
+  "name": "Bolt",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 90,
+  "types": "Kim loại",
+  "number": "023/411",
+  "evolvesTo": "arthrobolt"
+ },
+ {
+  "slug": "arthrobolt",
+  "name": "Arthrobolt",
+  "rarity": "Epic",
+  "element": "Lightning",
+  "hp": 60,
+  "types": "Sét, Kim loại",
+  "number": "024/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "tweesher",
+  "name": "Tweesher",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Frost",
+  "number": "025/411",
+  "evolvesTo": "heronquak"
+ },
+ {
+  "slug": "heronquak",
+  "name": "Heronquak",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Frost, Sky",
+  "number": "026/411",
+  "evolvesTo": "eaglace"
+ },
+ {
+  "slug": "eaglace",
+  "name": "Eaglace",
+  "rarity": "Epic",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Frost, Sky",
+  "number": "027/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "lambert",
+  "name": "Lambert",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 40,
+  "types": "Cây",
+  "number": "028/411",
+  "evolvesTo": "legko"
+ },
+ {
+  "slug": "legko",
+  "name": "Legko",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 70,
+  "types": "Cây",
+  "number": "029/411",
+  "evolvesTo": "moloch"
+ },
+ {
+  "slug": "moloch",
+  "name": "Moloch",
+  "rarity": "Epic",
+  "element": "Grass",
+  "hp": 90,
+  "types": "Cây, Heroic",
+  "number": "030/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "agnite",
+  "name": "Agnite",
+  "rarity": "Common",
+  "element": "Fire",
+  "hp": 60,
+  "types": "Lửa",
+  "number": "031/411",
+  "evolvesTo": "agnidon"
+ },
+ {
+  "slug": "agnidon",
+  "name": "Agnidon",
+  "rarity": "Rare",
+  "element": "Fire",
+  "hp": 70,
+  "types": "Lửa",
+  "number": "032/411",
+  "evolvesTo": "agnigon"
+ },
+ {
+  "slug": "agnigon",
+  "name": "Agnigon",
+  "rarity": "Epic",
+  "element": "Fire",
+  "hp": 80,
+  "types": "Lửa, Bóng tối",
+  "number": "033/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "grintot",
+  "name": "Grintot",
+  "rarity": "Common",
+  "element": "Fighting",
+  "hp": 70,
+  "types": "Đất",
+  "number": "034/411",
+  "evolvesTo": "grinflare"
+ },
+ {
+  "slug": "grinflare",
+  "name": "Grinflare",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 80,
+  "types": "Đất, Lửa",
+  "number": "035/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "grintrock",
+  "name": "Grintrock",
+  "rarity": "Rare",
+  "element": "Lightning",
+  "hp": 80,
+  "types": "Sét, Đất",
+  "number": "036/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "memnomnom",
+  "name": "Memnomnom",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Thường",
+  "number": "037/411",
+  "evolvesTo": "miaownolith"
+ },
+ {
+  "slug": "miaownolith",
+  "name": "Miaownolith",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 60,
+  "types": "Đất, Thường",
+  "number": "038/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "pyraminx",
+  "name": "Pyraminx",
+  "rarity": "Rare",
+  "element": "Psychic",
+  "hp": 60,
+  "types": "Vũ trụ, Thường",
+  "number": "039/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "mauai",
+  "name": "Mauai",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 50,
+  "types": "Kim loại, Bóng tối",
+  "number": "040/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "dollfin",
+  "name": "Dollfin",
+  "rarity": "Common",
+  "element": "Water",
+  "hp": 80,
+  "types": "Nước",
+  "number": "041/411",
+  "evolvesTo": "bigfin"
+ },
+ {
+  "slug": "delfeco",
+  "name": "Delfeco",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 90,
+  "types": "Nước, Cây",
+  "number": "042/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "bigfin",
+  "name": "Bigfin",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 90,
+  "types": "Nước",
+  "number": "043/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "sharpfin",
+  "name": "Sharpfin",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 90,
+  "types": "Nước, Heroic",
+  "number": "044/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "budaye",
+  "name": "Budaye",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 40,
+  "types": "Cây",
+  "number": "045/411",
+  "evolvesTo": "bamboon"
+ },
+ {
+  "slug": "bamboon",
+  "name": "Bamboon",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 50,
+  "types": "Cây, Heroic",
+  "number": "046/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "frondly",
+  "name": "Frondly",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 50,
+  "types": "Cây, Vũ trụ",
+  "number": "047/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "ignibus",
+  "name": "Ignibus",
+  "rarity": "Common",
+  "element": "Fire",
+  "hp": 80,
+  "types": "Lửa",
+  "number": "048/411",
+  "evolvesTo": "eruptibus"
+ },
+ {
+  "slug": "embazook",
+  "name": "Embazook",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 70,
+  "types": "Kim loại, Lửa",
+  "number": "049/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "eruptibus",
+  "name": "Eruptibus",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 90,
+  "types": "Đất, Lửa",
+  "number": "050/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "cataspike",
+  "name": "Cataspike",
+  "rarity": "Common",
+  "element": "Metal",
+  "hp": 70,
+  "types": "Kim loại, Venom",
+  "number": "051/411",
+  "evolvesTo": "puparmor"
+ },
+ {
+  "slug": "puparmor",
+  "name": "Puparmor",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 90,
+  "types": "Kim loại, Venom",
+  "number": "052/411",
+  "evolvesTo": "weavifly"
+ },
+ {
+  "slug": "weavifly",
+  "name": "Weavifly",
+  "rarity": "Epic",
+  "element": "Metal",
+  "hp": 90,
+  "types": "Kim loại, Sky",
+  "number": "053/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "vamporm",
+  "name": "Vamporm",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 70,
+  "types": "Venom, Bóng tối",
+  "number": "054/411",
+  "evolvesTo": "dracune"
+ },
+ {
+  "slug": "dracune",
+  "name": "Dracune",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 90,
+  "types": "Venom, Bóng tối",
+  "number": "055/411",
+  "evolvesTo": "fluttaflap"
+ },
+ {
+  "slug": "fluttaflap",
+  "name": "Fluttaflap",
+  "rarity": "Epic",
+  "element": "Colorless",
+  "hp": 90,
+  "types": "Sky, Bóng tối",
+  "number": "056/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "elofly",
+  "name": "Elofly",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Thường, Sky",
+  "number": "057/411",
+  "evolvesTo": "elowind"
+ },
+ {
+  "slug": "elowind",
+  "name": "Elowind",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Sky, Thường",
+  "number": "058/411",
+  "evolvesTo": "elostorm"
+ },
+ {
+  "slug": "elostorm",
+  "name": "Elostorm",
+  "rarity": "Epic",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Thường, Sky",
+  "number": "059/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "aardorn",
+  "name": "Aardorn",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Thường",
+  "number": "060/411",
+  "evolvesTo": "aardart"
+ },
+ {
+  "slug": "aardart",
+  "name": "Aardart",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 70,
+  "types": "Thường",
+  "number": "061/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "squabbit",
+  "name": "Squabbit",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Heroic",
+  "number": "062/411",
+  "evolvesTo": "rabbitosaur"
+ },
+ {
+  "slug": "rabbitosaur",
+  "name": "Rabbitosaur",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 70,
+  "types": "Heroic",
+  "number": "063/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "eyenemy",
+  "name": "Eyenemy",
+  "rarity": "Common",
+  "element": "Psychic",
+  "hp": 60,
+  "types": "Vũ trụ",
+  "number": "064/411",
+  "evolvesTo": "eyesore"
+ },
+ {
+  "slug": "eyesore",
+  "name": "Eyesore",
+  "rarity": "Rare",
+  "element": "Psychic",
+  "hp": 70,
+  "types": "Vũ trụ",
+  "number": "065/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "pipis",
+  "name": "Pipis",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Sky, Thường",
+  "number": "066/411",
+  "evolvesTo": "strella"
+ },
+ {
+  "slug": "strella",
+  "name": "Strella",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Sky, Thường",
+  "number": "067/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "noctula",
+  "name": "Noctula",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Sky, Bóng tối",
+  "number": "068/411",
+  "evolvesTo": "noctalo"
+ },
+ {
+  "slug": "noctalo",
+  "name": "Noctalo",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Sky, Bóng tối",
+  "number": "069/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "nudiflot_male",
+  "name": "Nudiflot Male",
+  "rarity": "Common",
+  "element": "Water",
+  "hp": 50,
+  "types": "Nước, Venom",
+  "number": "070/411",
+  "evolvesTo": "nudikill"
+ },
+ {
+  "slug": "nudikill",
+  "name": "Nudikill",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 60,
+  "types": "Nước, Venom",
+  "number": "071/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "nudiflot_female",
+  "name": "Nudiflot Female",
+  "rarity": "Common",
+  "element": "Water",
+  "hp": 50,
+  "types": "Nước, Vũ trụ",
+  "number": "072/411",
+  "evolvesTo": "nudimind"
+ },
+ {
+  "slug": "nudimind",
+  "name": "Nudimind",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 60,
+  "types": "Nước, Vũ trụ",
+  "number": "073/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "katapill",
+  "name": "Katapill",
+  "rarity": "Common",
+  "element": "Metal",
+  "hp": 70,
+  "types": "Kim loại, Venom",
+  "number": "074/411",
+  "evolvesTo": "katacoon"
+ },
+ {
+  "slug": "katacoon",
+  "name": "Katacoon",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 80,
+  "types": "Kim loại, Venom",
+  "number": "075/411",
+  "evolvesTo": "bugnin"
+ },
+ {
+  "slug": "bugnin",
+  "name": "Bugnin",
+  "rarity": "Epic",
+  "element": "Metal",
+  "hp": 90,
+  "types": "Kim loại, Venom",
+  "number": "076/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "sumchon",
+  "name": "Sumchon",
+  "rarity": "Epic",
+  "element": "Metal",
+  "hp": 90,
+  "types": "Kim loại, Heroic",
+  "number": "077/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "dynastor",
+  "name": "Dynastor",
+  "rarity": "Epic",
+  "element": "Metal",
+  "hp": 60,
+  "types": "Kim loại, Heroic",
+  "number": "078/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "anu",
+  "name": "Anu",
+  "rarity": "Uncommon",
+  "element": "Psychic",
+  "hp": 60,
+  "types": "Vũ trụ",
+  "number": "079/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "cardiling",
+  "name": "Cardiling",
+  "rarity": "Common",
+  "element": "Fire",
+  "hp": 40,
+  "types": "Lửa, Sky",
+  "number": "080/411",
+  "evolvesTo": "cardiwing"
+ },
+ {
+  "slug": "cardiwing",
+  "name": "Cardiwing",
+  "rarity": "Rare",
+  "element": "Fire",
+  "hp": 50,
+  "types": "Lửa, Sky",
+  "number": "081/411",
+  "evolvesTo": "cardinale"
+ },
+ {
+  "slug": "cardinale",
+  "name": "Cardinale",
+  "rarity": "Epic",
+  "element": "Fire",
+  "hp": 60,
+  "types": "Lửa, Sky",
+  "number": "082/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "anoleaf",
+  "name": "Anoleaf",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 60,
+  "types": "Cây",
+  "number": "083/411",
+  "evolvesTo": "gectile"
+ },
+ {
+  "slug": "gectile",
+  "name": "Gectile",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 50,
+  "types": "Cây",
+  "number": "084/411",
+  "evolvesTo": "velocitile"
+ },
+ {
+  "slug": "velocitile",
+  "name": "Velocitile",
+  "rarity": "Epic",
+  "element": "Grass",
+  "hp": 60,
+  "types": "Cây",
+  "number": "085/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "fluoresfin",
+  "name": "Fluoresfin",
+  "rarity": "Common",
+  "element": "Lightning",
+  "hp": 80,
+  "types": "Sét, Nước",
+  "number": "086/411",
+  "evolvesTo": "incandesfin"
+ },
+ {
+  "slug": "incandesfin",
+  "name": "Incandesfin",
+  "rarity": "Rare",
+  "element": "Lightning",
+  "hp": 90,
+  "types": "Sét, Nước",
+  "number": "087/411",
+  "evolvesTo": "lightmare"
+ },
+ {
+  "slug": "lightmare",
+  "name": "Lightmare",
+  "rarity": "Epic",
+  "element": "Lightning",
+  "hp": 100,
+  "types": "Sét, Nước",
+  "number": "088/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "cairfrey",
+  "name": "Cairfrey",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Thường",
+  "number": "089/411",
+  "evolvesTo": "possessun"
+ },
+ {
+  "slug": "possessun",
+  "name": "Possessun",
+  "rarity": "Rare",
+  "element": "Darkness",
+  "hp": 90,
+  "types": "Bóng tối",
+  "number": "090/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "dandicub",
+  "name": "Dandicub",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây",
+  "number": "091/411",
+  "evolvesTo": "dandylion"
+ },
+ {
+  "slug": "dandylion",
+  "name": "Dandylion",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 60,
+  "types": "Cây",
+  "number": "092/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "embra",
+  "name": "Embra",
+  "rarity": "Common",
+  "element": "Fire",
+  "hp": 80,
+  "types": "Lửa",
+  "number": "093/411",
+  "evolvesTo": "ruption"
+ },
+ {
+  "slug": "ruption",
+  "name": "Ruption",
+  "rarity": "Rare",
+  "element": "Fire",
+  "hp": 80,
+  "types": "Lửa",
+  "number": "094/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "shybulb",
+  "name": "Shybulb",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 40,
+  "types": "Cây",
+  "number": "095/411",
+  "evolvesTo": "narcileaf"
+ },
+ {
+  "slug": "narcileaf",
+  "name": "Narcileaf",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 90,
+  "types": "Cây",
+  "number": "096/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "tikoal",
+  "name": "Tikoal",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây, Lửa",
+  "number": "097/411",
+  "evolvesTo": "tikorch"
+ },
+ {
+  "slug": "tikorch",
+  "name": "Tikorch",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 90,
+  "types": "Cây, Lửa",
+  "number": "098/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "hatchling",
+  "name": "Hatchling",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Sky",
+  "number": "099/411",
+  "evolvesTo": "birdling"
+ },
+ {
+  "slug": "birdling",
+  "name": "Birdling",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Sky",
+  "number": "100/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "bursa",
+  "name": "Bursa",
+  "rarity": "Common",
+  "element": "Fire",
+  "hp": 40,
+  "types": "Lửa, Vũ trụ",
+  "number": "101/411",
+  "evolvesTo": "flambear"
+ },
+ {
+  "slug": "flambear",
+  "name": "Flambear",
+  "rarity": "Rare",
+  "element": "Fire",
+  "hp": 80,
+  "types": "Lửa, Vũ trụ",
+  "number": "102/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "trapsnap",
+  "name": "Trapsnap",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 70,
+  "types": "Cây, Bóng tối",
+  "number": "103/411",
+  "evolvesTo": "sapsnap"
+ },
+ {
+  "slug": "sapsnap",
+  "name": "Sapsnap",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây, Bóng tối",
+  "number": "104/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "forturtle",
+  "name": "Forturtle",
+  "rarity": "Common",
+  "element": "Psychic",
+  "hp": 40,
+  "types": "Vũ trụ",
+  "number": "105/411",
+  "evolvesTo": "prophetoise"
+ },
+ {
+  "slug": "prophetoise",
+  "name": "Prophetoise",
+  "rarity": "Rare",
+  "element": "Fire",
+  "hp": 50,
+  "types": "Lửa, Vũ trụ",
+  "number": "106/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "pythwire",
+  "name": "Pythwire",
+  "rarity": "Common",
+  "element": "Lightning",
+  "hp": 60,
+  "types": "Sét, Kim loại",
+  "number": "107/411",
+  "evolvesTo": "ouroboutlet"
+ },
+ {
+  "slug": "ouroboutlet",
+  "name": "Ouroboutlet",
+  "rarity": "Rare",
+  "element": "Lightning",
+  "hp": 70,
+  "types": "Sét, Kim loại",
+  "number": "108/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "sockeserp",
+  "name": "Sockeserp",
+  "rarity": "Rare",
+  "element": "Lightning",
+  "hp": 70,
+  "types": "Sét, Kim loại",
+  "number": "109/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "komodraw",
+  "name": "Komodraw",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Thường",
+  "number": "110/411",
+  "evolvesTo": "komoduel"
+ },
+ {
+  "slug": "grimachin",
+  "name": "Grimachin",
+  "rarity": "Common",
+  "element": "Metal",
+  "hp": 50,
+  "types": "Kim loại",
+  "number": "111/411",
+  "evolvesTo": "tigrock"
+ },
+ {
+  "slug": "tigrock",
+  "name": "Tigrock",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 60,
+  "types": "Kim loại",
+  "number": "112/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "tumbleworm",
+  "name": "Tumbleworm",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 70,
+  "types": "Venom",
+  "number": "113/411",
+  "evolvesTo": "tumblebee"
+ },
+ {
+  "slug": "tumblebee",
+  "name": "Tumblebee",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Venom",
+  "number": "114/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "sampsack",
+  "name": "Sampsack",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Heroic",
+  "number": "115/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "sampsage",
+  "name": "Sampsage",
+  "rarity": "Uncommon",
+  "element": "Psychic",
+  "hp": 40,
+  "types": "Vũ trụ",
+  "number": "116/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "abesnaki",
+  "name": "Abesnaki",
+  "rarity": "Uncommon",
+  "element": "Psychic",
+  "hp": 60,
+  "types": "Vũ trụ",
+  "number": "117/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "araignee",
+  "name": "Araignee",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Venom",
+  "number": "118/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "axolightl",
+  "name": "Axolightl",
+  "rarity": "Common",
+  "element": "Water",
+  "hp": 50,
+  "types": "Nước",
+  "number": "119/411",
+  "evolvesTo": "ampystoma"
+ },
+ {
+  "slug": "capiti",
+  "name": "Capiti",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Thường",
+  "number": "120/411",
+  "evolvesTo": "capinyah"
+ },
+ {
+  "slug": "capinyah",
+  "name": "Capinyah",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Heroic",
+  "number": "121/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "cochini",
+  "name": "Cochini",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Thường",
+  "number": "122/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "coleorus",
+  "name": "Coleorus",
+  "rarity": "Uncommon",
+  "element": "Lightning",
+  "hp": 40,
+  "types": "Sét, Cây",
+  "number": "123/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "conifrost",
+  "name": "Conifrost",
+  "rarity": "Uncommon",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây, Frost",
+  "number": "124/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "cowpignon",
+  "name": "Cowpignon",
+  "rarity": "Uncommon",
+  "element": "Grass",
+  "hp": 40,
+  "types": "Cây, Vũ trụ",
+  "number": "125/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "djinnbo",
+  "name": "Djinnbo",
+  "rarity": "Uncommon",
+  "element": "Fire",
+  "hp": 40,
+  "types": "Lửa, Bóng tối",
+  "number": "126/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "dune_pincher",
+  "name": "Dune Pincher",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Thường",
+  "number": "127/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "foofle",
+  "name": "Foofle",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Thường",
+  "number": "128/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "ghosteeth",
+  "name": "Ghosteeth",
+  "rarity": "Uncommon",
+  "element": "Darkness",
+  "hp": 80,
+  "types": "Bóng tối",
+  "number": "129/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "hydrone",
+  "name": "Hydrone",
+  "rarity": "Uncommon",
+  "element": "Metal",
+  "hp": 40,
+  "types": "Kim loại, Nước",
+  "number": "130/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "lapinou",
+  "name": "Lapinou",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Thường",
+  "number": "131/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "manosting",
+  "name": "Manosting",
+  "rarity": "Uncommon",
+  "element": "Water",
+  "hp": 60,
+  "types": "Nước, Venom",
+  "number": "132/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "masknake",
+  "name": "Masknake",
+  "rarity": "Uncommon",
+  "element": "Psychic",
+  "hp": 60,
+  "types": "Vũ trụ",
+  "number": "133/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "pigabyte",
+  "name": "Pigabyte",
+  "rarity": "Uncommon",
+  "element": "Metal",
+  "hp": 80,
+  "types": "Kim loại, Thường",
+  "number": "134/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "polyrock",
+  "name": "Polyrock",
+  "rarity": "Uncommon",
+  "element": "Fighting",
+  "hp": 80,
+  "types": "Đất, Heroic",
+  "number": "135/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "propellercat",
+  "name": "Propellercat",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Thường, Sky",
+  "number": "136/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "sclairus",
+  "name": "Sclairus",
+  "rarity": "Uncommon",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây",
+  "number": "137/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "sludgehog",
+  "name": "Sludgehog",
+  "rarity": "Uncommon",
+  "element": "Fighting",
+  "hp": 80,
+  "types": "Đất, Cây",
+  "number": "138/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "spighter",
+  "name": "Spighter",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Venom, Bóng tối",
+  "number": "139/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "toufigel",
+  "name": "Toufigel",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Thường",
+  "number": "140/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "tourbidi",
+  "name": "Tourbidi",
+  "rarity": "Uncommon",
+  "element": "Grass",
+  "hp": 40,
+  "types": "Cây",
+  "number": "141/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "volcoli",
+  "name": "Volcoli",
+  "rarity": "Legendary",
+  "element": "Grass",
+  "hp": 40,
+  "types": "Cây, Vũ trụ",
+  "number": "142/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "botbot",
+  "name": "Botbot",
+  "rarity": "Common",
+  "element": "Metal",
+  "hp": 70,
+  "types": "Kim loại",
+  "number": "143/411",
+  "evolvesTo": "av8r"
+ },
+ {
+  "slug": "av8r",
+  "name": "Av8R",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 50,
+  "types": "Kim loại, Sky",
+  "number": "144/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "picc",
+  "name": "Picc",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 90,
+  "types": "Kim loại, Nước",
+  "number": "145/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "mrmoswitch",
+  "name": "Mrmoswitch",
+  "rarity": "Rare",
+  "element": "Lightning",
+  "hp": 50,
+  "types": "Sét, Kim loại",
+  "number": "146/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "k9",
+  "name": "K9",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 60,
+  "types": "Kim loại, Heroic",
+  "number": "147/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "b_ver_1",
+  "name": "B Ver 1",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 70,
+  "types": "Kim loại, Cây",
+  "number": "148/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "zunna",
+  "name": "Zunna",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Thường",
+  "number": "149/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "vivipere",
+  "name": "Vivipere",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Thường",
+  "number": "150/411",
+  "evolvesTo": "vivicinder"
+ },
+ {
+  "slug": "vivicinder",
+  "name": "Vivicinder",
+  "rarity": "Rare",
+  "element": "Fire",
+  "hp": 70,
+  "types": "Lửa",
+  "number": "151/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "viviphyta",
+  "name": "Viviphyta",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 70,
+  "types": "Cây",
+  "number": "152/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "viviteel",
+  "name": "Viviteel",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 70,
+  "types": "Kim loại",
+  "number": "153/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "vivitrans",
+  "name": "Vivitrans",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 70,
+  "types": "Frost",
+  "number": "154/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "vivitron",
+  "name": "Vivitron",
+  "rarity": "Rare",
+  "element": "Lightning",
+  "hp": 70,
+  "types": "Sét",
+  "number": "155/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "vividactil",
+  "name": "Vividactil",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 50,
+  "types": "Đất",
+  "number": "156/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "vivisource",
+  "name": "Vivisource",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 70,
+  "types": "Nước",
+  "number": "157/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "chloragon",
+  "name": "Chloragon",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 60,
+  "types": "Cây",
+  "number": "158/411",
+  "evolvesTo": "sapragon"
+ },
+ {
+  "slug": "sapragon",
+  "name": "Sapragon",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 70,
+  "types": "Cây",
+  "number": "159/411",
+  "evolvesTo": "dragarbor"
+ },
+ {
+  "slug": "dragarbor",
+  "name": "Dragarbor",
+  "rarity": "Epic",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây, Vũ trụ",
+  "number": "160/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "rhincus",
+  "name": "Rhincus",
+  "rarity": "Uncommon",
+  "element": "Fighting",
+  "hp": 40,
+  "types": "Đất, Sky",
+  "number": "161/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "shammer",
+  "name": "Shammer",
+  "rarity": "Uncommon",
+  "element": "Fighting",
+  "hp": 60,
+  "types": "Đất",
+  "number": "162/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "drokoro",
+  "name": "Drokoro",
+  "rarity": "Legendary",
+  "element": "Fire",
+  "hp": 60,
+  "types": "Lửa",
+  "number": "163/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "yiinaang",
+  "name": "Yiinaang",
+  "rarity": "Uncommon",
+  "element": "Darkness",
+  "hp": 80,
+  "types": "Bóng tối, Vũ trụ",
+  "number": "164/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "snarlon",
+  "name": "Snarlon",
+  "rarity": "Legendary",
+  "element": "Darkness",
+  "hp": 60,
+  "types": "Bóng tối, Thường",
+  "number": "165/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "conileaf",
+  "name": "Conileaf",
+  "rarity": "Uncommon",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây",
+  "number": "166/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "foxfire",
+  "name": "Foxfire",
+  "rarity": "Common",
+  "element": "Fire",
+  "hp": 60,
+  "types": "Lửa",
+  "number": "167/411",
+  "evolvesTo": "vulpyre"
+ },
+ {
+  "slug": "vulpyre",
+  "name": "Vulpyre",
+  "rarity": "Rare",
+  "element": "Fire",
+  "hp": 60,
+  "types": "Lửa",
+  "number": "168/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "pharfan",
+  "name": "Pharfan",
+  "rarity": "Common",
+  "element": "Water",
+  "hp": 80,
+  "types": "Nước",
+  "number": "169/411",
+  "evolvesTo": "pharavion"
+ },
+ {
+  "slug": "nostray",
+  "name": "Nostray",
+  "rarity": "Common",
+  "element": "Water",
+  "hp": 80,
+  "types": "Nước",
+  "number": "170/411",
+  "evolvesTo": "shnark"
+ },
+ {
+  "slug": "shnark",
+  "name": "Shnark",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 90,
+  "types": "Nước",
+  "number": "171/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "chillimp",
+  "name": "Chillimp",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 70,
+  "types": "Frost, Heroic",
+  "number": "172/411",
+  "evolvesTo": "snowrilla"
+ },
+ {
+  "slug": "snowrilla",
+  "name": "Snowrilla",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Frost, Heroic",
+  "number": "173/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "flacono",
+  "name": "Flacono",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Sky",
+  "number": "174/411",
+  "evolvesTo": "corvix"
+ },
+ {
+  "slug": "corvix",
+  "name": "Corvix",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Sky",
+  "number": "175/411",
+  "evolvesTo": "gryfix"
+ },
+ {
+  "slug": "gryfix",
+  "name": "Gryfix",
+  "rarity": "Epic",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Sky",
+  "number": "176/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "wrougon",
+  "name": "Wrougon",
+  "rarity": "Common",
+  "element": "Metal",
+  "hp": 60,
+  "types": "Kim loại",
+  "number": "177/411",
+  "evolvesTo": "allagon"
+ },
+ {
+  "slug": "allagon",
+  "name": "Allagon",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 70,
+  "types": "Kim loại",
+  "number": "178/411",
+  "evolvesTo": "ferricran"
+ },
+ {
+  "slug": "ferricran",
+  "name": "Ferricran",
+  "rarity": "Epic",
+  "element": "Metal",
+  "hp": 80,
+  "types": "Kim loại",
+  "number": "179/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "seirein",
+  "name": "Seirein",
+  "rarity": "Common",
+  "element": "Fire",
+  "hp": 80,
+  "types": "Lửa, Bóng tối",
+  "number": "180/411",
+  "evolvesTo": "loliferno"
+ },
+ {
+  "slug": "loliferno",
+  "name": "Loliferno",
+  "rarity": "Rare",
+  "element": "Fire",
+  "hp": 50,
+  "types": "Lửa, Bóng tối",
+  "number": "181/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "spirain",
+  "name": "Spirain",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 50,
+  "types": "Nước, Sky",
+  "number": "182/411",
+  "evolvesTo": "tornicane"
+ },
+ {
+  "slug": "tornicane",
+  "name": "Tornicane",
+  "rarity": "Epic",
+  "element": "Water",
+  "hp": 60,
+  "types": "Nước, Sky",
+  "number": "183/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "dinoflop",
+  "name": "Dinoflop",
+  "rarity": "Uncommon",
+  "element": "Fighting",
+  "hp": 60,
+  "types": "Đất",
+  "number": "184/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "enduros",
+  "name": "Enduros",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Heroic",
+  "number": "185/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "galnec",
+  "name": "Galnec",
+  "rarity": "Uncommon",
+  "element": "Fighting",
+  "hp": 60,
+  "types": "Đất",
+  "number": "186/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "fruitera",
+  "name": "Fruitera",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 40,
+  "types": "Cây",
+  "number": "187/411",
+  "evolvesTo": "megafruitera"
+ },
+ {
+  "slug": "megafruitera",
+  "name": "Megafruitera",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 50,
+  "types": "Cây, Sky",
+  "number": "188/411",
+  "evolvesTo": "spectera"
+ },
+ {
+  "slug": "spectera",
+  "name": "Spectera",
+  "rarity": "Epic",
+  "element": "Grass",
+  "hp": 60,
+  "types": "Cây, Sky",
+  "number": "189/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "pilthropus",
+  "name": "Pilthropus",
+  "rarity": "Uncommon",
+  "element": "Fighting",
+  "hp": 40,
+  "types": "Đất",
+  "number": "190/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "coproblight",
+  "name": "Coproblight",
+  "rarity": "Uncommon",
+  "element": "Fighting",
+  "hp": 80,
+  "types": "Đất",
+  "number": "191/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "chromeye",
+  "name": "Chromeye",
+  "rarity": "Common",
+  "element": "Metal",
+  "hp": 80,
+  "types": "Kim loại, Vũ trụ",
+  "number": "192/411",
+  "evolvesTo": "angrito"
+ },
+ {
+  "slug": "angrito",
+  "name": "Angrito",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 90,
+  "types": "Kim loại, Vũ trụ",
+  "number": "193/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "happito",
+  "name": "Happito",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 90,
+  "types": "Kim loại, Vũ trụ",
+  "number": "194/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "neutrito",
+  "name": "Neutrito",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 90,
+  "types": "Kim loại, Vũ trụ",
+  "number": "195/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "sadito",
+  "name": "Sadito",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 90,
+  "types": "Kim loại, Vũ trụ",
+  "number": "196/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "fancair",
+  "name": "Fancair",
+  "rarity": "Common",
+  "element": "Lightning",
+  "hp": 40,
+  "types": "Sét, Sky",
+  "number": "197/411",
+  "evolvesTo": "windeye"
+ },
+ {
+  "slug": "windeye",
+  "name": "Windeye",
+  "rarity": "Rare",
+  "element": "Lightning",
+  "hp": 50,
+  "types": "Sét, Kim loại",
+  "number": "198/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "pairagrin",
+  "name": "Pairagrin",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Sky",
+  "number": "199/411",
+  "evolvesTo": "pairagrim"
+ },
+ {
+  "slug": "pairagrim",
+  "name": "Pairagrim",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Sky",
+  "number": "200/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "skwib",
+  "name": "Skwib",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Thường",
+  "number": "201/411",
+  "evolvesTo": "octabode"
+ },
+ {
+  "slug": "octabode",
+  "name": "Octabode",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 60,
+  "types": "Đất, Thường",
+  "number": "202/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "drashimi",
+  "name": "Drashimi",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 50,
+  "types": "Cây",
+  "number": "203/411",
+  "evolvesTo": "tsushimi"
+ },
+ {
+  "slug": "tsushimi",
+  "name": "Tsushimi",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 70,
+  "types": "Cây",
+  "number": "204/411",
+  "evolvesTo": "tobishimi"
+ },
+ {
+  "slug": "tobishimi",
+  "name": "Tobishimi",
+  "rarity": "Epic",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây",
+  "number": "205/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "selket",
+  "name": "Selket",
+  "rarity": "Common",
+  "element": "Fighting",
+  "hp": 70,
+  "types": "Đất, Venom",
+  "number": "206/411",
+  "evolvesTo": "selmatek"
+ },
+ {
+  "slug": "selmatek",
+  "name": "Selmatek",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 80,
+  "types": "Đất, Venom",
+  "number": "207/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "furnursus",
+  "name": "Furnursus",
+  "rarity": "Common",
+  "element": "Fire",
+  "hp": 40,
+  "types": "Lửa",
+  "number": "208/411",
+  "evolvesTo": "statursus"
+ },
+ {
+  "slug": "statursus",
+  "name": "Statursus",
+  "rarity": "Rare",
+  "element": "Fire",
+  "hp": 50,
+  "types": "Lửa, Vũ trụ",
+  "number": "209/411",
+  "evolvesTo": "coaldiak"
+ },
+ {
+  "slug": "baoby",
+  "name": "Baoby",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây",
+  "number": "210/411",
+  "evolvesTo": "baobaraffe"
+ },
+ {
+  "slug": "baobaraffe",
+  "name": "Baobaraffe",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 90,
+  "types": "Cây",
+  "number": "211/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "boltnu",
+  "name": "Boltnu",
+  "rarity": "Common",
+  "element": "Metal",
+  "hp": 80,
+  "types": "Kim loại",
+  "number": "212/411",
+  "evolvesTo": "exclawvate"
+ },
+ {
+  "slug": "exclawvate",
+  "name": "Exclawvate",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 70,
+  "types": "Kim loại",
+  "number": "213/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "tetrchimp",
+  "name": "Tetrchimp",
+  "rarity": "Common",
+  "element": "Lightning",
+  "hp": 40,
+  "types": "Sét, Vũ trụ",
+  "number": "214/411",
+  "evolvesTo": "apeoro"
+ },
+ {
+  "slug": "apeoro",
+  "name": "Apeoro",
+  "rarity": "Rare",
+  "element": "Lightning",
+  "hp": 50,
+  "types": "Sét, Vũ trụ",
+  "number": "215/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "turnipper",
+  "name": "Turnipper",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 50,
+  "types": "Cây",
+  "number": "216/411",
+  "evolvesTo": "beenstalker"
+ },
+ {
+  "slug": "beenstalker",
+  "name": "Beenstalker",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 60,
+  "types": "Cây",
+  "number": "217/411",
+  "evolvesTo": "wendigger"
+ },
+ {
+  "slug": "wendigger",
+  "name": "Wendigger",
+  "rarity": "Epic",
+  "element": "Grass",
+  "hp": 90,
+  "types": "Cây, Bóng tối",
+  "number": "218/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "altie",
+  "name": "Altie",
+  "rarity": "Legendary",
+  "element": "Psychic",
+  "hp": 40,
+  "types": "Vũ trụ",
+  "number": "219/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "metesaur",
+  "name": "Metesaur",
+  "rarity": "Common",
+  "element": "Fighting",
+  "hp": 40,
+  "types": "Đất, Lửa",
+  "number": "220/411",
+  "evolvesTo": "qetzlrokilus"
+ },
+ {
+  "slug": "qetzlrokilus",
+  "name": "Qetzlrokilus",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 50,
+  "types": "Đất, Lửa",
+  "number": "221/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "rosarin",
+  "name": "Rosarin",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 40,
+  "types": "Cây",
+  "number": "222/411",
+  "evolvesTo": "toxiris"
+ },
+ {
+  "slug": "toxiris",
+  "name": "Toxiris",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 50,
+  "types": "Cây, Venom",
+  "number": "223/411",
+  "evolvesTo": "ninjasmine"
+ },
+ {
+  "slug": "ninjasmine",
+  "name": "Ninjasmine",
+  "rarity": "Epic",
+  "element": "Grass",
+  "hp": 60,
+  "types": "Cây, Venom",
+  "number": "224/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "jelillow",
+  "name": "Jelillow",
+  "rarity": "Common",
+  "element": "Water",
+  "hp": 80,
+  "types": "Nước",
+  "number": "225/411",
+  "evolvesTo": "bedoo"
+ },
+ {
+  "slug": "bedoo",
+  "name": "Bedoo",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 90,
+  "types": "Nước",
+  "number": "226/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "merlicun",
+  "name": "Merlicun",
+  "rarity": "Common",
+  "element": "Psychic",
+  "hp": 60,
+  "types": "Vũ trụ, Thường",
+  "number": "227/411",
+  "evolvesTo": "firomenis"
+ },
+ {
+  "slug": "firomenis",
+  "name": "Firomenis",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 70,
+  "types": "Kim loại, Vũ trụ",
+  "number": "228/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "fordin",
+  "name": "Fordin",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây",
+  "number": "229/411",
+  "evolvesTo": "stegofor"
+ },
+ {
+  "slug": "stegofor",
+  "name": "Stegofor",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 90,
+  "types": "Cây",
+  "number": "230/411",
+  "evolvesTo": "brachifor"
+ },
+ {
+  "slug": "brachifor",
+  "name": "Brachifor",
+  "rarity": "Epic",
+  "element": "Grass",
+  "hp": 100,
+  "types": "Cây",
+  "number": "231/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "spoilurm",
+  "name": "Spoilurm",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Venom",
+  "number": "232/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "brewdin",
+  "name": "Brewdin",
+  "rarity": "Uncommon",
+  "element": "Water",
+  "hp": 60,
+  "types": "Nước, Bóng tối",
+  "number": "233/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "urcine",
+  "name": "Urcine",
+  "rarity": "Uncommon",
+  "element": "Darkness",
+  "hp": 80,
+  "types": "Bóng tối, Heroic",
+  "number": "234/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "tarpeur",
+  "name": "Tarpeur",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 70,
+  "types": "Cây",
+  "number": "235/411",
+  "evolvesTo": "vigueur"
+ },
+ {
+  "slug": "vigueur",
+  "name": "Vigueur",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây, Heroic",
+  "number": "236/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "taupypus",
+  "name": "Taupypus",
+  "rarity": "Uncommon",
+  "element": "Water",
+  "hp": 60,
+  "types": "Nước, Thường",
+  "number": "237/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "tumblequill",
+  "name": "Tumblequill",
+  "rarity": "Common",
+  "element": "Fighting",
+  "hp": 60,
+  "types": "Đất, Thường",
+  "number": "238/411",
+  "evolvesTo": "tumbledillo"
+ },
+ {
+  "slug": "tumbledillo",
+  "name": "Tumbledillo",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 70,
+  "types": "Đất, Thường",
+  "number": "239/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "spycozeus",
+  "name": "Spycozeus",
+  "rarity": "Uncommon",
+  "element": "Grass",
+  "hp": 60,
+  "types": "Cây",
+  "number": "240/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "mystikapi",
+  "name": "Mystikapi",
+  "rarity": "Uncommon",
+  "element": "Psychic",
+  "hp": 80,
+  "types": "Vũ trụ",
+  "number": "241/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "nuenflu",
+  "name": "Nuenflu",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Venom, Frost",
+  "number": "242/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "snock",
+  "name": "Snock",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Thường",
+  "number": "243/411",
+  "evolvesTo": "pythock"
+ },
+ {
+  "slug": "pythock",
+  "name": "Pythock",
+  "rarity": "Rare",
+  "element": "Darkness",
+  "hp": 70,
+  "types": "Bóng tối, Thường",
+  "number": "244/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "snaki",
+  "name": "Snaki",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Thường",
+  "number": "245/411",
+  "evolvesTo": "snokari"
+ },
+ {
+  "slug": "snokari",
+  "name": "Snokari",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 70,
+  "types": "Thường",
+  "number": "246/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "lunight",
+  "name": "Lunight",
+  "rarity": "Uncommon",
+  "element": "Darkness",
+  "hp": 40,
+  "types": "Bóng tối, Vũ trụ",
+  "number": "247/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "solight",
+  "name": "Solight",
+  "rarity": "Uncommon",
+  "element": "Fire",
+  "hp": 40,
+  "types": "Lửa, Vũ trụ",
+  "number": "248/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "wolffsky",
+  "name": "Wolffsky",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 60,
+  "types": "Cây, Frost",
+  "number": "249/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "bumbulus",
+  "name": "Bumbulus",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Sky",
+  "number": "250/411",
+  "evolvesTo": "nimbulex"
+ },
+ {
+  "slug": "nimbulex",
+  "name": "Nimbulex",
+  "rarity": "Rare",
+  "element": "Lightning",
+  "hp": 90,
+  "types": "Sét, Sky",
+  "number": "251/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "howl",
+  "name": "Howl",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Thường, Sky",
+  "number": "252/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "cateye",
+  "name": "Cateye",
+  "rarity": "Uncommon",
+  "element": "Psychic",
+  "hp": 60,
+  "types": "Vũ trụ",
+  "number": "253/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "fuzzlet",
+  "name": "Fuzzlet",
+  "rarity": "Common",
+  "element": "Psychic",
+  "hp": 80,
+  "types": "Vũ trụ, Thường",
+  "number": "254/411",
+  "evolvesTo": "fuzzina"
+ },
+ {
+  "slug": "fuzzina",
+  "name": "Fuzzina",
+  "rarity": "Rare",
+  "element": "Psychic",
+  "hp": 90,
+  "types": "Vũ trụ, Thường",
+  "number": "255/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "flisces",
+  "name": "Flisces",
+  "rarity": "Uncommon",
+  "element": "Water",
+  "hp": 80,
+  "types": "Nước, Sky",
+  "number": "256/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "mingdyn",
+  "name": "Mingdyn",
+  "rarity": "Uncommon",
+  "element": "Fire",
+  "hp": 60,
+  "types": "Lửa, Sky",
+  "number": "257/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "uneye",
+  "name": "Uneye",
+  "rarity": "Common",
+  "element": "Darkness",
+  "hp": 80,
+  "types": "Bóng tối, Vũ trụ",
+  "number": "258/411",
+  "evolvesTo": "lendos"
+ },
+ {
+  "slug": "lendos",
+  "name": "Lendos",
+  "rarity": "Rare",
+  "element": "Darkness",
+  "hp": 90,
+  "types": "Bóng tối, Vũ trụ",
+  "number": "259/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "ziggurat",
+  "name": "Ziggurat",
+  "rarity": "Uncommon",
+  "element": "Fighting",
+  "hp": 60,
+  "types": "Đất, Thường",
+  "number": "260/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "urcheedle",
+  "name": "Urcheedle",
+  "rarity": "Uncommon",
+  "element": "Fighting",
+  "hp": 80,
+  "types": "Đất, Venom",
+  "number": "261/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "joulraton",
+  "name": "Joulraton",
+  "rarity": "Uncommon",
+  "element": "Lightning",
+  "hp": 60,
+  "types": "Sét",
+  "number": "262/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "pantherafira",
+  "name": "Pantherafira",
+  "rarity": "Common",
+  "element": "Fire",
+  "hp": 50,
+  "types": "Lửa, Thường",
+  "number": "263/411",
+  "evolvesTo": "criniotherme"
+ },
+ {
+  "slug": "criniotherme",
+  "name": "Criniotherme",
+  "rarity": "Rare",
+  "element": "Fire",
+  "hp": 60,
+  "types": "Lửa, Thường",
+  "number": "264/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "dankush",
+  "name": "Dankush",
+  "rarity": "Uncommon",
+  "element": "Grass",
+  "hp": 40,
+  "types": "Cây, Lửa",
+  "number": "265/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "cherubat",
+  "name": "Cherubat",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Sky, Vũ trụ",
+  "number": "266/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "ambuwl",
+  "name": "Ambuwl",
+  "rarity": "Uncommon",
+  "element": "Psychic",
+  "hp": 40,
+  "types": "Vũ trụ",
+  "number": "267/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "woodoor",
+  "name": "Woodoor",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 40,
+  "types": "Cây",
+  "number": "268/411",
+  "evolvesTo": "blasdoor"
+ },
+ {
+  "slug": "blasdoor",
+  "name": "Blasdoor",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 50,
+  "types": "Kim loại",
+  "number": "269/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "rhinocarpe",
+  "name": "Rhinocarpe",
+  "rarity": "Uncommon",
+  "element": "Water",
+  "hp": 80,
+  "types": "Nước, Heroic",
+  "number": "270/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "kernel",
+  "name": "Kernel",
+  "rarity": "Uncommon",
+  "element": "Lightning",
+  "hp": 40,
+  "types": "Sét, Kim loại",
+  "number": "271/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "tux",
+  "name": "Tux",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Frost, Heroic",
+  "number": "272/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "hotline",
+  "name": "Hotline",
+  "rarity": "Uncommon",
+  "element": "Metal",
+  "hp": 40,
+  "types": "Kim loại, Lửa",
+  "number": "273/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "rinocereed",
+  "name": "Rinocereed",
+  "rarity": "Uncommon",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây",
+  "number": "274/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "potturmeist",
+  "name": "Potturmeist",
+  "rarity": "Common",
+  "element": "Fighting",
+  "hp": 80,
+  "types": "Đất, Bóng tối",
+  "number": "275/411",
+  "evolvesTo": "potturney"
+ },
+ {
+  "slug": "potturney",
+  "name": "Potturney",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 90,
+  "types": "Đất, Bóng tối",
+  "number": "276/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "imbrickcile",
+  "name": "Imbrickcile",
+  "rarity": "Common",
+  "element": "Fighting",
+  "hp": 40,
+  "types": "Đất, Heroic",
+  "number": "277/411",
+  "evolvesTo": "bricgard"
+ },
+ {
+  "slug": "bricgard",
+  "name": "Bricgard",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 90,
+  "types": "Đất, Heroic",
+  "number": "278/411",
+  "evolvesTo": "brickhemoth"
+ },
+ {
+  "slug": "brickhemoth",
+  "name": "Brickhemoth",
+  "rarity": "Epic",
+  "element": "Fighting",
+  "hp": 90,
+  "types": "Đất, Heroic",
+  "number": "279/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "waysprite",
+  "name": "Waysprite",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Frost",
+  "number": "280/411",
+  "evolvesTo": "angesnow"
+ },
+ {
+  "slug": "angesnow",
+  "name": "Angesnow",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Frost, Vũ trụ",
+  "number": "281/411",
+  "evolvesTo": "seraphice"
+ },
+ {
+  "slug": "demosnow",
+  "name": "Demosnow",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Frost, Bóng tối",
+  "number": "282/411",
+  "evolvesTo": "lucifice"
+ },
+ {
+  "slug": "lucifice",
+  "name": "Lucifice",
+  "rarity": "Epic",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Frost, Bóng tối",
+  "number": "283/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "seraphice",
+  "name": "Seraphice",
+  "rarity": "Epic",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Frost, Vũ trụ",
+  "number": "284/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "uf0",
+  "name": "Uf0",
+  "rarity": "Uncommon",
+  "element": "Metal",
+  "hp": 80,
+  "types": "Kim loại, Vũ trụ",
+  "number": "285/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "tadcool",
+  "name": "Tadcool",
+  "rarity": "Common",
+  "element": "Water",
+  "hp": 50,
+  "types": "Nước, Frost",
+  "number": "286/411",
+  "evolvesTo": "fribbit"
+ },
+ {
+  "slug": "fribbit",
+  "name": "Fribbit",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 60,
+  "types": "Nước, Frost",
+  "number": "287/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "squink",
+  "name": "Squink",
+  "rarity": "Common",
+  "element": "Water",
+  "hp": 50,
+  "types": "Nước",
+  "number": "288/411",
+  "evolvesTo": "hectapod"
+ },
+ {
+  "slug": "hectapod",
+  "name": "Hectapod",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 60,
+  "types": "Nước",
+  "number": "289/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "slichen",
+  "name": "Slichen",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây",
+  "number": "290/411",
+  "evolvesTo": "glombroc"
+ },
+ {
+  "slug": "glombroc",
+  "name": "Glombroc",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 90,
+  "types": "Đất, Cây",
+  "number": "291/411",
+  "evolvesTo": "conglolem"
+ },
+ {
+  "slug": "conglolem",
+  "name": "Conglolem",
+  "rarity": "Epic",
+  "element": "Fighting",
+  "hp": 90,
+  "types": "Đất",
+  "number": "292/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "caper",
+  "name": "Caper",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Frost, Thường",
+  "number": "293/411",
+  "evolvesTo": "crankus"
+ },
+ {
+  "slug": "crankus",
+  "name": "Crankus",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 90,
+  "types": "Frost, Thường",
+  "number": "294/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "lesmagu",
+  "name": "Lesmagu",
+  "rarity": "Common",
+  "element": "Fighting",
+  "hp": 50,
+  "types": "Đất, Venom",
+  "number": "295/411",
+  "evolvesTo": "shelagu"
+ },
+ {
+  "slug": "shelagu",
+  "name": "Shelagu",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 90,
+  "types": "Đất, Venom",
+  "number": "296/411",
+  "evolvesTo": "crustagu"
+ },
+ {
+  "slug": "crustagu",
+  "name": "Crustagu",
+  "rarity": "Epic",
+  "element": "Water",
+  "hp": 100,
+  "types": "Nước, Venom",
+  "number": "297/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "ampystoma",
+  "name": "Ampystoma",
+  "rarity": "Rare",
+  "element": "Lightning",
+  "hp": 80,
+  "types": "Sét, Nước",
+  "number": "298/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "medipup",
+  "name": "Medipup",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Thường",
+  "number": "299/411",
+  "evolvesTo": "doctsky"
+ },
+ {
+  "slug": "doctsky",
+  "name": "Doctsky",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Thường",
+  "number": "300/411",
+  "evolvesTo": "askylpaws"
+ },
+ {
+  "slug": "ruffalo",
+  "name": "Ruffalo",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Thường",
+  "number": "301/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "pearamanca",
+  "name": "Pearamanca",
+  "rarity": "Uncommon",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây",
+  "number": "302/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "sheye",
+  "name": "Sheye",
+  "rarity": "Common",
+  "element": "Water",
+  "hp": 50,
+  "types": "Nước",
+  "number": "303/411",
+  "evolvesTo": "shrab"
+ },
+ {
+  "slug": "shrab",
+  "name": "Shrab",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 60,
+  "types": "Nước",
+  "number": "304/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "marvillar",
+  "name": "Marvillar",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 70,
+  "types": "Thường",
+  "number": "305/411",
+  "evolvesTo": "marvantis"
+ },
+ {
+  "slug": "marvantis",
+  "name": "Marvantis",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Sky, Thường",
+  "number": "306/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "scarlant",
+  "name": "Scarlant",
+  "rarity": "Common",
+  "element": "Fighting",
+  "hp": 60,
+  "types": "Đất, Heroic",
+  "number": "307/411",
+  "evolvesTo": "shull"
+ },
+ {
+  "slug": "shull",
+  "name": "Shull",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 90,
+  "types": "Đất, Heroic",
+  "number": "308/411",
+  "evolvesTo": "myrmison"
+ },
+ {
+  "slug": "myrmison",
+  "name": "Myrmison",
+  "rarity": "Epic",
+  "element": "Fighting",
+  "hp": 60,
+  "types": "Đất, Heroic",
+  "number": "309/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "devidin",
+  "name": "Devidin",
+  "rarity": "Common",
+  "element": "Fighting",
+  "hp": 80,
+  "types": "Đất, Lửa",
+  "number": "310/411",
+  "evolvesTo": "devidra"
+ },
+ {
+  "slug": "devidra",
+  "name": "Devidra",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 90,
+  "types": "Đất, Lửa",
+  "number": "311/411",
+  "evolvesTo": "deviraptor"
+ },
+ {
+  "slug": "deviraptor",
+  "name": "Deviraptor",
+  "rarity": "Epic",
+  "element": "Fighting",
+  "hp": 80,
+  "types": "Đất, Lửa",
+  "number": "312/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "boxali",
+  "name": "Boxali",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Heroic, Sky",
+  "number": "313/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "chibiro",
+  "name": "Chibiro",
+  "rarity": "Uncommon",
+  "element": "Grass",
+  "hp": 60,
+  "types": "Cây, Thường",
+  "number": "314/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "komoduel",
+  "name": "Komoduel",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Thường",
+  "number": "315/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "thumpurn",
+  "name": "Thumpurn",
+  "rarity": "Common",
+  "element": "Fire",
+  "hp": 70,
+  "types": "Lửa, Thường",
+  "number": "316/411",
+  "evolvesTo": "volconey"
+ },
+ {
+  "slug": "volconey",
+  "name": "Volconey",
+  "rarity": "Rare",
+  "element": "Fire",
+  "hp": 70,
+  "types": "Lửa, Thường",
+  "number": "317/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "asudopt",
+  "name": "Asudopt",
+  "rarity": "Legendary",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Frost, Vũ trụ",
+  "number": "318/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "uglip",
+  "name": "Uglip",
+  "rarity": "Uncommon",
+  "element": "Water",
+  "hp": 80,
+  "types": "Nước",
+  "number": "319/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "graffiki",
+  "name": "Graffiki",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Thường",
+  "number": "320/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "sprorm",
+  "name": "Sprorm",
+  "rarity": "Common",
+  "element": "Metal",
+  "hp": 40,
+  "types": "Kim loại",
+  "number": "321/411",
+  "evolvesTo": "sphake"
+ },
+ {
+  "slug": "sphake",
+  "name": "Sphake",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 50,
+  "types": "Kim loại",
+  "number": "322/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "jeluna",
+  "name": "Jeluna",
+  "rarity": "Uncommon",
+  "element": "Water",
+  "hp": 80,
+  "types": "Nước, Vũ trụ",
+  "number": "323/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "konuit",
+  "name": "Konuit",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Thường",
+  "number": "324/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "flummby",
+  "name": "Flummby",
+  "rarity": "Common",
+  "element": "Psychic",
+  "hp": 40,
+  "types": "Vũ trụ",
+  "number": "325/411",
+  "evolvesTo": "flummack"
+ },
+ {
+  "slug": "flummack",
+  "name": "Flummack",
+  "rarity": "Rare",
+  "element": "Psychic",
+  "hp": 50,
+  "types": "Vũ trụ",
+  "number": "326/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "hoarse",
+  "name": "Hoarse",
+  "rarity": "Common",
+  "element": "Darkness",
+  "hp": 80,
+  "types": "Bóng tối, Thường",
+  "number": "327/411",
+  "evolvesTo": "equill"
+ },
+ {
+  "slug": "equill",
+  "name": "Equill",
+  "rarity": "Rare",
+  "element": "Darkness",
+  "hp": 90,
+  "types": "Bóng tối, Thường",
+  "number": "328/411",
+  "evolvesTo": "hoarseshoo"
+ },
+ {
+  "slug": "hoarseshoo",
+  "name": "Hoarseshoo",
+  "rarity": "Epic",
+  "element": "Colorless",
+  "hp": 100,
+  "types": "Venom, Bóng tối",
+  "number": "329/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "metoxic",
+  "name": "Metoxic",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Venom",
+  "number": "330/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "ned",
+  "name": "Ned",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Thường",
+  "number": "331/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "legoplaste",
+  "name": "Legoplaste",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Thường",
+  "number": "332/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "gliffary",
+  "name": "Gliffary",
+  "rarity": "Uncommon",
+  "element": "Psychic",
+  "hp": 40,
+  "types": "Vũ trụ",
+  "number": "333/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "boxorox",
+  "name": "Boxorox",
+  "rarity": "Uncommon",
+  "element": "Fighting",
+  "hp": 40,
+  "types": "Đất",
+  "number": "334/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "claymorior",
+  "name": "Claymorior",
+  "rarity": "Common",
+  "element": "Fighting",
+  "hp": 40,
+  "types": "Đất, Heroic",
+  "number": "335/411",
+  "evolvesTo": "regalance"
+ },
+ {
+  "slug": "regalance",
+  "name": "Regalance",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 50,
+  "types": "Đất",
+  "number": "336/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "nebufin",
+  "name": "Nebufin",
+  "rarity": "Common",
+  "element": "Water",
+  "hp": 50,
+  "types": "Nước, Venom",
+  "number": "337/411",
+  "evolvesTo": "galasces"
+ },
+ {
+  "slug": "galasces",
+  "name": "Galasces",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 60,
+  "types": "Nước, Venom",
+  "number": "338/411",
+  "evolvesTo": "novaquarius"
+ },
+ {
+  "slug": "novaquarius",
+  "name": "Novaquarius",
+  "rarity": "Epic",
+  "element": "Water",
+  "hp": 70,
+  "types": "Nước, Venom",
+  "number": "339/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "hissiorite",
+  "name": "Hissiorite",
+  "rarity": "Common",
+  "element": "Fire",
+  "hp": 60,
+  "types": "Lửa",
+  "number": "340/411",
+  "evolvesTo": "cobarett"
+ },
+ {
+  "slug": "cobarett",
+  "name": "Cobarett",
+  "rarity": "Rare",
+  "element": "Fire",
+  "hp": 70,
+  "types": "Lửa",
+  "number": "341/411",
+  "evolvesTo": "pythonova"
+ },
+ {
+  "slug": "pythonova",
+  "name": "Pythonova",
+  "rarity": "Epic",
+  "element": "Fire",
+  "hp": 80,
+  "types": "Lửa",
+  "number": "342/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "burrlock",
+  "name": "Burrlock",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây",
+  "number": "343/411",
+  "evolvesTo": "cacaburr"
+ },
+ {
+  "slug": "cacaburr",
+  "name": "Cacaburr",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 90,
+  "types": "Cây",
+  "number": "344/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "eskipup",
+  "name": "Eskipup",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Frost",
+  "number": "345/411",
+  "evolvesTo": "houndice"
+ },
+ {
+  "slug": "houndice",
+  "name": "Houndice",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 60,
+  "types": "Frost",
+  "number": "346/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "flounce",
+  "name": "Flounce",
+  "rarity": "Common",
+  "element": "Fire",
+  "hp": 50,
+  "types": "Lửa",
+  "number": "347/411",
+  "evolvesTo": "knindling"
+ },
+ {
+  "slug": "knindling",
+  "name": "Knindling",
+  "rarity": "Rare",
+  "element": "Fire",
+  "hp": 60,
+  "types": "Lửa",
+  "number": "348/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "gourda",
+  "name": "Gourda",
+  "rarity": "Uncommon",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây",
+  "number": "349/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "stonifly",
+  "name": "Stonifly",
+  "rarity": "Common",
+  "element": "Fighting",
+  "hp": 70,
+  "types": "Đất",
+  "number": "350/411",
+  "evolvesTo": "cocrune"
+ },
+ {
+  "slug": "cocrune",
+  "name": "Cocrune",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 90,
+  "types": "Đất, Bóng tối",
+  "number": "351/411",
+  "evolvesTo": "runesquito"
+ },
+ {
+  "slug": "runesquito",
+  "name": "Runesquito",
+  "rarity": "Epic",
+  "element": "Fighting",
+  "hp": 60,
+  "types": "Đất, Bóng tối",
+  "number": "352/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "teddisun",
+  "name": "Teddisun",
+  "rarity": "Uncommon",
+  "element": "Psychic",
+  "hp": 40,
+  "types": "Vũ trụ, Thường",
+  "number": "353/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "sprightly",
+  "name": "Sprightly",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây",
+  "number": "354/411",
+  "evolvesTo": "uprout"
+ },
+ {
+  "slug": "uprout",
+  "name": "Uprout",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 90,
+  "types": "Cây, Sky",
+  "number": "355/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "stomic",
+  "name": "Stomic",
+  "rarity": "Common",
+  "element": "Metal",
+  "hp": 80,
+  "types": "Kim loại, Venom",
+  "number": "356/411",
+  "evolvesTo": "gastronium"
+ },
+ {
+  "slug": "gastronium",
+  "name": "Gastronium",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 90,
+  "types": "Kim loại, Venom",
+  "number": "357/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "cackleen",
+  "name": "Cackleen",
+  "rarity": "Common",
+  "element": "Darkness",
+  "hp": 40,
+  "types": "Bóng tối, Vũ trụ",
+  "number": "358/411",
+  "evolvesTo": "brumi"
+ },
+ {
+  "slug": "brumi",
+  "name": "Brumi",
+  "rarity": "Rare",
+  "element": "Darkness",
+  "hp": 50,
+  "types": "Bóng tối, Vũ trụ",
+  "number": "359/411",
+  "evolvesTo": "bewhich"
+ },
+ {
+  "slug": "bewhich",
+  "name": "Bewhich",
+  "rarity": "Epic",
+  "element": "Darkness",
+  "hp": 60,
+  "types": "Bóng tối, Vũ trụ",
+  "number": "360/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "duggot",
+  "name": "Duggot",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 60,
+  "types": "Cây, Venom",
+  "number": "361/411",
+  "evolvesTo": "breem"
+ },
+ {
+  "slug": "breem",
+  "name": "Breem",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Venom",
+  "number": "362/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "medushock",
+  "name": "Medushock",
+  "rarity": "Uncommon",
+  "element": "Lightning",
+  "hp": 60,
+  "types": "Sét, Venom",
+  "number": "363/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "chenipode",
+  "name": "Chenipode",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 70,
+  "types": "Thường",
+  "number": "364/411",
+  "evolvesTo": "exapode"
+ },
+ {
+  "slug": "exapode",
+  "name": "Exapode",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Thường",
+  "number": "365/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "poinchin",
+  "name": "Poinchin",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 70,
+  "types": "Venom",
+  "number": "366/411",
+  "evolvesTo": "saurchin"
+ },
+ {
+  "slug": "saurchin",
+  "name": "Saurchin",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 70,
+  "types": "Venom",
+  "number": "367/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "babysnitch",
+  "name": "Babysnitch",
+  "rarity": "Common",
+  "element": "Darkness",
+  "hp": 50,
+  "types": "Bóng tối, Thường",
+  "number": "368/411",
+  "evolvesTo": "baddrscratch"
+ },
+ {
+  "slug": "baddrscratch",
+  "name": "Baddrscratch",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 60,
+  "types": "Đất, Bóng tối",
+  "number": "369/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "weedsea",
+  "name": "Weedsea",
+  "rarity": "Common",
+  "element": "Water",
+  "hp": 80,
+  "types": "Nước, Cây",
+  "number": "370/411",
+  "evolvesTo": "weedlantis"
+ },
+ {
+  "slug": "weedlantis",
+  "name": "Weedlantis",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 70,
+  "types": "Nước, Cây",
+  "number": "371/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "grumpi",
+  "name": "Grumpi",
+  "rarity": "Uncommon",
+  "element": "Colorless",
+  "hp": 80,
+  "types": "Thường",
+  "number": "372/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "banling",
+  "name": "Banling",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 70,
+  "types": "Cây",
+  "number": "373/411",
+  "evolvesTo": "bansaken"
+ },
+ {
+  "slug": "bansaken",
+  "name": "Bansaken",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây, Bóng tối",
+  "number": "374/411",
+  "evolvesTo": "banvengeance"
+ },
+ {
+  "slug": "banvengeance",
+  "name": "Banvengeance",
+  "rarity": "Epic",
+  "element": "Grass",
+  "hp": 90,
+  "types": "Cây, Bóng tối",
+  "number": "375/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "hampotamos",
+  "name": "Hampotamos",
+  "rarity": "Uncommon",
+  "element": "Fighting",
+  "hp": 80,
+  "types": "Đất",
+  "number": "376/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "coaldiak",
+  "name": "Coaldiak",
+  "rarity": "Epic",
+  "element": "Fire",
+  "hp": 60,
+  "types": "Lửa, Thường",
+  "number": "377/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "askylpaws",
+  "name": "Askylpaws",
+  "rarity": "Epic",
+  "element": "Colorless",
+  "hp": 70,
+  "types": "Venom, Vũ trụ",
+  "number": "378/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "erythroskyte",
+  "name": "Erythroskyte",
+  "rarity": "Epic",
+  "element": "Metal",
+  "hp": 70,
+  "types": "Kim loại, Thường",
+  "number": "379/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "pharavion",
+  "name": "Pharavion",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 90,
+  "types": "Nước, Heroic",
+  "number": "380/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "yamada",
+  "name": "Yamada",
+  "rarity": "Rare",
+  "element": "Darkness",
+  "hp": 40,
+  "types": "Bóng tối, Heroic",
+  "number": "381/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "shimmerain",
+  "name": "Shimmerain",
+  "rarity": "Uncommon",
+  "element": "Water",
+  "hp": 80,
+  "types": "Nước",
+  "number": "382/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "chickadee",
+  "name": "Chickadee",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Thường, Sky",
+  "number": "383/411",
+  "evolvesTo": "birdee"
+ },
+ {
+  "slug": "birdee",
+  "name": "Birdee",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Thường, Sky",
+  "number": "384/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "pickoon",
+  "name": "Pickoon",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Thường",
+  "number": "385/411",
+  "evolvesTo": "raccscal"
+ },
+ {
+  "slug": "raccscal",
+  "name": "Raccscal",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 70,
+  "types": "Thường",
+  "number": "386/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "kroki",
+  "name": "Kroki",
+  "rarity": "Common",
+  "element": "Water",
+  "hp": 80,
+  "types": "Nước",
+  "number": "387/411",
+  "evolvesTo": "krokivip"
+ },
+ {
+  "slug": "krokivip",
+  "name": "Krokivip",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 90,
+  "types": "Nước, Venom",
+  "number": "388/411",
+  "evolvesTo": "leviadile"
+ },
+ {
+  "slug": "leviadile",
+  "name": "Leviadile",
+  "rarity": "Epic",
+  "element": "Water",
+  "hp": 100,
+  "types": "Nước, Venom",
+  "number": "389/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "pawsand",
+  "name": "Pawsand",
+  "rarity": "Common",
+  "element": "Fighting",
+  "hp": 80,
+  "types": "Đất",
+  "number": "390/411",
+  "evolvesTo": "knightsand"
+ },
+ {
+  "slug": "bishosand",
+  "name": "Bishosand",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 50,
+  "types": "Đất, Vũ trụ",
+  "number": "391/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "knightsand",
+  "name": "Knightsand",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 50,
+  "types": "Đất, Heroic",
+  "number": "392/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "rooksand",
+  "name": "Rooksand",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 90,
+  "types": "Đất",
+  "number": "393/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "helipi",
+  "name": "Helipi",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây, Sky",
+  "number": "394/411",
+  "evolvesTo": "coppi"
+ },
+ {
+  "slug": "coppi",
+  "name": "Coppi",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 90,
+  "types": "Cây, Sky",
+  "number": "395/411",
+  "evolvesTo": "parappi"
+ },
+ {
+  "slug": "parappi",
+  "name": "Parappi",
+  "rarity": "Epic",
+  "element": "Grass",
+  "hp": 100,
+  "types": "Cây, Sky",
+  "number": "396/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "virware",
+  "name": "Virware",
+  "rarity": "Common",
+  "element": "Metal",
+  "hp": 40,
+  "types": "Kim loại, Vũ trụ",
+  "number": "397/411",
+  "evolvesTo": "trojerror"
+ },
+ {
+  "slug": "trojerror",
+  "name": "Trojerror",
+  "rarity": "Rare",
+  "element": "Metal",
+  "hp": 50,
+  "types": "Kim loại, Vũ trụ",
+  "number": "398/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "glomon",
+  "name": "Glomon",
+  "rarity": "Rare",
+  "element": "Fighting",
+  "hp": 80,
+  "types": "Đất, Nước",
+  "number": "399/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "cohldrabi",
+  "name": "Cohldrabi",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 40,
+  "types": "Cây, Frost",
+  "number": "400/411",
+  "evolvesTo": "lettice"
+ },
+ {
+  "slug": "lettice",
+  "name": "Lettice",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 50,
+  "types": "Cây, Frost",
+  "number": "401/411",
+  "evolvesTo": "frostuce"
+ },
+ {
+  "slug": "frostuce",
+  "name": "Frostuce",
+  "rarity": "Epic",
+  "element": "Grass",
+  "hp": 60,
+  "types": "Cây, Frost",
+  "number": "402/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "carcharock",
+  "name": "Carcharock",
+  "rarity": "Uncommon",
+  "element": "Fighting",
+  "hp": 60,
+  "types": "Đất",
+  "number": "403/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "primordia",
+  "name": "Primordia",
+  "rarity": "Uncommon",
+  "element": "Fire",
+  "hp": 80,
+  "types": "Lửa, Frost",
+  "number": "404/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "toucanary",
+  "name": "Toucanary",
+  "rarity": "Common",
+  "element": "Colorless",
+  "hp": 40,
+  "types": "Sky",
+  "number": "405/411",
+  "evolvesTo": "raptoucan"
+ },
+ {
+  "slug": "raptoucan",
+  "name": "Raptoucan",
+  "rarity": "Rare",
+  "element": "Colorless",
+  "hp": 50,
+  "types": "Sky",
+  "number": "406/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "hoodoll",
+  "name": "Hoodoll",
+  "rarity": "Common",
+  "element": "Grass",
+  "hp": 80,
+  "types": "Cây, Venom",
+  "number": "407/411",
+  "evolvesTo": "wolololl"
+ },
+ {
+  "slug": "wolololl",
+  "name": "Wolololl",
+  "rarity": "Rare",
+  "element": "Grass",
+  "hp": 50,
+  "types": "Cây, Venom",
+  "number": "408/411",
+  "evolvesTo": ""
+ },
+ {
+  "slug": "gupphish",
+  "name": "Gupphish",
+  "rarity": "Common",
+  "element": "Water",
+  "hp": 80,
+  "types": "Nước, Lửa",
+  "number": "409/411",
+  "evolvesTo": "gupphire"
+ },
+ {
+  "slug": "gupphire",
+  "name": "Gupphire",
+  "rarity": "Rare",
+  "element": "Water",
+  "hp": 90,
+  "types": "Nước, Lửa",
+  "number": "410/411",
+  "evolvesTo": "golnagi"
+ },
+ {
+  "slug": "golnagi",
+  "name": "Golnagi",
+  "rarity": "Epic",
+  "element": "Water",
+  "hp": 100,
+  "types": "Nước, Lửa",
+  "number": "411/411",
+  "evolvesTo": ""
+ }
+]

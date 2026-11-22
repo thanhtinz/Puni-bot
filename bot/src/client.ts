@@ -76,6 +76,13 @@ export function buildSlashPayload(registry: CommandRegistry) {
         b.addStringOption((o) => o.setName("userid").setDescription("User ID cần gỡ ban").setRequired(true));
         b.addStringOption((o) => o.setName("lydo").setDescription("Lý do").setRequired(false));
       }
+      if (["gacha", "card", "deck", "market", "trade", "settings", "collection"].includes(c.name)) {
+        b.addStringOption((o) => o.setName("hanhdong").setDescription("Hành động: single/multi/view/sell/offer...").setRequired(false));
+        b.addStringOption((o) => o.setName("thamso").setDescription("Tham số: mã thẻ, giá, tên bộ bài...").setRequired(false));
+      }
+      if (c.name === "trade") {
+        b.addUserOption((o) => o.setName("nguoi").setDescription("Người nhận trao đổi (cho offer)").setRequired(false));
+      }
       return b.toJSON();
     });
 }
@@ -442,6 +449,13 @@ export function createBotClient(deps: {
       if (id) args.push(id);
       const reason = cmd.options.getString("lydo");
       if (reason) args.push(reason);
+    } else if (["gacha", "card", "deck", "market", "trade", "settings", "collection"].includes(cmd.commandName)) {
+      const action = cmd.options.getString("hanhdong");
+      if (action) args.push(action);
+      const rest = cmd.options.getString("thamso");
+      if (rest) args.push(...rest.split(/\s+/).filter(Boolean));
+      const user = cmd.options.getUser("nguoi");
+      if (user) mentions.push(user.id);
     }
     const outcome = await dispatcher.dispatchSlash({
       name: cmd.commandName,

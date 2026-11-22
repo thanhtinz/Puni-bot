@@ -26,6 +26,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
               <Link href="/commands">Danh sách lệnh</Link>
               <Link href="/timestamps">Timestamps</Link>
               <Link href="/membership">Hội viên</Link>
+              <Link href="/tcg">Game thẻ</Link>
               {supportUrl ? (
                 <a href={supportUrl} target="_blank" rel="noreferrer">
                   Support
@@ -68,6 +69,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
                   <Link href="/commands">Danh sách lệnh</Link>
                   <Link href="/timestamps">Timestamps</Link>
                   <Link href="/membership">Hội viên</Link>
+              <Link href="/tcg">Game thẻ</Link>
                   <Link href="/status">Trạng thái</Link>
                 </div>
                 <div>
