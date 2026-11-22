@@ -152,6 +152,10 @@ export interface TcgSpecies {
   /** Base stats for card battles (game_species.base_hp / base_atk). */
   baseHp?: number;
   baseAtk?: number;
+  /** Member-exclusive card: only members can pull it (spec 6.19). */
+  memberExclusive?: boolean;
+  /** Card set this species belongs to (spec 6.27). */
+  setId?: string;
 }
 
 /** Pick a species of the rolled rarity; featured species weigh x5. */

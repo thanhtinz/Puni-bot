@@ -455,6 +455,29 @@ export async function listBotConfigMeta(): Promise<{ key: string; updated_at: st
 
 /* ---------------- Game content (Admin-managed, spec 6.17) ---- */
 
+export interface ModCaseRow {
+  case_no: number;
+  target_id: string;
+  moderator_id: string;
+  action: string;
+  reason: string;
+  duration_sec: number | null;
+  active: boolean;
+  created_at: string;
+}
+
+/** Moderation case history of one guild, newest first (Kiem duyet -> Lich su). */
+export async function listGuildCases(guildId: string, limit = 60): Promise<ModCaseRow[]> {
+  const res = await db().query(
+    `SELECT case_no, target_id, moderator_id, action, reason, duration_sec,
+            active, created_at::text AS created_at
+     FROM mod_cases WHERE guild_id = $1
+     ORDER BY case_no DESC LIMIT $2`,
+    [guildId, limit],
+  );
+  return res.rows as ModCaseRow[];
+}
+
 export interface SpeciesRow {
   id: string;
   name: string;
@@ -468,6 +491,45 @@ export interface SpeciesRow {
   sprite_url: string;
   member_exclusive: boolean;
   enabled: boolean;
+  set_id: string;
+}
+
+export interface GameSetRow {
+  id: string;
+  name: string;
+  description: string;
+  sort: number;
+  enabled: boolean;
+  species_count: number;
+}
+
+export async function listGameSets(): Promise<GameSetRow[]> {
+  try {
+    const res = await db().query(
+      `SELECT s.id, s.name, s.description, s.sort, s.enabled,
+              (SELECT COUNT(*)::int FROM game_species g WHERE g.set_id = s.id) AS species_count
+       FROM game_sets s ORDER BY s.sort, s.name`,
+    );
+    return res.rows as GameSetRow[];
+  } catch {
+    return [];
+  }
+}
+
+export async function upsertGameSet(s: { id: string; name: string; description: string; sort: number; enabled: boolean }): Promise<void> {
+  await db().query(
+    `INSERT INTO game_sets (id, name, description, sort, enabled) VALUES ($1,$2,$3,$4,$5)
+     ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, description=EXCLUDED.description,
+       sort=EXCLUDED.sort, enabled=EXCLUDED.enabled`,
+    [s.id, s.name, s.description, s.sort, s.enabled],
+  );
+}
+
+export async function deleteGameSet(id: string): Promise<boolean> {
+  const used = await db().query(`SELECT 1 FROM game_species WHERE set_id = $1 LIMIT 1`, [id]);
+  if (used.rowCount && used.rowCount > 0) return false;
+  await db().query(`DELETE FROM game_sets WHERE id = $1`, [id]);
+  return true;
 }
 
 export async function listSpecies(): Promise<SpeciesRow[] | null> {
@@ -483,13 +545,13 @@ export async function listSpecies(): Promise<SpeciesRow[] | null> {
 
 export async function upsertSpecies(s: SpeciesRow): Promise<void> {
   await db().query(
-    `INSERT INTO game_species (id, name, types, rarity, base_hp, base_atk, base_def, base_spd, description, sprite_url, member_exclusive, enabled, updated_at)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12, now())
+    `INSERT INTO game_species (id, name, types, rarity, base_hp, base_atk, base_def, base_spd, description, sprite_url, member_exclusive, enabled, set_id, updated_at)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13, now())
      ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, types=EXCLUDED.types, rarity=EXCLUDED.rarity,
        base_hp=EXCLUDED.base_hp, base_atk=EXCLUDED.base_atk, base_def=EXCLUDED.base_def, base_spd=EXCLUDED.base_spd,
        description=EXCLUDED.description, sprite_url=EXCLUDED.sprite_url,
-       member_exclusive=EXCLUDED.member_exclusive, enabled=EXCLUDED.enabled, updated_at=now()`,
-    [s.id, s.name, s.types, s.rarity, s.base_hp, s.base_atk, s.base_def, s.base_spd, s.description, s.sprite_url, s.member_exclusive, s.enabled],
+       member_exclusive=EXCLUDED.member_exclusive, enabled=EXCLUDED.enabled, set_id=EXCLUDED.set_id, updated_at=now()`,
+    [s.id, s.name, s.types, s.rarity, s.base_hp, s.base_atk, s.base_def, s.base_spd, s.description, s.sprite_url, s.member_exclusive, s.enabled, s.set_id || "tuxemon"],
   );
 }
 
@@ -500,123 +562,6 @@ export async function deleteSpecies(id: string): Promise<void> {
 export async function setSpeciesEnabled(id: string, enabled: boolean): Promise<void> {
   await db().query(`UPDATE game_species SET enabled = $2, updated_at = now() WHERE id = $1`, [id, enabled]);
 }
-
-export interface ItemRow {
-  id: string;
-  name: string;
-  category: string;
-  price_coins: string;
-  price_gems: string;
-  sell_price: string;
-  description: string;
-  icon_url: string;
-  enabled: boolean;
-}
-
-export const ITEM_CATEGORIES: { id: string; label: string }[] = [
-  { id: "consumable", label: "Tiêu hao" },
-  { id: "material", label: "Nguyên liệu" },
-  { id: "other", label: "Khác" },
-];
-
-export async function listItems(category?: string): Promise<ItemRow[] | null> {
-  try {
-    const res = category
-      ? await db().query<ItemRow>(
-          `SELECT id, name, category, price_coins::text AS price_coins, price_gems::text AS price_gems,
-                  sell_price::text AS sell_price, description, icon_url, enabled
-           FROM game_items WHERE category = $1 ORDER BY name LIMIT 500`,
-          [category],
-        )
-      : await db().query<ItemRow>(
-          `SELECT id, name, category, price_coins::text AS price_coins, price_gems::text AS price_gems,
-                  sell_price::text AS sell_price, description, icon_url, enabled
-           FROM game_items ORDER BY category, name LIMIT 500`,
-        );
-    return res.rows;
-  } catch {
-    return null;
-  }
-}
-
-export async function upsertItem(i: {
-  id: string; name: string; category: string;
-  priceCoins: number; priceGems: number; sellPrice: number;
-  description: string; iconUrl: string; enabled: boolean;
-}): Promise<void> {
-  await db().query(
-    `INSERT INTO game_items (id, name, category, price_coins, price_gems, sell_price, description, icon_url, enabled, updated_at)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9, now())
-     ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, category=EXCLUDED.category,
-       price_coins=EXCLUDED.price_coins, price_gems=EXCLUDED.price_gems, sell_price=EXCLUDED.sell_price,
-       description=EXCLUDED.description, icon_url=EXCLUDED.icon_url, enabled=EXCLUDED.enabled, updated_at=now()`,
-    [i.id, i.name, i.category, i.priceCoins, i.priceGems, i.sellPrice, i.description, i.iconUrl, i.enabled],
-  );
-}
-
-export async function deleteItem(id: string): Promise<void> {
-  await db().query(`DELETE FROM game_items WHERE id = $1`, [id]);
-}
-
-export async function setItemEnabled(id: string, enabled: boolean): Promise<void> {
-  await db().query(`UPDATE game_items SET enabled = $2, updated_at = now() WHERE id = $1`, [id, enabled]);
-}
-
-export interface ShopListingRow {
-  id: string;
-  item_id: string;
-  item_name: string;
-  item_price_coins: string;
-  item_price_gems: string;
-  price_coins: string | null;
-  price_gems: string | null;
-  stock: number | null;
-  sort: number;
-  enabled: boolean;
-}
-
-export async function listShopListings(): Promise<ShopListingRow[] | null> {
-  try {
-    const res = await db().query<ShopListingRow>(
-      `SELECT l.id::text AS id, l.item_id, i.name AS item_name,
-              i.price_coins::text AS item_price_coins, i.price_gems::text AS item_price_gems,
-              l.price_coins::text AS price_coins, l.price_gems::text AS price_gems,
-              l.stock, l.sort, l.enabled
-       FROM game_shop_listings l JOIN game_items i ON i.id = l.item_id
-       ORDER BY l.sort, i.name LIMIT 500`,
-    );
-    return res.rows;
-  } catch {
-    return null;
-  }
-}
-
-export async function upsertShopListing(input: {
-  itemId: string;
-  priceCoins: number | null;
-  priceGems: number | null;
-  stock: number | null;
-  sort: number;
-  enabled: boolean;
-}): Promise<void> {
-  await db().query(
-    `INSERT INTO game_shop_listings (item_id, price_coins, price_gems, stock, sort, enabled, updated_at)
-     VALUES ($1,$2,$3,$4,$5,$6, now())
-     ON CONFLICT (item_id) DO UPDATE SET price_coins=EXCLUDED.price_coins, price_gems=EXCLUDED.price_gems,
-       stock=EXCLUDED.stock, sort=EXCLUDED.sort, enabled=EXCLUDED.enabled, updated_at=now()`,
-    [input.itemId, input.priceCoins, input.priceGems, input.stock, input.sort, input.enabled],
-  );
-}
-
-export async function deleteShopListing(id: string): Promise<void> {
-  await db().query(`DELETE FROM game_shop_listings WHERE id = $1`, [id]);
-}
-
-export async function setShopListingEnabled(id: string, enabled: boolean): Promise<void> {
-  await db().query(`UPDATE game_shop_listings SET enabled = $2, updated_at = now() WHERE id = $1`, [id, enabled]);
-}
-
-/* ---------------- Membership orders (spec 6.19 purchase flow) ------ */
 
 export interface MembershipOrderRow {
   code: string;

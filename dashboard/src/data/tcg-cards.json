@@ -7,7 +7,8 @@
   "hp": 40,
   "types": "Lửa, Nước",
   "number": "001/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "bearloch",
@@ -17,7 +18,8 @@
   "hp": 80,
   "types": "Kim loại, Cây",
   "number": "002/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "chrome_robo",
@@ -27,7 +29,8 @@
   "hp": 40,
   "types": "Kim loại",
   "number": "003/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "d0llf1n",
@@ -37,7 +40,8 @@
   "hp": 80,
   "types": "Nước",
   "number": "004/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "dark_robo",
@@ -47,7 +51,8 @@
   "hp": 40,
   "types": "Kim loại",
   "number": "005/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "f7u1t3ra",
@@ -57,7 +62,8 @@
   "hp": 40,
   "types": "Cây",
   "number": "006/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "foxko",
@@ -67,7 +73,8 @@
   "hp": 60,
   "types": "Lửa, Cây",
   "number": "007/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "l3gk0",
@@ -77,7 +84,8 @@
   "hp": 60,
   "types": "Cây",
   "number": "008/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "mk01_alpha",
@@ -87,7 +95,8 @@
   "hp": 70,
   "types": "Kim loại",
   "number": "009/411",
-  "evolvesTo": "mk01_delta"
+  "evolvesTo": "mk01_delta",
+  "set": "tuxemon"
  },
  {
   "slug": "mk01_beta",
@@ -97,7 +106,8 @@
   "hp": 70,
   "types": "Kim loại",
   "number": "010/411",
-  "evolvesTo": "mk01_delta"
+  "evolvesTo": "mk01_delta",
+  "set": "tuxemon"
  },
  {
   "slug": "mk01_delta",
@@ -107,7 +117,8 @@
   "hp": 80,
   "types": "Kim loại",
   "number": "011/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "mk01_gamma",
@@ -117,7 +128,8 @@
   "hp": 80,
   "types": "Kim loại",
   "number": "012/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "mk01_omega",
@@ -127,7 +139,8 @@
   "hp": 80,
   "types": "Kim loại",
   "number": "013/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "mk01_proto",
@@ -137,7 +150,8 @@
   "hp": 60,
   "types": "Kim loại",
   "number": "014/411",
-  "evolvesTo": "mk01_alpha"
+  "evolvesTo": "mk01_alpha",
+  "set": "tuxemon"
  },
  {
   "slug": "r0ck1tt3n",
@@ -147,7 +161,8 @@
   "hp": 60,
   "types": "Đất",
   "number": "015/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "rocktot",
@@ -157,7 +172,8 @@
   "hp": 80,
   "types": "Đất",
   "number": "016/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "xeon",
@@ -167,7 +183,8 @@
   "hp": 40,
   "types": "Kim loại",
   "number": "017/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "xeon_2",
@@ -177,7 +194,8 @@
   "hp": 40,
   "types": "Kim loại",
   "number": "018/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "rockitten",
@@ -187,7 +205,8 @@
   "hp": 50,
   "types": "Đất",
   "number": "019/411",
-  "evolvesTo": "rockat"
+  "evolvesTo": "rockat",
+  "set": "tuxemon"
  },
  {
   "slug": "rockat",
@@ -197,7 +216,8 @@
   "hp": 60,
   "types": "Đất",
   "number": "020/411",
-  "evolvesTo": "jemuar"
+  "evolvesTo": "jemuar",
+  "set": "tuxemon"
  },
  {
   "slug": "jemuar",
@@ -207,7 +227,8 @@
   "hp": 70,
   "types": "Đất, Vũ trụ",
   "number": "021/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "nut",
@@ -217,7 +238,8 @@
   "hp": 80,
   "types": "Kim loại",
   "number": "022/411",
-  "evolvesTo": "bolt"
+  "evolvesTo": "bolt",
+  "set": "tuxemon"
  },
  {
   "slug": "bolt",
@@ -227,7 +249,8 @@
   "hp": 90,
   "types": "Kim loại",
   "number": "023/411",
-  "evolvesTo": "arthrobolt"
+  "evolvesTo": "arthrobolt",
+  "set": "tuxemon"
  },
  {
   "slug": "arthrobolt",
@@ -237,7 +260,8 @@
   "hp": 60,
   "types": "Sét, Kim loại",
   "number": "024/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "tweesher",
@@ -247,7 +271,8 @@
   "hp": 40,
   "types": "Frost",
   "number": "025/411",
-  "evolvesTo": "heronquak"
+  "evolvesTo": "heronquak",
+  "set": "tuxemon"
  },
  {
   "slug": "heronquak",
@@ -257,7 +282,8 @@
   "hp": 50,
   "types": "Frost, Sky",
   "number": "026/411",
-  "evolvesTo": "eaglace"
+  "evolvesTo": "eaglace",
+  "set": "tuxemon"
  },
  {
   "slug": "eaglace",
@@ -267,7 +293,8 @@
   "hp": 60,
   "types": "Frost, Sky",
   "number": "027/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "lambert",
@@ -277,7 +304,8 @@
   "hp": 40,
   "types": "Cây",
   "number": "028/411",
-  "evolvesTo": "legko"
+  "evolvesTo": "legko",
+  "set": "tuxemon"
  },
  {
   "slug": "legko",
@@ -287,7 +315,8 @@
   "hp": 70,
   "types": "Cây",
   "number": "029/411",
-  "evolvesTo": "moloch"
+  "evolvesTo": "moloch",
+  "set": "tuxemon"
  },
  {
   "slug": "moloch",
@@ -297,7 +326,8 @@
   "hp": 90,
   "types": "Cây, Heroic",
   "number": "030/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "agnite",
@@ -307,7 +337,8 @@
   "hp": 60,
   "types": "Lửa",
   "number": "031/411",
-  "evolvesTo": "agnidon"
+  "evolvesTo": "agnidon",
+  "set": "tuxemon"
  },
  {
   "slug": "agnidon",
@@ -317,7 +348,8 @@
   "hp": 70,
   "types": "Lửa",
   "number": "032/411",
-  "evolvesTo": "agnigon"
+  "evolvesTo": "agnigon",
+  "set": "tuxemon"
  },
  {
   "slug": "agnigon",
@@ -327,7 +359,8 @@
   "hp": 80,
   "types": "Lửa, Bóng tối",
   "number": "033/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "grintot",
@@ -337,7 +370,8 @@
   "hp": 70,
   "types": "Đất",
   "number": "034/411",
-  "evolvesTo": "grinflare"
+  "evolvesTo": "grinflare",
+  "set": "tuxemon"
  },
  {
   "slug": "grinflare",
@@ -347,7 +381,8 @@
   "hp": 80,
   "types": "Đất, Lửa",
   "number": "035/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "grintrock",
@@ -357,7 +392,8 @@
   "hp": 80,
   "types": "Sét, Đất",
   "number": "036/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "memnomnom",
@@ -367,7 +403,8 @@
   "hp": 50,
   "types": "Thường",
   "number": "037/411",
-  "evolvesTo": "miaownolith"
+  "evolvesTo": "miaownolith",
+  "set": "tuxemon"
  },
  {
   "slug": "miaownolith",
@@ -377,7 +414,8 @@
   "hp": 60,
   "types": "Đất, Thường",
   "number": "038/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "pyraminx",
@@ -387,7 +425,8 @@
   "hp": 60,
   "types": "Vũ trụ, Thường",
   "number": "039/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "mauai",
@@ -397,7 +436,8 @@
   "hp": 50,
   "types": "Kim loại, Bóng tối",
   "number": "040/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "dollfin",
@@ -407,7 +447,8 @@
   "hp": 80,
   "types": "Nước",
   "number": "041/411",
-  "evolvesTo": "bigfin"
+  "evolvesTo": "bigfin",
+  "set": "tuxemon"
  },
  {
   "slug": "delfeco",
@@ -417,7 +458,8 @@
   "hp": 90,
   "types": "Nước, Cây",
   "number": "042/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "bigfin",
@@ -427,7 +469,8 @@
   "hp": 90,
   "types": "Nước",
   "number": "043/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "sharpfin",
@@ -437,7 +480,8 @@
   "hp": 90,
   "types": "Nước, Heroic",
   "number": "044/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "budaye",
@@ -447,7 +491,8 @@
   "hp": 40,
   "types": "Cây",
   "number": "045/411",
-  "evolvesTo": "bamboon"
+  "evolvesTo": "bamboon",
+  "set": "tuxemon"
  },
  {
   "slug": "bamboon",
@@ -457,7 +502,8 @@
   "hp": 50,
   "types": "Cây, Heroic",
   "number": "046/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "frondly",
@@ -467,7 +513,8 @@
   "hp": 50,
   "types": "Cây, Vũ trụ",
   "number": "047/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "ignibus",
@@ -477,7 +524,8 @@
   "hp": 80,
   "types": "Lửa",
   "number": "048/411",
-  "evolvesTo": "eruptibus"
+  "evolvesTo": "eruptibus",
+  "set": "tuxemon"
  },
  {
   "slug": "embazook",
@@ -487,7 +535,8 @@
   "hp": 70,
   "types": "Kim loại, Lửa",
   "number": "049/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "eruptibus",
@@ -497,7 +546,8 @@
   "hp": 90,
   "types": "Đất, Lửa",
   "number": "050/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "cataspike",
@@ -507,7 +557,8 @@
   "hp": 70,
   "types": "Kim loại, Venom",
   "number": "051/411",
-  "evolvesTo": "puparmor"
+  "evolvesTo": "puparmor",
+  "set": "tuxemon"
  },
  {
   "slug": "puparmor",
@@ -517,7 +568,8 @@
   "hp": 90,
   "types": "Kim loại, Venom",
   "number": "052/411",
-  "evolvesTo": "weavifly"
+  "evolvesTo": "weavifly",
+  "set": "tuxemon"
  },
  {
   "slug": "weavifly",
@@ -527,7 +579,8 @@
   "hp": 90,
   "types": "Kim loại, Sky",
   "number": "053/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "vamporm",
@@ -537,7 +590,8 @@
   "hp": 70,
   "types": "Venom, Bóng tối",
   "number": "054/411",
-  "evolvesTo": "dracune"
+  "evolvesTo": "dracune",
+  "set": "tuxemon"
  },
  {
   "slug": "dracune",
@@ -547,7 +601,8 @@
   "hp": 90,
   "types": "Venom, Bóng tối",
   "number": "055/411",
-  "evolvesTo": "fluttaflap"
+  "evolvesTo": "fluttaflap",
+  "set": "tuxemon"
  },
  {
   "slug": "fluttaflap",
@@ -557,7 +612,8 @@
   "hp": 90,
   "types": "Sky, Bóng tối",
   "number": "056/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "elofly",
@@ -567,7 +623,8 @@
   "hp": 40,
   "types": "Thường, Sky",
   "number": "057/411",
-  "evolvesTo": "elowind"
+  "evolvesTo": "elowind",
+  "set": "tuxemon"
  },
  {
   "slug": "elowind",
@@ -577,7 +634,8 @@
   "hp": 50,
   "types": "Sky, Thường",
   "number": "058/411",
-  "evolvesTo": "elostorm"
+  "evolvesTo": "elostorm",
+  "set": "tuxemon"
  },
  {
   "slug": "elostorm",
@@ -587,7 +645,8 @@
   "hp": 60,
   "types": "Thường, Sky",
   "number": "059/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "aardorn",
@@ -597,7 +656,8 @@
   "hp": 60,
   "types": "Thường",
   "number": "060/411",
-  "evolvesTo": "aardart"
+  "evolvesTo": "aardart",
+  "set": "tuxemon"
  },
  {
   "slug": "aardart",
@@ -607,7 +667,8 @@
   "hp": 70,
   "types": "Thường",
   "number": "061/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "squabbit",
@@ -617,7 +678,8 @@
   "hp": 60,
   "types": "Heroic",
   "number": "062/411",
-  "evolvesTo": "rabbitosaur"
+  "evolvesTo": "rabbitosaur",
+  "set": "tuxemon"
  },
  {
   "slug": "rabbitosaur",
@@ -627,7 +689,8 @@
   "hp": 70,
   "types": "Heroic",
   "number": "063/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "eyenemy",
@@ -637,7 +700,8 @@
   "hp": 60,
   "types": "Vũ trụ",
   "number": "064/411",
-  "evolvesTo": "eyesore"
+  "evolvesTo": "eyesore",
+  "set": "tuxemon"
  },
  {
   "slug": "eyesore",
@@ -647,7 +711,8 @@
   "hp": 70,
   "types": "Vũ trụ",
   "number": "065/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "pipis",
@@ -657,7 +722,8 @@
   "hp": 40,
   "types": "Sky, Thường",
   "number": "066/411",
-  "evolvesTo": "strella"
+  "evolvesTo": "strella",
+  "set": "tuxemon"
  },
  {
   "slug": "strella",
@@ -667,7 +733,8 @@
   "hp": 50,
   "types": "Sky, Thường",
   "number": "067/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "noctula",
@@ -677,7 +744,8 @@
   "hp": 40,
   "types": "Sky, Bóng tối",
   "number": "068/411",
-  "evolvesTo": "noctalo"
+  "evolvesTo": "noctalo",
+  "set": "tuxemon"
  },
  {
   "slug": "noctalo",
@@ -687,7 +755,8 @@
   "hp": 50,
   "types": "Sky, Bóng tối",
   "number": "069/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "nudiflot_male",
@@ -697,7 +766,8 @@
   "hp": 50,
   "types": "Nước, Venom",
   "number": "070/411",
-  "evolvesTo": "nudikill"
+  "evolvesTo": "nudikill",
+  "set": "tuxemon"
  },
  {
   "slug": "nudikill",
@@ -707,7 +777,8 @@
   "hp": 60,
   "types": "Nước, Venom",
   "number": "071/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "nudiflot_female",
@@ -717,7 +788,8 @@
   "hp": 50,
   "types": "Nước, Vũ trụ",
   "number": "072/411",
-  "evolvesTo": "nudimind"
+  "evolvesTo": "nudimind",
+  "set": "tuxemon"
  },
  {
   "slug": "nudimind",
@@ -727,7 +799,8 @@
   "hp": 60,
   "types": "Nước, Vũ trụ",
   "number": "073/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "katapill",
@@ -737,7 +810,8 @@
   "hp": 70,
   "types": "Kim loại, Venom",
   "number": "074/411",
-  "evolvesTo": "katacoon"
+  "evolvesTo": "katacoon",
+  "set": "tuxemon"
  },
  {
   "slug": "katacoon",
@@ -747,7 +821,8 @@
   "hp": 80,
   "types": "Kim loại, Venom",
   "number": "075/411",
-  "evolvesTo": "bugnin"
+  "evolvesTo": "bugnin",
+  "set": "tuxemon"
  },
  {
   "slug": "bugnin",
@@ -757,7 +832,8 @@
   "hp": 90,
   "types": "Kim loại, Venom",
   "number": "076/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "sumchon",
@@ -767,7 +843,8 @@
   "hp": 90,
   "types": "Kim loại, Heroic",
   "number": "077/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "dynastor",
@@ -777,7 +854,8 @@
   "hp": 60,
   "types": "Kim loại, Heroic",
   "number": "078/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "anu",
@@ -787,7 +865,8 @@
   "hp": 60,
   "types": "Vũ trụ",
   "number": "079/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "cardiling",
@@ -797,7 +876,8 @@
   "hp": 40,
   "types": "Lửa, Sky",
   "number": "080/411",
-  "evolvesTo": "cardiwing"
+  "evolvesTo": "cardiwing",
+  "set": "tuxemon"
  },
  {
   "slug": "cardiwing",
@@ -807,7 +887,8 @@
   "hp": 50,
   "types": "Lửa, Sky",
   "number": "081/411",
-  "evolvesTo": "cardinale"
+  "evolvesTo": "cardinale",
+  "set": "tuxemon"
  },
  {
   "slug": "cardinale",
@@ -817,7 +898,8 @@
   "hp": 60,
   "types": "Lửa, Sky",
   "number": "082/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "anoleaf",
@@ -827,7 +909,8 @@
   "hp": 60,
   "types": "Cây",
   "number": "083/411",
-  "evolvesTo": "gectile"
+  "evolvesTo": "gectile",
+  "set": "tuxemon"
  },
  {
   "slug": "gectile",
@@ -837,7 +920,8 @@
   "hp": 50,
   "types": "Cây",
   "number": "084/411",
-  "evolvesTo": "velocitile"
+  "evolvesTo": "velocitile",
+  "set": "tuxemon"
  },
  {
   "slug": "velocitile",
@@ -847,7 +931,8 @@
   "hp": 60,
   "types": "Cây",
   "number": "085/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "fluoresfin",
@@ -857,7 +942,8 @@
   "hp": 80,
   "types": "Sét, Nước",
   "number": "086/411",
-  "evolvesTo": "incandesfin"
+  "evolvesTo": "incandesfin",
+  "set": "tuxemon"
  },
  {
   "slug": "incandesfin",
@@ -867,7 +953,8 @@
   "hp": 90,
   "types": "Sét, Nước",
   "number": "087/411",
-  "evolvesTo": "lightmare"
+  "evolvesTo": "lightmare",
+  "set": "tuxemon"
  },
  {
   "slug": "lightmare",
@@ -877,7 +964,8 @@
   "hp": 100,
   "types": "Sét, Nước",
   "number": "088/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "cairfrey",
@@ -887,7 +975,8 @@
   "hp": 80,
   "types": "Thường",
   "number": "089/411",
-  "evolvesTo": "possessun"
+  "evolvesTo": "possessun",
+  "set": "tuxemon"
  },
  {
   "slug": "possessun",
@@ -897,7 +986,8 @@
   "hp": 90,
   "types": "Bóng tối",
   "number": "090/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "dandicub",
@@ -907,7 +997,8 @@
   "hp": 80,
   "types": "Cây",
   "number": "091/411",
-  "evolvesTo": "dandylion"
+  "evolvesTo": "dandylion",
+  "set": "tuxemon"
  },
  {
   "slug": "dandylion",
@@ -917,7 +1008,8 @@
   "hp": 60,
   "types": "Cây",
   "number": "092/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "embra",
@@ -927,7 +1019,8 @@
   "hp": 80,
   "types": "Lửa",
   "number": "093/411",
-  "evolvesTo": "ruption"
+  "evolvesTo": "ruption",
+  "set": "tuxemon"
  },
  {
   "slug": "ruption",
@@ -937,7 +1030,8 @@
   "hp": 80,
   "types": "Lửa",
   "number": "094/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "shybulb",
@@ -947,7 +1041,8 @@
   "hp": 40,
   "types": "Cây",
   "number": "095/411",
-  "evolvesTo": "narcileaf"
+  "evolvesTo": "narcileaf",
+  "set": "tuxemon"
  },
  {
   "slug": "narcileaf",
@@ -957,7 +1052,8 @@
   "hp": 90,
   "types": "Cây",
   "number": "096/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "tikoal",
@@ -967,7 +1063,8 @@
   "hp": 80,
   "types": "Cây, Lửa",
   "number": "097/411",
-  "evolvesTo": "tikorch"
+  "evolvesTo": "tikorch",
+  "set": "tuxemon"
  },
  {
   "slug": "tikorch",
@@ -977,7 +1074,8 @@
   "hp": 90,
   "types": "Cây, Lửa",
   "number": "098/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "hatchling",
@@ -987,7 +1085,8 @@
   "hp": 40,
   "types": "Sky",
   "number": "099/411",
-  "evolvesTo": "birdling"
+  "evolvesTo": "birdling",
+  "set": "tuxemon"
  },
  {
   "slug": "birdling",
@@ -997,7 +1096,8 @@
   "hp": 50,
   "types": "Sky",
   "number": "100/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "bursa",
@@ -1007,7 +1107,8 @@
   "hp": 40,
   "types": "Lửa, Vũ trụ",
   "number": "101/411",
-  "evolvesTo": "flambear"
+  "evolvesTo": "flambear",
+  "set": "tuxemon"
  },
  {
   "slug": "flambear",
@@ -1017,7 +1118,8 @@
   "hp": 80,
   "types": "Lửa, Vũ trụ",
   "number": "102/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "trapsnap",
@@ -1027,7 +1129,8 @@
   "hp": 70,
   "types": "Cây, Bóng tối",
   "number": "103/411",
-  "evolvesTo": "sapsnap"
+  "evolvesTo": "sapsnap",
+  "set": "tuxemon"
  },
  {
   "slug": "sapsnap",
@@ -1037,7 +1140,8 @@
   "hp": 80,
   "types": "Cây, Bóng tối",
   "number": "104/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "forturtle",
@@ -1047,7 +1151,8 @@
   "hp": 40,
   "types": "Vũ trụ",
   "number": "105/411",
-  "evolvesTo": "prophetoise"
+  "evolvesTo": "prophetoise",
+  "set": "tuxemon"
  },
  {
   "slug": "prophetoise",
@@ -1057,7 +1162,8 @@
   "hp": 50,
   "types": "Lửa, Vũ trụ",
   "number": "106/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "pythwire",
@@ -1067,7 +1173,8 @@
   "hp": 60,
   "types": "Sét, Kim loại",
   "number": "107/411",
-  "evolvesTo": "ouroboutlet"
+  "evolvesTo": "ouroboutlet",
+  "set": "tuxemon"
  },
  {
   "slug": "ouroboutlet",
@@ -1077,7 +1184,8 @@
   "hp": 70,
   "types": "Sét, Kim loại",
   "number": "108/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "sockeserp",
@@ -1087,7 +1195,8 @@
   "hp": 70,
   "types": "Sét, Kim loại",
   "number": "109/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "komodraw",
@@ -1097,7 +1206,8 @@
   "hp": 40,
   "types": "Thường",
   "number": "110/411",
-  "evolvesTo": "komoduel"
+  "evolvesTo": "komoduel",
+  "set": "tuxemon"
  },
  {
   "slug": "grimachin",
@@ -1107,7 +1217,8 @@
   "hp": 50,
   "types": "Kim loại",
   "number": "111/411",
-  "evolvesTo": "tigrock"
+  "evolvesTo": "tigrock",
+  "set": "tuxemon"
  },
  {
   "slug": "tigrock",
@@ -1117,7 +1228,8 @@
   "hp": 60,
   "types": "Kim loại",
   "number": "112/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "tumbleworm",
@@ -1127,7 +1239,8 @@
   "hp": 70,
   "types": "Venom",
   "number": "113/411",
-  "evolvesTo": "tumblebee"
+  "evolvesTo": "tumblebee",
+  "set": "tuxemon"
  },
  {
   "slug": "tumblebee",
@@ -1137,7 +1250,8 @@
   "hp": 50,
   "types": "Venom",
   "number": "114/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "sampsack",
@@ -1147,7 +1261,8 @@
   "hp": 80,
   "types": "Heroic",
   "number": "115/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "sampsage",
@@ -1157,7 +1272,8 @@
   "hp": 40,
   "types": "Vũ trụ",
   "number": "116/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "abesnaki",
@@ -1167,7 +1283,8 @@
   "hp": 60,
   "types": "Vũ trụ",
   "number": "117/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "araignee",
@@ -1177,7 +1294,8 @@
   "hp": 80,
   "types": "Venom",
   "number": "118/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "axolightl",
@@ -1187,7 +1305,8 @@
   "hp": 50,
   "types": "Nước",
   "number": "119/411",
-  "evolvesTo": "ampystoma"
+  "evolvesTo": "ampystoma",
+  "set": "tuxemon"
  },
  {
   "slug": "capiti",
@@ -1197,7 +1316,8 @@
   "hp": 40,
   "types": "Thường",
   "number": "120/411",
-  "evolvesTo": "capinyah"
+  "evolvesTo": "capinyah",
+  "set": "tuxemon"
  },
  {
   "slug": "capinyah",
@@ -1207,7 +1327,8 @@
   "hp": 50,
   "types": "Heroic",
   "number": "121/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "cochini",
@@ -1217,7 +1338,8 @@
   "hp": 60,
   "types": "Thường",
   "number": "122/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "coleorus",
@@ -1227,7 +1349,8 @@
   "hp": 40,
   "types": "Sét, Cây",
   "number": "123/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "conifrost",
@@ -1237,7 +1360,8 @@
   "hp": 80,
   "types": "Cây, Frost",
   "number": "124/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "cowpignon",
@@ -1247,7 +1371,8 @@
   "hp": 40,
   "types": "Cây, Vũ trụ",
   "number": "125/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "djinnbo",
@@ -1257,7 +1382,8 @@
   "hp": 40,
   "types": "Lửa, Bóng tối",
   "number": "126/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "dune_pincher",
@@ -1267,7 +1393,8 @@
   "hp": 80,
   "types": "Thường",
   "number": "127/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "foofle",
@@ -1277,7 +1404,8 @@
   "hp": 60,
   "types": "Thường",
   "number": "128/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "ghosteeth",
@@ -1287,7 +1415,8 @@
   "hp": 80,
   "types": "Bóng tối",
   "number": "129/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "hydrone",
@@ -1297,7 +1426,8 @@
   "hp": 40,
   "types": "Kim loại, Nước",
   "number": "130/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "lapinou",
@@ -1307,7 +1437,8 @@
   "hp": 60,
   "types": "Thường",
   "number": "131/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "manosting",
@@ -1317,7 +1448,8 @@
   "hp": 60,
   "types": "Nước, Venom",
   "number": "132/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "masknake",
@@ -1327,7 +1459,8 @@
   "hp": 60,
   "types": "Vũ trụ",
   "number": "133/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "pigabyte",
@@ -1337,7 +1470,8 @@
   "hp": 80,
   "types": "Kim loại, Thường",
   "number": "134/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "polyrock",
@@ -1347,7 +1481,8 @@
   "hp": 80,
   "types": "Đất, Heroic",
   "number": "135/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "propellercat",
@@ -1357,7 +1492,8 @@
   "hp": 40,
   "types": "Thường, Sky",
   "number": "136/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "sclairus",
@@ -1367,7 +1503,8 @@
   "hp": 80,
   "types": "Cây",
   "number": "137/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "sludgehog",
@@ -1377,7 +1514,8 @@
   "hp": 80,
   "types": "Đất, Cây",
   "number": "138/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "spighter",
@@ -1387,7 +1525,8 @@
   "hp": 80,
   "types": "Venom, Bóng tối",
   "number": "139/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "toufigel",
@@ -1397,7 +1536,8 @@
   "hp": 60,
   "types": "Thường",
   "number": "140/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "tourbidi",
@@ -1407,7 +1547,8 @@
   "hp": 40,
   "types": "Cây",
   "number": "141/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "volcoli",
@@ -1417,7 +1558,8 @@
   "hp": 40,
   "types": "Cây, Vũ trụ",
   "number": "142/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "botbot",
@@ -1427,7 +1569,8 @@
   "hp": 70,
   "types": "Kim loại",
   "number": "143/411",
-  "evolvesTo": "av8r"
+  "evolvesTo": "av8r",
+  "set": "tuxemon"
  },
  {
   "slug": "av8r",
@@ -1437,7 +1580,8 @@
   "hp": 50,
   "types": "Kim loại, Sky",
   "number": "144/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "picc",
@@ -1447,7 +1591,8 @@
   "hp": 90,
   "types": "Kim loại, Nước",
   "number": "145/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "mrmoswitch",
@@ -1457,7 +1602,8 @@
   "hp": 50,
   "types": "Sét, Kim loại",
   "number": "146/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "k9",
@@ -1467,7 +1613,8 @@
   "hp": 60,
   "types": "Kim loại, Heroic",
   "number": "147/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "b_ver_1",
@@ -1477,7 +1624,8 @@
   "hp": 70,
   "types": "Kim loại, Cây",
   "number": "148/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "zunna",
@@ -1487,7 +1635,8 @@
   "hp": 80,
   "types": "Thường",
   "number": "149/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "vivipere",
@@ -1497,7 +1646,8 @@
   "hp": 60,
   "types": "Thường",
   "number": "150/411",
-  "evolvesTo": "vivicinder"
+  "evolvesTo": "vivicinder",
+  "set": "tuxemon"
  },
  {
   "slug": "vivicinder",
@@ -1507,7 +1657,8 @@
   "hp": 70,
   "types": "Lửa",
   "number": "151/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "viviphyta",
@@ -1517,7 +1668,8 @@
   "hp": 70,
   "types": "Cây",
   "number": "152/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "viviteel",
@@ -1527,7 +1679,8 @@
   "hp": 70,
   "types": "Kim loại",
   "number": "153/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "vivitrans",
@@ -1537,7 +1690,8 @@
   "hp": 70,
   "types": "Frost",
   "number": "154/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "vivitron",
@@ -1547,7 +1701,8 @@
   "hp": 70,
   "types": "Sét",
   "number": "155/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "vividactil",
@@ -1557,7 +1712,8 @@
   "hp": 50,
   "types": "Đất",
   "number": "156/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "vivisource",
@@ -1567,7 +1723,8 @@
   "hp": 70,
   "types": "Nước",
   "number": "157/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "chloragon",
@@ -1577,7 +1734,8 @@
   "hp": 60,
   "types": "Cây",
   "number": "158/411",
-  "evolvesTo": "sapragon"
+  "evolvesTo": "sapragon",
+  "set": "tuxemon"
  },
  {
   "slug": "sapragon",
@@ -1587,7 +1745,8 @@
   "hp": 70,
   "types": "Cây",
   "number": "159/411",
-  "evolvesTo": "dragarbor"
+  "evolvesTo": "dragarbor",
+  "set": "tuxemon"
  },
  {
   "slug": "dragarbor",
@@ -1597,7 +1756,8 @@
   "hp": 80,
   "types": "Cây, Vũ trụ",
   "number": "160/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "rhincus",
@@ -1607,7 +1767,8 @@
   "hp": 40,
   "types": "Đất, Sky",
   "number": "161/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "shammer",
@@ -1617,7 +1778,8 @@
   "hp": 60,
   "types": "Đất",
   "number": "162/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "drokoro",
@@ -1627,7 +1789,8 @@
   "hp": 60,
   "types": "Lửa",
   "number": "163/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "yiinaang",
@@ -1637,7 +1800,8 @@
   "hp": 80,
   "types": "Bóng tối, Vũ trụ",
   "number": "164/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "snarlon",
@@ -1647,7 +1811,8 @@
   "hp": 60,
   "types": "Bóng tối, Thường",
   "number": "165/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "conileaf",
@@ -1657,7 +1822,8 @@
   "hp": 80,
   "types": "Cây",
   "number": "166/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "foxfire",
@@ -1667,7 +1833,8 @@
   "hp": 60,
   "types": "Lửa",
   "number": "167/411",
-  "evolvesTo": "vulpyre"
+  "evolvesTo": "vulpyre",
+  "set": "tuxemon"
  },
  {
   "slug": "vulpyre",
@@ -1677,7 +1844,8 @@
   "hp": 60,
   "types": "Lửa",
   "number": "168/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "pharfan",
@@ -1687,7 +1855,8 @@
   "hp": 80,
   "types": "Nước",
   "number": "169/411",
-  "evolvesTo": "pharavion"
+  "evolvesTo": "pharavion",
+  "set": "tuxemon"
  },
  {
   "slug": "nostray",
@@ -1697,7 +1866,8 @@
   "hp": 80,
   "types": "Nước",
   "number": "170/411",
-  "evolvesTo": "shnark"
+  "evolvesTo": "shnark",
+  "set": "tuxemon"
  },
  {
   "slug": "shnark",
@@ -1707,7 +1877,8 @@
   "hp": 90,
   "types": "Nước",
   "number": "171/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "chillimp",
@@ -1717,7 +1888,8 @@
   "hp": 70,
   "types": "Frost, Heroic",
   "number": "172/411",
-  "evolvesTo": "snowrilla"
+  "evolvesTo": "snowrilla",
+  "set": "tuxemon"
  },
  {
   "slug": "snowrilla",
@@ -1727,7 +1899,8 @@
   "hp": 80,
   "types": "Frost, Heroic",
   "number": "173/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "flacono",
@@ -1737,7 +1910,8 @@
   "hp": 40,
   "types": "Sky",
   "number": "174/411",
-  "evolvesTo": "corvix"
+  "evolvesTo": "corvix",
+  "set": "tuxemon"
  },
  {
   "slug": "corvix",
@@ -1747,7 +1921,8 @@
   "hp": 50,
   "types": "Sky",
   "number": "175/411",
-  "evolvesTo": "gryfix"
+  "evolvesTo": "gryfix",
+  "set": "tuxemon"
  },
  {
   "slug": "gryfix",
@@ -1757,7 +1932,8 @@
   "hp": 60,
   "types": "Sky",
   "number": "176/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "wrougon",
@@ -1767,7 +1943,8 @@
   "hp": 60,
   "types": "Kim loại",
   "number": "177/411",
-  "evolvesTo": "allagon"
+  "evolvesTo": "allagon",
+  "set": "tuxemon"
  },
  {
   "slug": "allagon",
@@ -1777,7 +1954,8 @@
   "hp": 70,
   "types": "Kim loại",
   "number": "178/411",
-  "evolvesTo": "ferricran"
+  "evolvesTo": "ferricran",
+  "set": "tuxemon"
  },
  {
   "slug": "ferricran",
@@ -1787,7 +1965,8 @@
   "hp": 80,
   "types": "Kim loại",
   "number": "179/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "seirein",
@@ -1797,7 +1976,8 @@
   "hp": 80,
   "types": "Lửa, Bóng tối",
   "number": "180/411",
-  "evolvesTo": "loliferno"
+  "evolvesTo": "loliferno",
+  "set": "tuxemon"
  },
  {
   "slug": "loliferno",
@@ -1807,7 +1987,8 @@
   "hp": 50,
   "types": "Lửa, Bóng tối",
   "number": "181/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "spirain",
@@ -1817,7 +1998,8 @@
   "hp": 50,
   "types": "Nước, Sky",
   "number": "182/411",
-  "evolvesTo": "tornicane"
+  "evolvesTo": "tornicane",
+  "set": "tuxemon"
  },
  {
   "slug": "tornicane",
@@ -1827,7 +2009,8 @@
   "hp": 60,
   "types": "Nước, Sky",
   "number": "183/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "dinoflop",
@@ -1837,7 +2020,8 @@
   "hp": 60,
   "types": "Đất",
   "number": "184/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "enduros",
@@ -1847,7 +2031,8 @@
   "hp": 80,
   "types": "Heroic",
   "number": "185/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "galnec",
@@ -1857,7 +2042,8 @@
   "hp": 60,
   "types": "Đất",
   "number": "186/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "fruitera",
@@ -1867,7 +2053,8 @@
   "hp": 40,
   "types": "Cây",
   "number": "187/411",
-  "evolvesTo": "megafruitera"
+  "evolvesTo": "megafruitera",
+  "set": "tuxemon"
  },
  {
   "slug": "megafruitera",
@@ -1877,7 +2064,8 @@
   "hp": 50,
   "types": "Cây, Sky",
   "number": "188/411",
-  "evolvesTo": "spectera"
+  "evolvesTo": "spectera",
+  "set": "tuxemon"
  },
  {
   "slug": "spectera",
@@ -1887,7 +2075,8 @@
   "hp": 60,
   "types": "Cây, Sky",
   "number": "189/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "pilthropus",
@@ -1897,7 +2086,8 @@
   "hp": 40,
   "types": "Đất",
   "number": "190/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "coproblight",
@@ -1907,7 +2097,8 @@
   "hp": 80,
   "types": "Đất",
   "number": "191/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "chromeye",
@@ -1917,7 +2108,8 @@
   "hp": 80,
   "types": "Kim loại, Vũ trụ",
   "number": "192/411",
-  "evolvesTo": "angrito"
+  "evolvesTo": "angrito",
+  "set": "tuxemon"
  },
  {
   "slug": "angrito",
@@ -1927,7 +2119,8 @@
   "hp": 90,
   "types": "Kim loại, Vũ trụ",
   "number": "193/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "happito",
@@ -1937,7 +2130,8 @@
   "hp": 90,
   "types": "Kim loại, Vũ trụ",
   "number": "194/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "neutrito",
@@ -1947,7 +2141,8 @@
   "hp": 90,
   "types": "Kim loại, Vũ trụ",
   "number": "195/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "sadito",
@@ -1957,7 +2152,8 @@
   "hp": 90,
   "types": "Kim loại, Vũ trụ",
   "number": "196/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "fancair",
@@ -1967,7 +2163,8 @@
   "hp": 40,
   "types": "Sét, Sky",
   "number": "197/411",
-  "evolvesTo": "windeye"
+  "evolvesTo": "windeye",
+  "set": "tuxemon"
  },
  {
   "slug": "windeye",
@@ -1977,7 +2174,8 @@
   "hp": 50,
   "types": "Sét, Kim loại",
   "number": "198/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "pairagrin",
@@ -1987,7 +2185,8 @@
   "hp": 40,
   "types": "Sky",
   "number": "199/411",
-  "evolvesTo": "pairagrim"
+  "evolvesTo": "pairagrim",
+  "set": "tuxemon"
  },
  {
   "slug": "pairagrim",
@@ -1997,7 +2196,8 @@
   "hp": 50,
   "types": "Sky",
   "number": "200/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "skwib",
@@ -2007,7 +2207,8 @@
   "hp": 50,
   "types": "Thường",
   "number": "201/411",
-  "evolvesTo": "octabode"
+  "evolvesTo": "octabode",
+  "set": "tuxemon"
  },
  {
   "slug": "octabode",
@@ -2017,7 +2218,8 @@
   "hp": 60,
   "types": "Đất, Thường",
   "number": "202/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "drashimi",
@@ -2027,7 +2229,8 @@
   "hp": 50,
   "types": "Cây",
   "number": "203/411",
-  "evolvesTo": "tsushimi"
+  "evolvesTo": "tsushimi",
+  "set": "tuxemon"
  },
  {
   "slug": "tsushimi",
@@ -2037,7 +2240,8 @@
   "hp": 70,
   "types": "Cây",
   "number": "204/411",
-  "evolvesTo": "tobishimi"
+  "evolvesTo": "tobishimi",
+  "set": "tuxemon"
  },
  {
   "slug": "tobishimi",
@@ -2047,7 +2251,8 @@
   "hp": 80,
   "types": "Cây",
   "number": "205/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "selket",
@@ -2057,7 +2262,8 @@
   "hp": 70,
   "types": "Đất, Venom",
   "number": "206/411",
-  "evolvesTo": "selmatek"
+  "evolvesTo": "selmatek",
+  "set": "tuxemon"
  },
  {
   "slug": "selmatek",
@@ -2067,7 +2273,8 @@
   "hp": 80,
   "types": "Đất, Venom",
   "number": "207/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "furnursus",
@@ -2077,7 +2284,8 @@
   "hp": 40,
   "types": "Lửa",
   "number": "208/411",
-  "evolvesTo": "statursus"
+  "evolvesTo": "statursus",
+  "set": "tuxemon"
  },
  {
   "slug": "statursus",
@@ -2087,7 +2295,8 @@
   "hp": 50,
   "types": "Lửa, Vũ trụ",
   "number": "209/411",
-  "evolvesTo": "coaldiak"
+  "evolvesTo": "coaldiak",
+  "set": "tuxemon"
  },
  {
   "slug": "baoby",
@@ -2097,7 +2306,8 @@
   "hp": 80,
   "types": "Cây",
   "number": "210/411",
-  "evolvesTo": "baobaraffe"
+  "evolvesTo": "baobaraffe",
+  "set": "tuxemon"
  },
  {
   "slug": "baobaraffe",
@@ -2107,7 +2317,8 @@
   "hp": 90,
   "types": "Cây",
   "number": "211/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "boltnu",
@@ -2117,7 +2328,8 @@
   "hp": 80,
   "types": "Kim loại",
   "number": "212/411",
-  "evolvesTo": "exclawvate"
+  "evolvesTo": "exclawvate",
+  "set": "tuxemon"
  },
  {
   "slug": "exclawvate",
@@ -2127,7 +2339,8 @@
   "hp": 70,
   "types": "Kim loại",
   "number": "213/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "tetrchimp",
@@ -2137,7 +2350,8 @@
   "hp": 40,
   "types": "Sét, Vũ trụ",
   "number": "214/411",
-  "evolvesTo": "apeoro"
+  "evolvesTo": "apeoro",
+  "set": "tuxemon"
  },
  {
   "slug": "apeoro",
@@ -2147,7 +2361,8 @@
   "hp": 50,
   "types": "Sét, Vũ trụ",
   "number": "215/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "turnipper",
@@ -2157,7 +2372,8 @@
   "hp": 50,
   "types": "Cây",
   "number": "216/411",
-  "evolvesTo": "beenstalker"
+  "evolvesTo": "beenstalker",
+  "set": "tuxemon"
  },
  {
   "slug": "beenstalker",
@@ -2167,7 +2383,8 @@
   "hp": 60,
   "types": "Cây",
   "number": "217/411",
-  "evolvesTo": "wendigger"
+  "evolvesTo": "wendigger",
+  "set": "tuxemon"
  },
  {
   "slug": "wendigger",
@@ -2177,7 +2394,8 @@
   "hp": 90,
   "types": "Cây, Bóng tối",
   "number": "218/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "altie",
@@ -2187,7 +2405,8 @@
   "hp": 40,
   "types": "Vũ trụ",
   "number": "219/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "metesaur",
@@ -2197,7 +2416,8 @@
   "hp": 40,
   "types": "Đất, Lửa",
   "number": "220/411",
-  "evolvesTo": "qetzlrokilus"
+  "evolvesTo": "qetzlrokilus",
+  "set": "tuxemon"
  },
  {
   "slug": "qetzlrokilus",
@@ -2207,7 +2427,8 @@
   "hp": 50,
   "types": "Đất, Lửa",
   "number": "221/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "rosarin",
@@ -2217,7 +2438,8 @@
   "hp": 40,
   "types": "Cây",
   "number": "222/411",
-  "evolvesTo": "toxiris"
+  "evolvesTo": "toxiris",
+  "set": "tuxemon"
  },
  {
   "slug": "toxiris",
@@ -2227,7 +2449,8 @@
   "hp": 50,
   "types": "Cây, Venom",
   "number": "223/411",
-  "evolvesTo": "ninjasmine"
+  "evolvesTo": "ninjasmine",
+  "set": "tuxemon"
  },
  {
   "slug": "ninjasmine",
@@ -2237,7 +2460,8 @@
   "hp": 60,
   "types": "Cây, Venom",
   "number": "224/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "jelillow",
@@ -2247,7 +2471,8 @@
   "hp": 80,
   "types": "Nước",
   "number": "225/411",
-  "evolvesTo": "bedoo"
+  "evolvesTo": "bedoo",
+  "set": "tuxemon"
  },
  {
   "slug": "bedoo",
@@ -2257,7 +2482,8 @@
   "hp": 90,
   "types": "Nước",
   "number": "226/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "merlicun",
@@ -2267,7 +2493,8 @@
   "hp": 60,
   "types": "Vũ trụ, Thường",
   "number": "227/411",
-  "evolvesTo": "firomenis"
+  "evolvesTo": "firomenis",
+  "set": "tuxemon"
  },
  {
   "slug": "firomenis",
@@ -2277,7 +2504,8 @@
   "hp": 70,
   "types": "Kim loại, Vũ trụ",
   "number": "228/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "fordin",
@@ -2287,7 +2515,8 @@
   "hp": 80,
   "types": "Cây",
   "number": "229/411",
-  "evolvesTo": "stegofor"
+  "evolvesTo": "stegofor",
+  "set": "tuxemon"
  },
  {
   "slug": "stegofor",
@@ -2297,7 +2526,8 @@
   "hp": 90,
   "types": "Cây",
   "number": "230/411",
-  "evolvesTo": "brachifor"
+  "evolvesTo": "brachifor",
+  "set": "tuxemon"
  },
  {
   "slug": "brachifor",
@@ -2307,7 +2537,8 @@
   "hp": 100,
   "types": "Cây",
   "number": "231/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "spoilurm",
@@ -2317,7 +2548,8 @@
   "hp": 60,
   "types": "Venom",
   "number": "232/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "brewdin",
@@ -2327,7 +2559,8 @@
   "hp": 60,
   "types": "Nước, Bóng tối",
   "number": "233/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "urcine",
@@ -2337,7 +2570,8 @@
   "hp": 80,
   "types": "Bóng tối, Heroic",
   "number": "234/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "tarpeur",
@@ -2347,7 +2581,8 @@
   "hp": 70,
   "types": "Cây",
   "number": "235/411",
-  "evolvesTo": "vigueur"
+  "evolvesTo": "vigueur",
+  "set": "tuxemon"
  },
  {
   "slug": "vigueur",
@@ -2357,7 +2592,8 @@
   "hp": 80,
   "types": "Cây, Heroic",
   "number": "236/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "taupypus",
@@ -2367,7 +2603,8 @@
   "hp": 60,
   "types": "Nước, Thường",
   "number": "237/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "tumblequill",
@@ -2377,7 +2614,8 @@
   "hp": 60,
   "types": "Đất, Thường",
   "number": "238/411",
-  "evolvesTo": "tumbledillo"
+  "evolvesTo": "tumbledillo",
+  "set": "tuxemon"
  },
  {
   "slug": "tumbledillo",
@@ -2387,7 +2625,8 @@
   "hp": 70,
   "types": "Đất, Thường",
   "number": "239/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "spycozeus",
@@ -2397,7 +2636,8 @@
   "hp": 60,
   "types": "Cây",
   "number": "240/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "mystikapi",
@@ -2407,7 +2647,8 @@
   "hp": 80,
   "types": "Vũ trụ",
   "number": "241/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "nuenflu",
@@ -2417,7 +2658,8 @@
   "hp": 60,
   "types": "Venom, Frost",
   "number": "242/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "snock",
@@ -2427,7 +2669,8 @@
   "hp": 60,
   "types": "Thường",
   "number": "243/411",
-  "evolvesTo": "pythock"
+  "evolvesTo": "pythock",
+  "set": "tuxemon"
  },
  {
   "slug": "pythock",
@@ -2437,7 +2680,8 @@
   "hp": 70,
   "types": "Bóng tối, Thường",
   "number": "244/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "snaki",
@@ -2447,7 +2691,8 @@
   "hp": 60,
   "types": "Thường",
   "number": "245/411",
-  "evolvesTo": "snokari"
+  "evolvesTo": "snokari",
+  "set": "tuxemon"
  },
  {
   "slug": "snokari",
@@ -2457,7 +2702,8 @@
   "hp": 70,
   "types": "Thường",
   "number": "246/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "lunight",
@@ -2467,7 +2713,8 @@
   "hp": 40,
   "types": "Bóng tối, Vũ trụ",
   "number": "247/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "solight",
@@ -2477,7 +2724,8 @@
   "hp": 40,
   "types": "Lửa, Vũ trụ",
   "number": "248/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "wolffsky",
@@ -2487,7 +2735,8 @@
   "hp": 60,
   "types": "Cây, Frost",
   "number": "249/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "bumbulus",
@@ -2497,7 +2746,8 @@
   "hp": 80,
   "types": "Sky",
   "number": "250/411",
-  "evolvesTo": "nimbulex"
+  "evolvesTo": "nimbulex",
+  "set": "tuxemon"
  },
  {
   "slug": "nimbulex",
@@ -2507,7 +2757,8 @@
   "hp": 90,
   "types": "Sét, Sky",
   "number": "251/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "howl",
@@ -2517,7 +2768,8 @@
   "hp": 40,
   "types": "Thường, Sky",
   "number": "252/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "cateye",
@@ -2527,7 +2779,8 @@
   "hp": 60,
   "types": "Vũ trụ",
   "number": "253/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "fuzzlet",
@@ -2537,7 +2790,8 @@
   "hp": 80,
   "types": "Vũ trụ, Thường",
   "number": "254/411",
-  "evolvesTo": "fuzzina"
+  "evolvesTo": "fuzzina",
+  "set": "tuxemon"
  },
  {
   "slug": "fuzzina",
@@ -2547,7 +2801,8 @@
   "hp": 90,
   "types": "Vũ trụ, Thường",
   "number": "255/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "flisces",
@@ -2557,7 +2812,8 @@
   "hp": 80,
   "types": "Nước, Sky",
   "number": "256/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "mingdyn",
@@ -2567,7 +2823,8 @@
   "hp": 60,
   "types": "Lửa, Sky",
   "number": "257/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "uneye",
@@ -2577,7 +2834,8 @@
   "hp": 80,
   "types": "Bóng tối, Vũ trụ",
   "number": "258/411",
-  "evolvesTo": "lendos"
+  "evolvesTo": "lendos",
+  "set": "tuxemon"
  },
  {
   "slug": "lendos",
@@ -2587,7 +2845,8 @@
   "hp": 90,
   "types": "Bóng tối, Vũ trụ",
   "number": "259/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "ziggurat",
@@ -2597,7 +2856,8 @@
   "hp": 60,
   "types": "Đất, Thường",
   "number": "260/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "urcheedle",
@@ -2607,7 +2867,8 @@
   "hp": 80,
   "types": "Đất, Venom",
   "number": "261/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "joulraton",
@@ -2617,7 +2878,8 @@
   "hp": 60,
   "types": "Sét",
   "number": "262/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "pantherafira",
@@ -2627,7 +2889,8 @@
   "hp": 50,
   "types": "Lửa, Thường",
   "number": "263/411",
-  "evolvesTo": "criniotherme"
+  "evolvesTo": "criniotherme",
+  "set": "tuxemon"
  },
  {
   "slug": "criniotherme",
@@ -2637,7 +2900,8 @@
   "hp": 60,
   "types": "Lửa, Thường",
   "number": "264/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "dankush",
@@ -2647,7 +2911,8 @@
   "hp": 40,
   "types": "Cây, Lửa",
   "number": "265/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "cherubat",
@@ -2657,7 +2922,8 @@
   "hp": 40,
   "types": "Sky, Vũ trụ",
   "number": "266/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "ambuwl",
@@ -2667,7 +2933,8 @@
   "hp": 40,
   "types": "Vũ trụ",
   "number": "267/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "woodoor",
@@ -2677,7 +2944,8 @@
   "hp": 40,
   "types": "Cây",
   "number": "268/411",
-  "evolvesTo": "blasdoor"
+  "evolvesTo": "blasdoor",
+  "set": "tuxemon"
  },
  {
   "slug": "blasdoor",
@@ -2687,7 +2955,8 @@
   "hp": 50,
   "types": "Kim loại",
   "number": "269/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "rhinocarpe",
@@ -2697,7 +2966,8 @@
   "hp": 80,
   "types": "Nước, Heroic",
   "number": "270/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "kernel",
@@ -2707,7 +2977,8 @@
   "hp": 40,
   "types": "Sét, Kim loại",
   "number": "271/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "tux",
@@ -2717,7 +2988,8 @@
   "hp": 40,
   "types": "Frost, Heroic",
   "number": "272/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "hotline",
@@ -2727,7 +2999,8 @@
   "hp": 40,
   "types": "Kim loại, Lửa",
   "number": "273/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "rinocereed",
@@ -2737,7 +3010,8 @@
   "hp": 80,
   "types": "Cây",
   "number": "274/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "potturmeist",
@@ -2747,7 +3021,8 @@
   "hp": 80,
   "types": "Đất, Bóng tối",
   "number": "275/411",
-  "evolvesTo": "potturney"
+  "evolvesTo": "potturney",
+  "set": "tuxemon"
  },
  {
   "slug": "potturney",
@@ -2757,7 +3032,8 @@
   "hp": 90,
   "types": "Đất, Bóng tối",
   "number": "276/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "imbrickcile",
@@ -2767,7 +3043,8 @@
   "hp": 40,
   "types": "Đất, Heroic",
   "number": "277/411",
-  "evolvesTo": "bricgard"
+  "evolvesTo": "bricgard",
+  "set": "tuxemon"
  },
  {
   "slug": "bricgard",
@@ -2777,7 +3054,8 @@
   "hp": 90,
   "types": "Đất, Heroic",
   "number": "278/411",
-  "evolvesTo": "brickhemoth"
+  "evolvesTo": "brickhemoth",
+  "set": "tuxemon"
  },
  {
   "slug": "brickhemoth",
@@ -2787,7 +3065,8 @@
   "hp": 90,
   "types": "Đất, Heroic",
   "number": "279/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "waysprite",
@@ -2797,7 +3076,8 @@
   "hp": 40,
   "types": "Frost",
   "number": "280/411",
-  "evolvesTo": "angesnow"
+  "evolvesTo": "angesnow",
+  "set": "tuxemon"
  },
  {
   "slug": "angesnow",
@@ -2807,7 +3087,8 @@
   "hp": 50,
   "types": "Frost, Vũ trụ",
   "number": "281/411",
-  "evolvesTo": "seraphice"
+  "evolvesTo": "seraphice",
+  "set": "tuxemon"
  },
  {
   "slug": "demosnow",
@@ -2817,7 +3098,8 @@
   "hp": 50,
   "types": "Frost, Bóng tối",
   "number": "282/411",
-  "evolvesTo": "lucifice"
+  "evolvesTo": "lucifice",
+  "set": "tuxemon"
  },
  {
   "slug": "lucifice",
@@ -2827,7 +3109,8 @@
   "hp": 60,
   "types": "Frost, Bóng tối",
   "number": "283/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "seraphice",
@@ -2837,7 +3120,8 @@
   "hp": 60,
   "types": "Frost, Vũ trụ",
   "number": "284/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "uf0",
@@ -2847,7 +3131,8 @@
   "hp": 80,
   "types": "Kim loại, Vũ trụ",
   "number": "285/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "tadcool",
@@ -2857,7 +3142,8 @@
   "hp": 50,
   "types": "Nước, Frost",
   "number": "286/411",
-  "evolvesTo": "fribbit"
+  "evolvesTo": "fribbit",
+  "set": "tuxemon"
  },
  {
   "slug": "fribbit",
@@ -2867,7 +3153,8 @@
   "hp": 60,
   "types": "Nước, Frost",
   "number": "287/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "squink",
@@ -2877,7 +3164,8 @@
   "hp": 50,
   "types": "Nước",
   "number": "288/411",
-  "evolvesTo": "hectapod"
+  "evolvesTo": "hectapod",
+  "set": "tuxemon"
  },
  {
   "slug": "hectapod",
@@ -2887,7 +3175,8 @@
   "hp": 60,
   "types": "Nước",
   "number": "289/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "slichen",
@@ -2897,7 +3186,8 @@
   "hp": 80,
   "types": "Cây",
   "number": "290/411",
-  "evolvesTo": "glombroc"
+  "evolvesTo": "glombroc",
+  "set": "tuxemon"
  },
  {
   "slug": "glombroc",
@@ -2907,7 +3197,8 @@
   "hp": 90,
   "types": "Đất, Cây",
   "number": "291/411",
-  "evolvesTo": "conglolem"
+  "evolvesTo": "conglolem",
+  "set": "tuxemon"
  },
  {
   "slug": "conglolem",
@@ -2917,7 +3208,8 @@
   "hp": 90,
   "types": "Đất",
   "number": "292/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "caper",
@@ -2927,7 +3219,8 @@
   "hp": 80,
   "types": "Frost, Thường",
   "number": "293/411",
-  "evolvesTo": "crankus"
+  "evolvesTo": "crankus",
+  "set": "tuxemon"
  },
  {
   "slug": "crankus",
@@ -2937,7 +3230,8 @@
   "hp": 90,
   "types": "Frost, Thường",
   "number": "294/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "lesmagu",
@@ -2947,7 +3241,8 @@
   "hp": 50,
   "types": "Đất, Venom",
   "number": "295/411",
-  "evolvesTo": "shelagu"
+  "evolvesTo": "shelagu",
+  "set": "tuxemon"
  },
  {
   "slug": "shelagu",
@@ -2957,7 +3252,8 @@
   "hp": 90,
   "types": "Đất, Venom",
   "number": "296/411",
-  "evolvesTo": "crustagu"
+  "evolvesTo": "crustagu",
+  "set": "tuxemon"
  },
  {
   "slug": "crustagu",
@@ -2967,7 +3263,8 @@
   "hp": 100,
   "types": "Nước, Venom",
   "number": "297/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "ampystoma",
@@ -2977,7 +3274,8 @@
   "hp": 80,
   "types": "Sét, Nước",
   "number": "298/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "medipup",
@@ -2987,7 +3285,8 @@
   "hp": 60,
   "types": "Thường",
   "number": "299/411",
-  "evolvesTo": "doctsky"
+  "evolvesTo": "doctsky",
+  "set": "tuxemon"
  },
  {
   "slug": "doctsky",
@@ -2997,7 +3296,8 @@
   "hp": 60,
   "types": "Thường",
   "number": "300/411",
-  "evolvesTo": "askylpaws"
+  "evolvesTo": "askylpaws",
+  "set": "tuxemon"
  },
  {
   "slug": "ruffalo",
@@ -3007,7 +3307,8 @@
   "hp": 80,
   "types": "Thường",
   "number": "301/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "pearamanca",
@@ -3017,7 +3318,8 @@
   "hp": 80,
   "types": "Cây",
   "number": "302/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "sheye",
@@ -3027,7 +3329,8 @@
   "hp": 50,
   "types": "Nước",
   "number": "303/411",
-  "evolvesTo": "shrab"
+  "evolvesTo": "shrab",
+  "set": "tuxemon"
  },
  {
   "slug": "shrab",
@@ -3037,7 +3340,8 @@
   "hp": 60,
   "types": "Nước",
   "number": "304/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "marvillar",
@@ -3047,7 +3351,8 @@
   "hp": 70,
   "types": "Thường",
   "number": "305/411",
-  "evolvesTo": "marvantis"
+  "evolvesTo": "marvantis",
+  "set": "tuxemon"
  },
  {
   "slug": "marvantis",
@@ -3057,7 +3362,8 @@
   "hp": 80,
   "types": "Sky, Thường",
   "number": "306/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "scarlant",
@@ -3067,7 +3373,8 @@
   "hp": 60,
   "types": "Đất, Heroic",
   "number": "307/411",
-  "evolvesTo": "shull"
+  "evolvesTo": "shull",
+  "set": "tuxemon"
  },
  {
   "slug": "shull",
@@ -3077,7 +3384,8 @@
   "hp": 90,
   "types": "Đất, Heroic",
   "number": "308/411",
-  "evolvesTo": "myrmison"
+  "evolvesTo": "myrmison",
+  "set": "tuxemon"
  },
  {
   "slug": "myrmison",
@@ -3087,7 +3395,8 @@
   "hp": 60,
   "types": "Đất, Heroic",
   "number": "309/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "devidin",
@@ -3097,7 +3406,8 @@
   "hp": 80,
   "types": "Đất, Lửa",
   "number": "310/411",
-  "evolvesTo": "devidra"
+  "evolvesTo": "devidra",
+  "set": "tuxemon"
  },
  {
   "slug": "devidra",
@@ -3107,7 +3417,8 @@
   "hp": 90,
   "types": "Đất, Lửa",
   "number": "311/411",
-  "evolvesTo": "deviraptor"
+  "evolvesTo": "deviraptor",
+  "set": "tuxemon"
  },
  {
   "slug": "deviraptor",
@@ -3117,7 +3428,8 @@
   "hp": 80,
   "types": "Đất, Lửa",
   "number": "312/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "boxali",
@@ -3127,7 +3439,8 @@
   "hp": 80,
   "types": "Heroic, Sky",
   "number": "313/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "chibiro",
@@ -3137,7 +3450,8 @@
   "hp": 60,
   "types": "Cây, Thường",
   "number": "314/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "komoduel",
@@ -3147,7 +3461,8 @@
   "hp": 50,
   "types": "Thường",
   "number": "315/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "thumpurn",
@@ -3157,7 +3472,8 @@
   "hp": 70,
   "types": "Lửa, Thường",
   "number": "316/411",
-  "evolvesTo": "volconey"
+  "evolvesTo": "volconey",
+  "set": "tuxemon"
  },
  {
   "slug": "volconey",
@@ -3167,7 +3483,8 @@
   "hp": 70,
   "types": "Lửa, Thường",
   "number": "317/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "asudopt",
@@ -3177,7 +3494,8 @@
   "hp": 40,
   "types": "Frost, Vũ trụ",
   "number": "318/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "uglip",
@@ -3187,7 +3505,8 @@
   "hp": 80,
   "types": "Nước",
   "number": "319/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "graffiki",
@@ -3197,7 +3516,8 @@
   "hp": 40,
   "types": "Thường",
   "number": "320/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "sprorm",
@@ -3207,7 +3527,8 @@
   "hp": 40,
   "types": "Kim loại",
   "number": "321/411",
-  "evolvesTo": "sphake"
+  "evolvesTo": "sphake",
+  "set": "tuxemon"
  },
  {
   "slug": "sphake",
@@ -3217,7 +3538,8 @@
   "hp": 50,
   "types": "Kim loại",
   "number": "322/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "jeluna",
@@ -3227,7 +3549,8 @@
   "hp": 80,
   "types": "Nước, Vũ trụ",
   "number": "323/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "konuit",
@@ -3237,7 +3560,8 @@
   "hp": 40,
   "types": "Thường",
   "number": "324/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "flummby",
@@ -3247,7 +3571,8 @@
   "hp": 40,
   "types": "Vũ trụ",
   "number": "325/411",
-  "evolvesTo": "flummack"
+  "evolvesTo": "flummack",
+  "set": "tuxemon"
  },
  {
   "slug": "flummack",
@@ -3257,7 +3582,8 @@
   "hp": 50,
   "types": "Vũ trụ",
   "number": "326/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "hoarse",
@@ -3267,7 +3593,8 @@
   "hp": 80,
   "types": "Bóng tối, Thường",
   "number": "327/411",
-  "evolvesTo": "equill"
+  "evolvesTo": "equill",
+  "set": "tuxemon"
  },
  {
   "slug": "equill",
@@ -3277,7 +3604,8 @@
   "hp": 90,
   "types": "Bóng tối, Thường",
   "number": "328/411",
-  "evolvesTo": "hoarseshoo"
+  "evolvesTo": "hoarseshoo",
+  "set": "tuxemon"
  },
  {
   "slug": "hoarseshoo",
@@ -3287,7 +3615,8 @@
   "hp": 100,
   "types": "Venom, Bóng tối",
   "number": "329/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "metoxic",
@@ -3297,7 +3626,8 @@
   "hp": 80,
   "types": "Venom",
   "number": "330/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "ned",
@@ -3307,7 +3637,8 @@
   "hp": 80,
   "types": "Thường",
   "number": "331/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "legoplaste",
@@ -3317,7 +3648,8 @@
   "hp": 80,
   "types": "Thường",
   "number": "332/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "gliffary",
@@ -3327,7 +3659,8 @@
   "hp": 40,
   "types": "Vũ trụ",
   "number": "333/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "boxorox",
@@ -3337,7 +3670,8 @@
   "hp": 40,
   "types": "Đất",
   "number": "334/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "claymorior",
@@ -3347,7 +3681,8 @@
   "hp": 40,
   "types": "Đất, Heroic",
   "number": "335/411",
-  "evolvesTo": "regalance"
+  "evolvesTo": "regalance",
+  "set": "tuxemon"
  },
  {
   "slug": "regalance",
@@ -3357,7 +3692,8 @@
   "hp": 50,
   "types": "Đất",
   "number": "336/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "nebufin",
@@ -3367,7 +3703,8 @@
   "hp": 50,
   "types": "Nước, Venom",
   "number": "337/411",
-  "evolvesTo": "galasces"
+  "evolvesTo": "galasces",
+  "set": "tuxemon"
  },
  {
   "slug": "galasces",
@@ -3377,7 +3714,8 @@
   "hp": 60,
   "types": "Nước, Venom",
   "number": "338/411",
-  "evolvesTo": "novaquarius"
+  "evolvesTo": "novaquarius",
+  "set": "tuxemon"
  },
  {
   "slug": "novaquarius",
@@ -3387,7 +3725,8 @@
   "hp": 70,
   "types": "Nước, Venom",
   "number": "339/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "hissiorite",
@@ -3397,7 +3736,8 @@
   "hp": 60,
   "types": "Lửa",
   "number": "340/411",
-  "evolvesTo": "cobarett"
+  "evolvesTo": "cobarett",
+  "set": "tuxemon"
  },
  {
   "slug": "cobarett",
@@ -3407,7 +3747,8 @@
   "hp": 70,
   "types": "Lửa",
   "number": "341/411",
-  "evolvesTo": "pythonova"
+  "evolvesTo": "pythonova",
+  "set": "tuxemon"
  },
  {
   "slug": "pythonova",
@@ -3417,7 +3758,8 @@
   "hp": 80,
   "types": "Lửa",
   "number": "342/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "burrlock",
@@ -3427,7 +3769,8 @@
   "hp": 80,
   "types": "Cây",
   "number": "343/411",
-  "evolvesTo": "cacaburr"
+  "evolvesTo": "cacaburr",
+  "set": "tuxemon"
  },
  {
   "slug": "cacaburr",
@@ -3437,7 +3780,8 @@
   "hp": 90,
   "types": "Cây",
   "number": "344/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "eskipup",
@@ -3447,7 +3791,8 @@
   "hp": 50,
   "types": "Frost",
   "number": "345/411",
-  "evolvesTo": "houndice"
+  "evolvesTo": "houndice",
+  "set": "tuxemon"
  },
  {
   "slug": "houndice",
@@ -3457,7 +3802,8 @@
   "hp": 60,
   "types": "Frost",
   "number": "346/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "flounce",
@@ -3467,7 +3813,8 @@
   "hp": 50,
   "types": "Lửa",
   "number": "347/411",
-  "evolvesTo": "knindling"
+  "evolvesTo": "knindling",
+  "set": "tuxemon"
  },
  {
   "slug": "knindling",
@@ -3477,7 +3824,8 @@
   "hp": 60,
   "types": "Lửa",
   "number": "348/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "gourda",
@@ -3487,7 +3835,8 @@
   "hp": 80,
   "types": "Cây",
   "number": "349/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "stonifly",
@@ -3497,7 +3846,8 @@
   "hp": 70,
   "types": "Đất",
   "number": "350/411",
-  "evolvesTo": "cocrune"
+  "evolvesTo": "cocrune",
+  "set": "tuxemon"
  },
  {
   "slug": "cocrune",
@@ -3507,7 +3857,8 @@
   "hp": 90,
   "types": "Đất, Bóng tối",
   "number": "351/411",
-  "evolvesTo": "runesquito"
+  "evolvesTo": "runesquito",
+  "set": "tuxemon"
  },
  {
   "slug": "runesquito",
@@ -3517,7 +3868,8 @@
   "hp": 60,
   "types": "Đất, Bóng tối",
   "number": "352/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "teddisun",
@@ -3527,7 +3879,8 @@
   "hp": 40,
   "types": "Vũ trụ, Thường",
   "number": "353/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "sprightly",
@@ -3537,7 +3890,8 @@
   "hp": 80,
   "types": "Cây",
   "number": "354/411",
-  "evolvesTo": "uprout"
+  "evolvesTo": "uprout",
+  "set": "tuxemon"
  },
  {
   "slug": "uprout",
@@ -3547,7 +3901,8 @@
   "hp": 90,
   "types": "Cây, Sky",
   "number": "355/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "stomic",
@@ -3557,7 +3912,8 @@
   "hp": 80,
   "types": "Kim loại, Venom",
   "number": "356/411",
-  "evolvesTo": "gastronium"
+  "evolvesTo": "gastronium",
+  "set": "tuxemon"
  },
  {
   "slug": "gastronium",
@@ -3567,7 +3923,8 @@
   "hp": 90,
   "types": "Kim loại, Venom",
   "number": "357/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "cackleen",
@@ -3577,7 +3934,8 @@
   "hp": 40,
   "types": "Bóng tối, Vũ trụ",
   "number": "358/411",
-  "evolvesTo": "brumi"
+  "evolvesTo": "brumi",
+  "set": "tuxemon"
  },
  {
   "slug": "brumi",
@@ -3587,7 +3945,8 @@
   "hp": 50,
   "types": "Bóng tối, Vũ trụ",
   "number": "359/411",
-  "evolvesTo": "bewhich"
+  "evolvesTo": "bewhich",
+  "set": "tuxemon"
  },
  {
   "slug": "bewhich",
@@ -3597,7 +3956,8 @@
   "hp": 60,
   "types": "Bóng tối, Vũ trụ",
   "number": "360/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "duggot",
@@ -3607,7 +3967,8 @@
   "hp": 60,
   "types": "Cây, Venom",
   "number": "361/411",
-  "evolvesTo": "breem"
+  "evolvesTo": "breem",
+  "set": "tuxemon"
  },
  {
   "slug": "breem",
@@ -3617,7 +3978,8 @@
   "hp": 50,
   "types": "Venom",
   "number": "362/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "medushock",
@@ -3627,7 +3989,8 @@
   "hp": 60,
   "types": "Sét, Venom",
   "number": "363/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "chenipode",
@@ -3637,7 +4000,8 @@
   "hp": 70,
   "types": "Thường",
   "number": "364/411",
-  "evolvesTo": "exapode"
+  "evolvesTo": "exapode",
+  "set": "tuxemon"
  },
  {
   "slug": "exapode",
@@ -3647,7 +4011,8 @@
   "hp": 80,
   "types": "Thường",
   "number": "365/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "poinchin",
@@ -3657,7 +4022,8 @@
   "hp": 70,
   "types": "Venom",
   "number": "366/411",
-  "evolvesTo": "saurchin"
+  "evolvesTo": "saurchin",
+  "set": "tuxemon"
  },
  {
   "slug": "saurchin",
@@ -3667,7 +4033,8 @@
   "hp": 70,
   "types": "Venom",
   "number": "367/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "babysnitch",
@@ -3677,7 +4044,8 @@
   "hp": 50,
   "types": "Bóng tối, Thường",
   "number": "368/411",
-  "evolvesTo": "baddrscratch"
+  "evolvesTo": "baddrscratch",
+  "set": "tuxemon"
  },
  {
   "slug": "baddrscratch",
@@ -3687,7 +4055,8 @@
   "hp": 60,
   "types": "Đất, Bóng tối",
   "number": "369/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "weedsea",
@@ -3697,7 +4066,8 @@
   "hp": 80,
   "types": "Nước, Cây",
   "number": "370/411",
-  "evolvesTo": "weedlantis"
+  "evolvesTo": "weedlantis",
+  "set": "tuxemon"
  },
  {
   "slug": "weedlantis",
@@ -3707,7 +4077,8 @@
   "hp": 70,
   "types": "Nước, Cây",
   "number": "371/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "grumpi",
@@ -3717,7 +4088,8 @@
   "hp": 80,
   "types": "Thường",
   "number": "372/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "banling",
@@ -3727,7 +4099,8 @@
   "hp": 70,
   "types": "Cây",
   "number": "373/411",
-  "evolvesTo": "bansaken"
+  "evolvesTo": "bansaken",
+  "set": "tuxemon"
  },
  {
   "slug": "bansaken",
@@ -3737,7 +4110,8 @@
   "hp": 80,
   "types": "Cây, Bóng tối",
   "number": "374/411",
-  "evolvesTo": "banvengeance"
+  "evolvesTo": "banvengeance",
+  "set": "tuxemon"
  },
  {
   "slug": "banvengeance",
@@ -3747,7 +4121,8 @@
   "hp": 90,
   "types": "Cây, Bóng tối",
   "number": "375/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "hampotamos",
@@ -3757,7 +4132,8 @@
   "hp": 80,
   "types": "Đất",
   "number": "376/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "coaldiak",
@@ -3767,7 +4143,8 @@
   "hp": 60,
   "types": "Lửa, Thường",
   "number": "377/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "askylpaws",
@@ -3777,7 +4154,8 @@
   "hp": 70,
   "types": "Venom, Vũ trụ",
   "number": "378/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "erythroskyte",
@@ -3787,7 +4165,8 @@
   "hp": 70,
   "types": "Kim loại, Thường",
   "number": "379/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "pharavion",
@@ -3797,7 +4176,8 @@
   "hp": 90,
   "types": "Nước, Heroic",
   "number": "380/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "yamada",
@@ -3807,7 +4187,8 @@
   "hp": 40,
   "types": "Bóng tối, Heroic",
   "number": "381/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "shimmerain",
@@ -3817,7 +4198,8 @@
   "hp": 80,
   "types": "Nước",
   "number": "382/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "chickadee",
@@ -3827,7 +4209,8 @@
   "hp": 40,
   "types": "Thường, Sky",
   "number": "383/411",
-  "evolvesTo": "birdee"
+  "evolvesTo": "birdee",
+  "set": "tuxemon"
  },
  {
   "slug": "birdee",
@@ -3837,7 +4220,8 @@
   "hp": 50,
   "types": "Thường, Sky",
   "number": "384/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "pickoon",
@@ -3847,7 +4231,8 @@
   "hp": 50,
   "types": "Thường",
   "number": "385/411",
-  "evolvesTo": "raccscal"
+  "evolvesTo": "raccscal",
+  "set": "tuxemon"
  },
  {
   "slug": "raccscal",
@@ -3857,7 +4242,8 @@
   "hp": 70,
   "types": "Thường",
   "number": "386/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "kroki",
@@ -3867,7 +4253,8 @@
   "hp": 80,
   "types": "Nước",
   "number": "387/411",
-  "evolvesTo": "krokivip"
+  "evolvesTo": "krokivip",
+  "set": "tuxemon"
  },
  {
   "slug": "krokivip",
@@ -3877,7 +4264,8 @@
   "hp": 90,
   "types": "Nước, Venom",
   "number": "388/411",
-  "evolvesTo": "leviadile"
+  "evolvesTo": "leviadile",
+  "set": "tuxemon"
  },
  {
   "slug": "leviadile",
@@ -3887,7 +4275,8 @@
   "hp": 100,
   "types": "Nước, Venom",
   "number": "389/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "pawsand",
@@ -3897,7 +4286,8 @@
   "hp": 80,
   "types": "Đất",
   "number": "390/411",
-  "evolvesTo": "knightsand"
+  "evolvesTo": "knightsand",
+  "set": "tuxemon"
  },
  {
   "slug": "bishosand",
@@ -3907,7 +4297,8 @@
   "hp": 50,
   "types": "Đất, Vũ trụ",
   "number": "391/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "knightsand",
@@ -3917,7 +4308,8 @@
   "hp": 50,
   "types": "Đất, Heroic",
   "number": "392/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "rooksand",
@@ -3927,7 +4319,8 @@
   "hp": 90,
   "types": "Đất",
   "number": "393/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "helipi",
@@ -3937,7 +4330,8 @@
   "hp": 80,
   "types": "Cây, Sky",
   "number": "394/411",
-  "evolvesTo": "coppi"
+  "evolvesTo": "coppi",
+  "set": "tuxemon"
  },
  {
   "slug": "coppi",
@@ -3947,7 +4341,8 @@
   "hp": 90,
   "types": "Cây, Sky",
   "number": "395/411",
-  "evolvesTo": "parappi"
+  "evolvesTo": "parappi",
+  "set": "tuxemon"
  },
  {
   "slug": "parappi",
@@ -3957,7 +4352,8 @@
   "hp": 100,
   "types": "Cây, Sky",
   "number": "396/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "virware",
@@ -3967,7 +4363,8 @@
   "hp": 40,
   "types": "Kim loại, Vũ trụ",
   "number": "397/411",
-  "evolvesTo": "trojerror"
+  "evolvesTo": "trojerror",
+  "set": "tuxemon"
  },
  {
   "slug": "trojerror",
@@ -3977,7 +4374,8 @@
   "hp": 50,
   "types": "Kim loại, Vũ trụ",
   "number": "398/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "glomon",
@@ -3987,7 +4385,8 @@
   "hp": 80,
   "types": "Đất, Nước",
   "number": "399/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "cohldrabi",
@@ -3997,7 +4396,8 @@
   "hp": 40,
   "types": "Cây, Frost",
   "number": "400/411",
-  "evolvesTo": "lettice"
+  "evolvesTo": "lettice",
+  "set": "tuxemon"
  },
  {
   "slug": "lettice",
@@ -4007,7 +4407,8 @@
   "hp": 50,
   "types": "Cây, Frost",
   "number": "401/411",
-  "evolvesTo": "frostuce"
+  "evolvesTo": "frostuce",
+  "set": "tuxemon"
  },
  {
   "slug": "frostuce",
@@ -4017,7 +4418,8 @@
   "hp": 60,
   "types": "Cây, Frost",
   "number": "402/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "carcharock",
@@ -4027,7 +4429,8 @@
   "hp": 60,
   "types": "Đất",
   "number": "403/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "primordia",
@@ -4037,7 +4440,8 @@
   "hp": 80,
   "types": "Lửa, Frost",
   "number": "404/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "toucanary",
@@ -4047,7 +4451,8 @@
   "hp": 40,
   "types": "Sky",
   "number": "405/411",
-  "evolvesTo": "raptoucan"
+  "evolvesTo": "raptoucan",
+  "set": "tuxemon"
  },
  {
   "slug": "raptoucan",
@@ -4057,7 +4462,8 @@
   "hp": 50,
   "types": "Sky",
   "number": "406/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "hoodoll",
@@ -4067,7 +4473,8 @@
   "hp": 80,
   "types": "Cây, Venom",
   "number": "407/411",
-  "evolvesTo": "wolololl"
+  "evolvesTo": "wolololl",
+  "set": "tuxemon"
  },
  {
   "slug": "wolololl",
@@ -4077,7 +4484,8 @@
   "hp": 50,
   "types": "Cây, Venom",
   "number": "408/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  },
  {
   "slug": "gupphish",
@@ -4087,7 +4495,8 @@
   "hp": 80,
   "types": "Nước, Lửa",
   "number": "409/411",
-  "evolvesTo": "gupphire"
+  "evolvesTo": "gupphire",
+  "set": "tuxemon"
  },
  {
   "slug": "gupphire",
@@ -4097,7 +4506,8 @@
   "hp": 90,
   "types": "Nước, Lửa",
   "number": "410/411",
-  "evolvesTo": "golnagi"
+  "evolvesTo": "golnagi",
+  "set": "tuxemon"
  },
  {
   "slug": "golnagi",
@@ -4107,6 +4517,7 @@
   "hp": 100,
   "types": "Nước, Lửa",
   "number": "411/411",
-  "evolvesTo": ""
+  "evolvesTo": "",
+  "set": "tuxemon"
  }
 ]

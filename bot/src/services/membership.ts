@@ -17,12 +17,23 @@ export interface MembershipTier {
   priceAmount: number;
   /** Percent added on top of the daily payout (0..300). */
   dailyBonusPercent: number;
-  /** Extra saved team slots in the game (GĐ9 reads this). */
+  /** Extra saved deck slots in the TCG. */
   extraTeams: number;
-  /** Extra daily lootbox allowance in the game (GĐ9 reads this). */
+  /** Legacy field, unused since the game became TCG-only. */
   extraLootboxPerDay: number;
-  /** Unlocks member-exclusive pets in the game (GĐ9 reads this). */
+  /** Unlocks member-exclusive cards in the TCG (GĐ9 reads this). */
   exclusivePets: boolean;
+  /** % off TCG gacha pull costs (0..90). */
+  gachaDiscountPercent: number;
+  /** Market sale fee % for this member (base fee is the TCG config's
+   *  marketFeePercent, default 5; lower = better, 0..5). */
+  marketFeePercent: number;
+  /** % added on top of card-battle Coin rewards (0..100). */
+  battleBonusPercent: number;
+  /** % added on top of card-battle card XP (0..100). */
+  xpBonusPercent: number;
+  /** Extra free standard packs from the daily TCG claim (0..3). */
+  extraFreePacksPerDay: number;
   /** Display perk lines for /membership and the `pass` command. */
   perks: string[];
 }
@@ -37,9 +48,15 @@ export const DEFAULT_MEMBERSHIP_TIERS: MembershipTier[] = [
     extraTeams: 0,
     extraLootboxPerDay: 0,
     exclusivePets: true,
+    gachaDiscountPercent: 5,
+    marketFeePercent: 4,
+    battleBonusPercent: 0,
+    xpBonusPercent: 0,
+    extraFreePacksPerDay: 0,
     perks: [
       "Daily nhận thêm +25% tiền",
-      "Mở khoá pet độc quyền dành cho hội viên",
+      "Mở thẻ TCG giảm 5% giá, phí bán chợ chỉ 4%",
+      "Mở khoá thẻ độc quyền dành cho hội viên",
       "Huy hiệu hội viên trong hồ sơ",
       "Role màu hội viên trong server chính của Puni",
     ],
@@ -53,10 +70,18 @@ export const DEFAULT_MEMBERSHIP_TIERS: MembershipTier[] = [
     extraTeams: 1,
     extraLootboxPerDay: 0,
     exclusivePets: true,
+    gachaDiscountPercent: 10,
+    marketFeePercent: 3,
+    battleBonusPercent: 10,
+    xpBonusPercent: 10,
+    extraFreePacksPerDay: 1,
     perks: [
       "Daily nhận thêm +50% tiền",
-      "Thêm 1 đội hình lưu sẵn trong game",
-      "Mở khoá pet độc quyền dành cho hội viên",
+      "Mở thẻ TCG giảm 10% giá, phí bán chợ chỉ 3%",
+      "Battle thẻ: +10% Coins và +10% XP thẻ",
+      "Thêm 1 gói thẻ miễn phí mỗi ngày",
+      "Thêm 1 bộ bài lưu sẵn trong TCG",
+      "Mở khoá thẻ độc quyền dành cho hội viên",
       "Vote trên top.gg nhận gấp đôi tiền thưởng",
     ],
   },
@@ -67,15 +92,23 @@ export const DEFAULT_MEMBERSHIP_TIERS: MembershipTier[] = [
     priceAmount: 100000,
     dailyBonusPercent: 100,
     extraTeams: 2,
-    extraLootboxPerDay: 1,
+    extraLootboxPerDay: 0,
     exclusivePets: true,
+    gachaDiscountPercent: 20,
+    marketFeePercent: 0,
+    battleBonusPercent: 25,
+    xpBonusPercent: 25,
+    extraFreePacksPerDay: 1,
     perks: [
       "Daily nhận thêm +100% tiền (gấp đôi)",
-      "Thêm 2 đội hình lưu sẵn trong game",
-      "Thêm 1 lootbox mỗi ngày trong game",
+      "Mở thẻ TCG giảm 20% giá, bán chợ KHÔNG mất phí",
+      "Battle thẻ: +25% Coins và +25% XP thẻ",
+      "Thêm 1 gói thẻ miễn phí mỗi ngày",
+      "Thêm 2 bộ bài lưu sẵn trong TCG",
+      "Ưu tiên hỗ trợ từ chủ bot",
       "Huy hiệu đặc biệt trên thẻ profile game",
       "Vote trên top.gg nhận gấp đôi tiền thưởng",
-      "Thiết kế 1 pet riêng theo yêu cầu của bạn (liên hệ chủ bot)",
+      "Thiết kế 1 thẻ riêng theo yêu cầu của bạn (liên hệ chủ bot)",
       "Được yêu cầu tuỳ biến 1 lệnh theo ý bạn (liên hệ chủ bot)",
     ],
   },
@@ -115,6 +148,11 @@ export function normalizeMembershipTiers(raw: unknown): MembershipTier[] {
       extraTeams: clampInt(r.extraTeams, 0, 5, 0),
       extraLootboxPerDay: clampInt(r.extraLootboxPerDay, 0, 5, 0),
       exclusivePets: r.exclusivePets === true,
+      gachaDiscountPercent: clampInt(r.gachaDiscountPercent, 0, 90, 0),
+      marketFeePercent: clampInt(r.marketFeePercent, 0, 5, 5),
+      battleBonusPercent: clampInt(r.battleBonusPercent, 0, 100, 0),
+      xpBonusPercent: clampInt(r.xpBonusPercent, 0, 100, 0),
+      extraFreePacksPerDay: clampInt(r.extraFreePacksPerDay, 0, 3, 0),
       perks: Array.isArray(r.perks)
         ? r.perks
             .filter((x): x is string => typeof x === "string")
@@ -143,6 +181,11 @@ export interface EffectivePerks {
   extraTeams: number;
   extraLootboxPerDay: number;
   exclusivePets: boolean;
+  gachaDiscountPercent: number;
+  marketFeePercent: number;
+  battleBonusPercent: number;
+  xpBonusPercent: number;
+  extraFreePacksPerDay: number;
 }
 
 /** Cumulative perks for a member of `tierId`: numeric game allowances
@@ -161,6 +204,11 @@ export function effectivePerks(
     extraTeams: Math.max(...upto.map((t) => t.extraTeams)),
     extraLootboxPerDay: Math.max(...upto.map((t) => t.extraLootboxPerDay)),
     exclusivePets: upto.some((t) => t.exclusivePets),
+    gachaDiscountPercent: tiers[idx].gachaDiscountPercent,
+    marketFeePercent: Math.min(...upto.map((t) => t.marketFeePercent)),
+    battleBonusPercent: tiers[idx].battleBonusPercent,
+    xpBonusPercent: tiers[idx].xpBonusPercent,
+    extraFreePacksPerDay: Math.max(...upto.map((t) => t.extraFreePacksPerDay)),
   };
 }
 

@@ -15,6 +15,8 @@ export interface TcgCardInfo {
   types: string;
   number: string;
   evolvesTo: string;
+  /** Card set id (spec 6.27) — "tuxemon" is the first set. */
+  set: string;
 }
 
 export const TCG_CARDS = manifest as TcgCardInfo[];
@@ -41,6 +43,9 @@ export interface MarketRow extends TcgCardInfo {
   soldCount: number;
   /** % change of the 7-day average sold price vs the previous 7 days. */
   trendPct: number | null;
+  /** Daily average sold prices over the last 30 days (oldest first),
+   *  for the sparkline. Empty when there are no sales in the window. */
+  spark: number[];
 }
 
 interface MarketStat {
@@ -50,6 +55,7 @@ interface MarketStat {
   avgSold: number | null;
   soldCount: number;
   trendPct: number | null;
+  spark: number[];
 }
 
 /** Catalog merged with live market floors + real sales statistics. */
@@ -82,7 +88,18 @@ export async function marketOverview(): Promise<MarketRow[]> {
         avgSold: r.avg_sold ? Math.round(Number.parseFloat(r.avg_sold)) : null,
         soldCount: r.sold_n ?? 0,
         trendPct: avg7 && prev7 ? Math.round(((avg7 - prev7) / prev7) * 1000) / 10 : null,
+        spark: [],
       });
+    }
+    const sparkRes = await db().query(
+      `SELECT i.species_id, date_trunc('day', l.sold_at) AS day, AVG(l.price)::text AS avg_price
+       FROM tcg_listings l JOIN tcg_instances i ON i.code = l.instance_code
+       WHERE l.status = 'sold' AND l.sold_at > now() - interval '30 days'
+       GROUP BY i.species_id, day ORDER BY day`,
+    );
+    for (const r of sparkRes.rows) {
+      const s = stats.get(r.species_id);
+      if (s) s.spark.push(Math.round(Number.parseFloat(r.avg_price)));
     }
   } catch {
     /* market tables absent before migration — show reference values */
@@ -98,8 +115,51 @@ export async function marketOverview(): Promise<MarketRow[]> {
       avgSold: s?.avgSold ?? null,
       soldCount: s?.soldCount ?? 0,
       trendPct: s?.trendPct ?? null,
+      spark: s?.spark ?? [],
     };
   });
+}
+
+export interface MarketSummary {
+  openListings: number;
+  openValue: number;
+  soldCount: number;
+  speciesListed: number;
+  /** Whole-market average sold price change: last 7d vs previous 7d. */
+  indexChangePct: number | null;
+}
+
+/** Whole-market headline numbers for the market page header. */
+export async function marketSummary(): Promise<MarketSummary> {
+  const empty: MarketSummary = { openListings: 0, openValue: 0, soldCount: 0, speciesListed: 0, indexChangePct: null };
+  try {
+    const res = await db().query(
+      `SELECT COUNT(*) FILTER (WHERE status = 'open')::int AS open_n,
+              COALESCE(SUM(price) FILTER (WHERE status = 'open'), 0)::text AS open_value,
+              COUNT(*) FILTER (WHERE status = 'sold')::int AS sold_n,
+              AVG(price) FILTER (WHERE status = 'sold' AND sold_at > now() - interval '7 days')::text AS avg_7d,
+              AVG(price) FILTER (WHERE status = 'sold' AND sold_at <= now() - interval '7 days'
+                                  AND sold_at > now() - interval '14 days')::text AS avg_prev7d
+       FROM tcg_listings`,
+    );
+    const sp = await db().query(
+      `SELECT COUNT(DISTINCT i.species_id)::int AS n
+       FROM tcg_listings l JOIN tcg_instances i ON i.code = l.instance_code
+       WHERE l.status = 'open'`,
+    );
+    const r = res.rows[0];
+    const avg7 = r.avg_7d ? Number.parseFloat(r.avg_7d) : null;
+    const prev7 = r.avg_prev7d ? Number.parseFloat(r.avg_prev7d) : null;
+    return {
+      openListings: r.open_n ?? 0,
+      openValue: Number.parseInt(r.open_value ?? "0", 10),
+      soldCount: r.sold_n ?? 0,
+      speciesListed: sp.rows[0]?.n ?? 0,
+      indexChangePct: avg7 && prev7 ? Math.round(((avg7 - prev7) / prev7) * 1000) / 10 : null,
+    };
+  } catch {
+    return empty;
+  }
 }
 
 export interface OwnedInstance {

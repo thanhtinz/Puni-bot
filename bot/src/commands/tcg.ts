@@ -35,6 +35,8 @@ export interface TcgCommandDeps {
   currencyName: () => string;
   /** Public base URL of the dashboard (card images), "" = no images. */
   cardBaseUrl: string;
+  /** Membership perks resolver (spec 6.19 TCG benefits). */
+  memberPerks?: (userId: string) => Promise<import("../services/membership").EffectivePerks | null>;
   now?: () => Date;
 }
 
@@ -372,8 +374,16 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
         const period = now().toISOString().slice(0, 10);
         const first = await deps.store.claimOnce(ctx.userId, "daily", period);
         if (!first) return { text: "Bạn đã nhận gói miễn phí hôm nay rồi." };
-        await deps.store.adjustWallet(ctx.userId, { packsStandard: 1 });
-        return { text: "Đã nhận **1 Gói Thường** miễn phí hôm nay. Mở bằng `gacha pack`." };
+        const perks = deps.memberPerks
+          ? await deps.memberPerks(ctx.userId).catch(() => null)
+          : null;
+        const packs = 1 + (perks?.extraFreePacksPerDay ?? 0);
+        await deps.store.adjustWallet(ctx.userId, { packsStandard: packs });
+        return {
+          text:
+            "Đã nhận **" + packs + " Gói Thường** miễn phí hôm nay. Mở bằng `gacha pack`." +
+            (packs > 1 ? " (Đã cộng thêm gói hội viên.)" : ""),
+        };
       }
       if (sub === "banner") {
         const banners = (await deps.store.listBanners()).filter((b) => bannerActive(b, now()));
@@ -540,7 +550,11 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
       if (sub === "create") {
         const name = ctx.args.slice(1).join(" ").trim() || "Bộ bài mới";
         const decks = await deps.store.listDecks(ctx.userId);
-        if (decks.length >= cfg.maxDecks) return { text: `Bạn đã có tối đa ${cfg.maxDecks} bộ bài.` };
+        const deckPerks = deps.memberPerks
+          ? await deps.memberPerks(ctx.userId).catch(() => null)
+          : null;
+        const maxDecks = cfg.maxDecks + (deckPerks?.extraTeams ?? 0);
+        if (decks.length >= maxDecks) return { text: `Bạn đã có tối đa ${maxDecks} bộ bài.` };
         const d = await deps.store.createDeck(ctx.userId, name.slice(0, 60));
         return { text: `Đã tạo bộ bài #${d.id} "${d.name}". Thêm thẻ: \`deck edit ${d.id} add <mã thẻ>\`.` };
       }
@@ -560,7 +574,11 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
         }
         if (valid.length !== codes.length) return { text: "Mã bộ bài chứa thẻ không thuộc về bạn (bộ bài chỉ nhập được bằng thẻ của chính bạn)." };
         const decks = await deps.store.listDecks(ctx.userId);
-        if (decks.length >= cfg.maxDecks) return { text: `Bạn đã có tối đa ${cfg.maxDecks} bộ bài.` };
+        const deckPerks2 = deps.memberPerks
+          ? await deps.memberPerks(ctx.userId).catch(() => null)
+          : null;
+        const maxDecks2 = cfg.maxDecks + (deckPerks2?.extraTeams ?? 0);
+        if (decks.length >= maxDecks2) return { text: `Bạn đã có tối đa ${maxDecks2} bộ bài.` };
         const d = await deps.store.createDeck(ctx.userId, "Bộ bài nhập");
         await deps.store.setDeckCards(d.id, valid);
         return { text: `Đã nhập bộ bài #${d.id} với ${valid.length} thẻ.` };
@@ -661,7 +679,14 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
         if (l.sellerId === ctx.userId) return { text: "Bạn không thể mua thẻ của chính mình." };
         const ok = await deps.economy.debit(ctx.userId, l.price, "tcg-market", `Mua thẻ tin #${l.id}`);
         if (!ok) return { text: `Không đủ ${deps.currencyName()} để mua (cần ${fmt(l.price)}).` };
-        const fee = Math.floor((l.price * cfg.marketFeePercent) / 100);
+        const sellerPerks = deps.memberPerks
+          ? await deps.memberPerks(l.sellerId).catch(() => null)
+          : null;
+        const feePercent = Math.min(
+          cfg.marketFeePercent,
+          sellerPerks?.marketFeePercent ?? cfg.marketFeePercent,
+        );
+        const fee = Math.floor((l.price * feePercent) / 100);
         await deps.economy.credit(l.sellerId, l.price - fee, "tcg-market", `Bán thẻ tin #${l.id} (đã trừ phí ${fmt(fee)})`);
         await deps.store.updateInstance(l.instanceCode, { userId: ctx.userId });
         await deps.store.closeListing(l.id, "sold", ctx.userId);
@@ -780,5 +805,127 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
     },
   };
 
-return [gacha, card, deck, market, trade, cardbattle];
+const ranked: CommandDef = {
+    name: "ranked",
+    aliases: ["dauhang"],
+    description: "Đấu hạng TCG: đấu với bộ bài của người chơi khác, cộng/trừ điểm hạng (MMR).",
+    module: "cozy",
+    permission: "everyone",
+    slash: true,
+    prefix: true,
+    cooldownSec: 20,
+    handler: async (ctx) => {
+      const out = await deps.game.rankedBattle(ctx.userId);
+      if (out.kind === "error") return { text: out.message };
+      const lines = [
+        `**Đấu hạng TCG** — đối thủ: <@${out.opponentId}>`,
+        ...out.log,
+        out.win
+          ? `**Thắng sau ${out.rounds} hiệp!** +${fmt(out.coins)} ${deps.currencyName()}`
+          : `**Thua sau ${out.rounds} hiệp.** +${fmt(out.coins)} ${deps.currencyName()}`,
+        `Điểm hạng: **${fmt(out.myMmr)}** (${out.mmrDelta >= 0 ? "+" : ""}${out.mmrDelta}) · Bậc: **${out.tierName}**${out.tierUp ? " — LÊN BẬC!" : ""}`,
+      ];
+      return { text: lines.join("\n") };
+    },
+  };
+
+  const rank: CommandDef = {
+    name: "rank",
+    aliases: ["hang", "mmr"],
+    description: "Xem bậc hạng TCG, điểm MMR và thành tích mùa này của bạn.",
+    module: "cozy",
+    permission: "everyone",
+    slash: true,
+    prefix: true,
+    cooldownSec: 5,
+    handler: async (ctx) => {
+      const prof = await deps.game.rankedProfile(ctx.userId);
+      const { rankTierFor, nextTierFor } = await import("../services/tcg-ranked");
+      const tier = rankTierFor(prof.mmr);
+      const next = nextTierFor(prof.mmr);
+      return {
+        text:
+          `**Hạng TCG của <@${ctx.userId}>**: **${tier.name}** · ${fmt(prof.mmr)} điểm` +
+          (next ? ` (còn ${fmt(next.minMmr - prof.mmr)} điểm lên ${next.name})` : "") +
+          `\nMùa ${prof.season}: ${prof.seasonWins} thắng · ${prof.seasonLosses} thua` +
+          `\nTổng: ${prof.wins} thắng · ${prof.losses} thua`,
+        ephemeral: true,
+      };
+    },
+  };
+
+  const duel: CommandDef = {
+    name: "duel",
+    aliases: ["thachdau"],
+    description: "Thách đấu TCG: duel @người [số cược] · duel accept · duel reject.",
+    module: "cozy",
+    permission: "everyone",
+    slash: true,
+    prefix: true,
+    cooldownSec: 5,
+    handler: async (ctx) => {
+      const sub = (ctx.args[0] ?? "").toLowerCase();
+      const { duelExpired } = await import("../services/tcg-ranked");
+      if (sub === "accept" || sub === "reject") {
+        const d = await deps.store.pendingDuelFor(ctx.userId);
+        if (!d) return { text: "Bạn không có lời thách đấu nào đang chờ." };
+        if (duelExpired(d, now())) {
+          await deps.store.resolveDuel(d.id, "expired");
+          if (d.wager > 0) await deps.economy.credit(d.challengerId, d.wager, "tcg-duel", "Hoàn cược thách đấu hết hạn");
+          return { text: "Lời thách đấu đã hết hạn 5 phút." };
+        }
+        if (sub === "reject") {
+          await deps.store.resolveDuel(d.id, "rejected");
+          if (d.wager > 0) await deps.economy.credit(d.challengerId, d.wager, "tcg-duel", "Hoàn cược thách đấu bị từ chối");
+          return { text: `Đã từ chối thách đấu của <@${d.challengerId}>.` };
+        }
+        if (d.wager > 0) {
+          const ok = await deps.economy.debit(ctx.userId, d.wager, "tcg-duel", `Nhận cược thách đấu #${d.id}`);
+          if (!ok) return { text: `Không đủ ${deps.currencyName()} để nhận cược ${fmt(d.wager)}.` };
+        }
+        const out = await deps.game.duelBattle(d.challengerId, d.opponentId);
+        if (out.kind === "error") {
+          await deps.store.resolveDuel(d.id, "rejected");
+          if (d.wager > 0) {
+            await deps.economy.credit(d.challengerId, d.wager, "tcg-duel", "Hoàn cược thách đấu lỗi");
+            await deps.economy.credit(d.opponentId, d.wager, "tcg-duel", "Hoàn cược thách đấu lỗi");
+          }
+          return { text: out.message };
+        }
+        await deps.store.resolveDuel(d.id, "done", out.winnerId);
+        if (d.wager > 0) {
+          await deps.economy.credit(out.winnerId, d.wager * 2, "tcg-duel", `Thắng cược thách đấu #${d.id}`);
+        }
+        return {
+          text: [
+            `**Thách đấu TCG #${d.id}** — <@${d.challengerId}> vs <@${d.opponentId}>`,
+            ...out.log,
+            `**<@${out.winnerId}> thắng sau ${out.rounds} hiệp!**` +
+              (d.wager > 0 ? ` Ăn cược **${fmt(d.wager * 2)}** ${deps.currencyName()}.` : ""),
+          ].join("\n"),
+        };
+      }
+      const target = ctx.mentions[0];
+      if (!target) return { text: "Tag người muốn thách đấu: `duel @người [số cược]` — hoặc `duel accept` / `duel reject`." };
+      if (target === ctx.userId) return { text: "Không tự thách đấu chính mình được đâu." };
+      const wager = Math.max(0, Number.parseInt(ctx.args.find((a) => /^\d+$/.test(a)) ?? "0", 10) || 0);
+      const existing = await deps.store.pendingDuelFor(target);
+      if (existing && !duelExpired(existing, now())) {
+        return { text: "Người đó đang có một lời thách đấu chờ rồi." };
+      }
+      if (wager > 0) {
+        const ok = await deps.economy.debit(ctx.userId, wager, "tcg-duel", "Đặt cược thách đấu TCG");
+        if (!ok) return { text: `Không đủ ${deps.currencyName()} để cược ${fmt(wager)}.` };
+      }
+      const d = await deps.store.createDuel(ctx.userId, target, wager);
+      return {
+        text:
+          `<@${target}> — <@${ctx.userId}> thách đấu TCG bạn` +
+          (wager > 0 ? ` với cược **${fmt(wager)}** ${deps.currencyName()}` : "") +
+          `! Trả lời bằng \`duel accept\` hoặc \`duel reject\` trong 5 phút. (Thách đấu #${d.id})`,
+      };
+    },
+  };
+
+return [gacha, card, deck, market, trade, cardbattle, ranked, rank, duel];
 }

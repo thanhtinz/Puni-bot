@@ -52,6 +52,7 @@ export async function POST(req: Request) {
     sprite_url: String(form.get("sprite_url") ?? "").trim().slice(0, 500),
     member_exclusive: form.get("member_exclusive") != null,
     enabled: form.get("enabled") != null,
+    set_id: String(form.get("set_id") ?? "tuxemon").trim().toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 41) || "tuxemon",
   });
   return back("saved=1");
 }

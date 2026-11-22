@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import "../../globals.css";
 import { currentSession } from "@/lib/current-session";
-import { IconActivity, IconBag, IconChart, IconChat, IconCoins, IconGrid, IconHome, IconPaw, IconServer, IconGlobe, IconSpark, IconUsers } from "@/components/icons";
+import { IconActivity, IconBag, IconChart, IconCoins, IconGrid, IconHome, IconPaw, IconGlobe, IconSpark, IconUsers } from "@/components/icons";
 import { isOwner } from "@/lib/session";
 import { Burger } from "@/components/burger";
 
@@ -73,23 +73,11 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
               <Link href="/admin/users" className="item">
                 <IconUsers /> Người dùng
               </Link>
-              <Link href="/admin/servers" className="item">
-                <IconServer /> Server
-              </Link>
-              <Link href="/admin/ai" className="item">
-                <IconChat /> AI trò chuyện
-              </Link>
               <Link href="/admin/clusters" className="item">
                 <IconGrid /> Cluster &amp; Shard
               </Link>
               <Link href="/admin/pets" className="item">
-                <IconPaw /> Pet
-              </Link>
-              <Link href="/admin/items" className="item">
-                <IconGrid /> Item
-              </Link>
-              <Link href="/admin/game-shop" className="item">
-                <IconBag /> Shop trong game
+                <IconPaw /> Loài thẻ
               </Link>
               <Link href="/admin/website" className="item">
                 <IconGlobe /> Trang web

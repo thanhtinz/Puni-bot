@@ -11,21 +11,13 @@ interface CatalogEntry {
 
 const MODULE_LABELS: Record<string, string> = {
   core: "Cơ bản",
-  community: "Cộng đồng",
-  moderation: "Kiểm duyệt",
-  manager: "Quản lý server",
-  role: "Vai trò (role)",
-  embed: "Embed",
-  reaction: "Reaction",
-  economy: "Economy",
-  games: "Minigame",
-  cozy: "Game",
+  economy: "Economy & Hôn nhân",
+  cozy: "Game thẻ bài TCG",
 };
 
 /**
- * Public command list (spec 6.13): generated
- * from the bot registry itself — community commands only;
- * commands never appear here.
+ * Public command list: generated from the bot registry itself —
+ * the pure game catalog (TCG + economy + marriage, spec 6.28).
  */
 export default function CommandsPage() {
   const entries = catalog as CatalogEntry[];

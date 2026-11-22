@@ -40,8 +40,16 @@ test("effective perks: cumulative allowances, own-tier daily percent", () => {
   const t3 = effectivePerks(tiers, "hao-tam");
   assert.equal(t3?.dailyBonusPercent, 100);
   assert.equal(t3?.extraTeams, 2);
-  assert.equal(t3?.extraLootboxPerDay, 1);
+  assert.equal(t3?.extraLootboxPerDay, 0);
   assert.equal(t3?.exclusivePets, true);
+  // TCG benefits (spec 6.19b): own-tier percents, best fee below.
+  assert.equal(t1?.gachaDiscountPercent, 5);
+  assert.equal(t1?.marketFeePercent, 4);
+  assert.equal(t3?.gachaDiscountPercent, 20);
+  assert.equal(t3?.marketFeePercent, 0);
+  assert.equal(t3?.battleBonusPercent, 25);
+  assert.equal(t3?.xpBonusPercent, 25);
+  assert.equal(t3?.extraFreePacksPerDay, 1);
   assert.equal(effectivePerks(tiers, "khong-co"), null);
 });
 
@@ -131,10 +139,3 @@ test("orders command: empty history message, then lists orders with status label
   assert.match(out.text, /Đã thanh toán/);
 });
 
-test("role diff: grants to active non-holders, revokes from expired holders", async () => {
-  const { computeRoleDiff } = await import("../src/services/membership-roles");
-  const diff = computeRoleDiff(new Set(["a", "b"]), new Set(["b", "c"]));
-  assert.deepEqual(diff.grant, ["a"]);
-  assert.deepEqual(diff.revoke, ["c"]);
-  assert.deepEqual(computeRoleDiff(new Set(), new Set()), { grant: [], revoke: [] });
-});

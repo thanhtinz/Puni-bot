@@ -135,7 +135,24 @@ export async function sellCardWeb(userId: string, code: string): Promise<TxResul
   }
 }
 
-/** Buy an open market listing — mirrors the bot market (5% fee). */
+/** The seller's market fee %: the TCG base fee (5) or their lower
+ *  membership fee when they hold an active tier (spec 6.19). */
+async function sellerFeePercent(sellerId: string): Promise<number> {
+  try {
+    const { getUserMembership, getBotConfig } = await import("@/lib/db");
+    const { normalizeMembershipTiers, effectivePerksWeb } = await import("@/lib/membership");
+    const m = await getUserMembership(sellerId);
+    if (!m || !m.active) return 5;
+    const tiers = normalizeMembershipTiers(await getBotConfig("membership_tiers"));
+    const perks = effectivePerksWeb(tiers, m.tier_id);
+    return perks ? Math.min(5, perks.marketFeePercent) : 5;
+  } catch {
+    return 5;
+  }
+}
+
+/** Buy an open market listing — mirrors the bot market (fee by the
+ *  seller's membership, base 5%). */
 export async function buyListingWeb(buyerId: string, listingId: number): Promise<TxResult> {
   const client = await db().connect();
   try {
@@ -151,7 +168,8 @@ export async function buyListingWeb(buyerId: string, listingId: number): Promise
     const price = Number.parseInt(row.price, 10);
     const paid = await adjustBalanceTx(client, buyerId, -price, "tcg-market", `Mua thẻ ${row.instance_code} (web)`);
     if (!paid) { await client.query("ROLLBACK"); return { ok: false, error: "Số dư Coins không đủ." }; }
-    const sellerGets = price - Math.floor(price * 0.05);
+    const feePct = await sellerFeePercent(row.seller_id);
+    const sellerGets = price - Math.floor((price * feePct) / 100);
     await adjustBalanceTx(client, row.seller_id, sellerGets, "tcg-market", `Bán thẻ ${row.instance_code} (web)`);
     await client.query(`UPDATE tcg_instances SET user_id = $1 WHERE code = $2`, [buyerId, row.instance_code]);
     await client.query(

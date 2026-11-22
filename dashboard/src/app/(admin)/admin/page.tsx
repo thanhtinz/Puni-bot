@@ -1,6 +1,6 @@
 import { adminGate } from "@/lib/current-session";
-import { db, getEconomyChart, getEconomyStats, getHeartbeats, listConfiguredGuildIds, listMemberships } from "@/lib/db";
-import { IconActivity, IconChart, IconCoins, IconServer, IconSpark, IconUsers, IconWallet } from "@/components/icons";
+import { db, getEconomyChart, getEconomyStats, getHeartbeats, listMemberships } from "@/lib/db";
+import { IconActivity, IconChart, IconCoins, IconSpark, IconUsers, IconWallet } from "@/components/icons";
 
 const SOURCE_LABELS: Record<string, string> = {
   daily: "Điểm danh (daily)",
@@ -24,7 +24,13 @@ export default async function AdminOverviewPage({
     if (gate.reason === "need-verify") return <VerifyForm error={verify === "failed"} />;
     return null; // layout already explains no-session / not-owner
   }
-  const guildIds = await listConfiguredGuildIds().catch(() => [] as string[]);
+  let cardInstances = 0;
+  try {
+    const res = await db().query<{ n: string }>(`SELECT COUNT(*)::text AS n FROM tcg_instances`);
+    cardInstances = Number.parseInt(res.rows[0]?.n || "0", 10);
+  } catch {
+    cardInstances = 0;
+  }
   const heartbeats = await getHeartbeats().catch(() => null);
   let economyAccounts = 0;
   try {
@@ -52,9 +58,9 @@ export default async function AdminOverviewPage({
       )}
       <div className="cards">
         <div className="card">
-          <span className="stat-ico"><IconServer /></span>
-          <h3>{guildIds.length}</h3>
-          <p>Server đã có cấu hình (guild_settings)</p>
+          <span className="stat-ico"><IconSpark /></span>
+          <h3>{fmt(cardInstances)}</h3>
+          <p>Thẻ TCG đã phát hành (tcg_instances)</p>
         </div>
         <div className="card">
           <span className="stat-ico"><IconUsers /></span>

@@ -10,7 +10,6 @@ import { Pool } from "pg";
 import { runMigrations } from "../src/db/migrate";
 import { PgEconomyStore } from "../src/db/pg-economy-store";
 import { PgGuildSettings } from "../src/db/pg-guild-settings";
-import { PgModCaseStore } from "../src/db/pg-mod-cases";
 import { EconomyService, InsufficientFundsError } from "../src/services/economy";
 
 const url = process.env.PUNI_TEST_DATABASE_URL;
@@ -37,18 +36,11 @@ test("migrations are idempotent", { skip }, async () => {
   assert.deepEqual(applied, []);
 });
 
-test("pg guild settings: defaults, round-trip, visible to a fresh provider", { skip }, async () => {
+test("pg guild settings: defaults for an unknown guild", { skip }, async () => {
   const a = new PgGuildSettings(pool);
   const dflt = await a.get("g-new");
   assert.equal(dflt.prefix, "!");
-  await a.set("g-new", {
-    prefix: "?",
-    reactionOverrides: { kiss: { enabled: false } },
-  });
-  const b = new PgGuildSettings(pool);
-  const read = await b.get("g-new");
-  assert.equal(read.prefix, "?");
-  assert.equal(read.reactionOverrides.kiss?.enabled, false);
+  assert.deepEqual(dflt.modules, {});
 });
 
 test("pg economy: same semantics as the in-memory store", { skip }, async () => {
@@ -65,50 +57,6 @@ test("pg economy: same semantics as the in-memory store", { skip }, async () => 
   const again = await eco.claimDaily("u1", new Date("2026-02-01T20:00:00Z"));
   assert.equal(again, null);
 });
-
-test("pg guild settings: community config round-trips through JSONB", { skip }, async () => {
-  const a = new PgGuildSettings(pool);
-  const s = await a.get("g-community");
-  await a.set("g-community", {
-    community: {
-      ...s.community,
-      welcome: { enabled: true, channelId: "c-welcome", message: "Hi {user}" },
-    },
-  });
-  const read = await new PgGuildSettings(pool).get("g-community");
-  assert.equal(read.community.welcome.enabled, true);
-  assert.equal(read.community.welcome.channelId, "c-welcome");
-  assert.equal(read.community.goodbye.enabled, false, "untouched sections keep defaults");
-});
-
-test("pg guild settings: logging + automod configs round-trip", { skip }, async () => {
-  const a = new PgGuildSettings(pool);
-  const s = await a.get("g-logcfg");
-  await a.set("g-logcfg", {
-    logging: { ...s.logging, enabled: true, channelId: "c-log", groups: { ...s.logging.groups, server: false } },
-    automod: { ...s.automod, enabled: true, blockedWords: ["xyz"], blockLinks: true, capsRatio: 0.8 },
-  });
-  const read = await new PgGuildSettings(pool).get("g-logcfg");
-  assert.equal(read.logging.enabled, true);
-  assert.equal(read.logging.groups.server, false);
-  assert.equal(read.logging.groups.messages, true);
-  assert.deepEqual(read.automod.blockedWords, ["xyz"]);
-  assert.equal(read.automod.capsRatio, 0.8);
-});
-
-test("pg mod cases: 10 parallel creates in one guild get unique sequential numbers", { skip }, async () => {
-  const store = new PgModCaseStore(pool);
-  const created = await Promise.all(
-    Array.from({ length: 10 }, (_, i) =>
-      store.create({ guildId: "g-race", targetId: `u${i}`, moderatorId: "m1", action: "warn" }),
-    ),
-  );
-  const numbers = created.map((c) => c.caseNo).sort((x, y) => x - y);
-  assert.deepEqual(numbers, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-  const other = await store.create({ guildId: "g-other", targetId: "u0", moderatorId: "m1", action: "warn" });
-  assert.equal(other.caseNo, 1, "numbering is independent per guild");
-});
-
 
 test("pg economy race: 20 parallel debits of 10 against a balance of 100 — exactly 10 land", { skip }, async () => {
   const eco = new EconomyService(new PgEconomyStore(pool));

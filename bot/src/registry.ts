@@ -1,10 +1,13 @@
-/** Assembles the single command registry (spec 6.3) from all modules. */
+/**
+ * Assembles the single command registry from all modules.
+ * Puni is a pure game bot (spec 6.28): TCG + economy + marriage +
+ * membership. No server-management modules exist anymore.
+ */
 import { CommandRegistry } from "@puni/shared";
 import { createCoreCommands } from "./commands/core";
-import { createReactionCommands } from "./commands/reactions";
 import { createEconomyCommands } from "./commands/economy";
 import { createMembershipCommands } from "./commands/membership";
-import { createVoteCommands } from "./commands/vote";
+import { createMarriageCommands, createCoupleDailyHook } from "./commands/marriage";
 import { createTcgCommands, createTcgGroupCommands } from "./commands/tcg";
 import { TcgGameService, InMemoryTcgStore, type TcgStore } from "./services/tcg-store";
 import { DEFAULT_TCG_CONFIG, type TcgConfig, type TcgSpecies } from "./services/tcg";
@@ -14,20 +17,18 @@ import {
   effectivePerks,
   type MembershipStore,
 } from "./services/membership";
-import { createEnforcementCommands, createModerationCommands } from "./commands/moderation";
+import {
+  DEFAULT_RING_TIERS,
+  InMemoryMarriageStore,
+  type MarriageStore,
+  type RingTier,
+} from "./services/marriage";
 import {
   EconomyService,
   DEFAULT_ECONOMY_CONFIG,
   type EconomyConfig,
   type EconomyStore,
 } from "./services/economy";
-import {
-  HookedModCaseStore,
-  InMemoryModCaseStore,
-  type CaseHook,
-  type ModCaseStore,
-} from "./services/mod-cases";
-import { LateBindingEnforcer } from "./services/enforcement";
 import { InMemoryGemsWallet, type GemsWallet } from "./services/gems";
 import type { GuildSettingsProvider } from "./guild-settings";
 
@@ -36,17 +37,14 @@ export interface BotDeps {
   economy: EconomyService;
   membership: MembershipStore;
   gems: GemsWallet;
-  cases: ModCaseStore;
-  enforcer: LateBindingEnforcer;
-  /** Register a callback fired after every case creation (moderation log). */
-  addCaseHook: (hook: CaseHook) => void;
+  marriage: MarriageStore;
+  tcgStore: TcgStore;
 }
 
 export function buildBot(deps: {
   settings: GuildSettingsProvider;
   economyStore?: EconomyStore;
   gemsWallet?: GemsWallet;
-  caseStore?: ModCaseStore;
   botName?: string;
   version?: string;
   /** Startup snapshot of the owner-edited economy config (Admin panel). */
@@ -60,6 +58,10 @@ export function buildBot(deps: {
   membershipTiersSource?: () => Promise<import("./services/membership").MembershipTier[]>;
   /** Membership order history store (spec 6.19) for `orders`. */
   membershipOrders?: import("./services/membership").MembershipOrderStore;
+  /** Marriage store (spec 6.16.5); in-memory when absent. */
+  marriageStore?: MarriageStore;
+  /** Live ring tier definitions (owner-editable prices). */
+  ringTiersSource?: () => Promise<RingTier[]>;
   /** TCG store (spec 6.23); in-memory when absent. */
   tcgStore?: TcgStore;
   /** TCG species catalog (game_species); empty = TCG unavailable. */
@@ -68,9 +70,6 @@ export function buildBot(deps: {
   tcgConfigSource?: () => Promise<TcgConfig>;
   /** Public dashboard base URL for card images in chat. */
   cardBaseUrl?: string;
-  voteStore?: import("./services/vote").VoteStore;
-  voteConfigSource?: () => Promise<import("./services/vote").VoteConfig>;
-  voteBotIdSource?: () => string | null;
 }): BotDeps {
   const registry = new CommandRegistry();
   const economyConfig = deps.economyConfig ?? DEFAULT_ECONOMY_CONFIG;
@@ -90,9 +89,6 @@ export function buildBot(deps: {
     dailyBonusSource,
   );
   const gems = deps.gemsWallet ?? new InMemoryGemsWallet();
-  const hooks: CaseHook[] = [];
-  const cases = new HookedModCaseStore(deps.caseStore ?? new InMemoryModCaseStore(), hooks);
-  const enforcer = new LateBindingEnforcer();
   const startedAt = Date.now();
 
   const tcgStore = deps.tcgStore ?? new InMemoryTcgStore();
@@ -112,12 +108,19 @@ export function buildBot(deps: {
     },
     balance: (userId: string) => economy.getBalance(userId),
   };
+  const memberPerks = async (userId: string) => {
+    const rec = await membership.getActive(userId, new Date()).catch(() => null);
+    if (!rec) return null;
+    const tiers = await tiersSource().catch(() => []);
+    return effectivePerks(tiers, rec.tierId);
+  };
   const tcgDeps = {
     game: new TcgGameService({
       store: tcgStore,
       catalog: tcgCatalog,
       config: tcgConfig,
       economy: tcgEconomy,
+      memberPerks,
     }),
     store: tcgStore,
     catalog: tcgCatalog,
@@ -125,7 +128,12 @@ export function buildBot(deps: {
     economy: tcgEconomy,
     currencyName: () => economyConfig.currencyName,
     cardBaseUrl: deps.cardBaseUrl ?? "",
+    memberPerks,
   };
+
+  const marriage = deps.marriageStore ?? new InMemoryMarriageStore();
+  const ringTiers = deps.ringTiersSource ?? (async () => DEFAULT_RING_TIERS);
+  const coupleDailyHook = createCoupleDailyHook({ store: marriage, tcgStore });
 
   const defs = [
     ...createCoreCommands({
@@ -134,30 +142,23 @@ export function buildBot(deps: {
       startedAt,
       version: deps.version ?? "0.1.0",
     }),
-    ...createReactionCommands({ settings: deps.settings, botName: deps.botName ?? "Puni" }),
-    ...createEconomyCommands({ economy, currencyName: economyConfig.currencyName, gemsName: economyConfig.gemsName, gems }),
-    ...createMembershipCommands({ membership, tiersSource, orders: deps.membershipOrders }),
-    ...createVoteCommands({
-      voteStore: deps.voteStore,
-      voteConfigSource: deps.voteConfigSource,
-      voteBotIdSource: deps.voteBotIdSource,
+    ...createEconomyCommands({
+      economy,
       currencyName: economyConfig.currencyName,
+      gemsName: economyConfig.gemsName,
+      gems,
+      onDailyClaim: coupleDailyHook,
+    }),
+    ...createMembershipCommands({ membership, tiersSource, orders: deps.membershipOrders }),
+    ...createMarriageCommands({
+      store: marriage,
+      economy: tcgEconomy,
+      ringTiers,
+      currencyName: () => economyConfig.currencyName,
     }),
     ...createTcgCommands(tcgDeps),
     ...createTcgGroupCommands(tcgDeps),
-    ...createModerationCommands({ cases }),
-    ...createEnforcementCommands({ cases, enforcer }),
   ];
   for (const def of defs) registry.register(def);
-  return {
-    registry,
-    economy,
-    membership,
-    gems,
-    cases,
-    enforcer,
-    addCaseHook: (hook) => {
-      hooks.push(hook);
-    },
-  };
+  return { registry, economy, membership, gems, marriage, tcgStore };
 }

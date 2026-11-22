@@ -6,9 +6,9 @@ import { getSiteSetting } from "@/lib/db";
 import { Burger } from "@/components/burger";
 
 export const metadata = {
-  title: "Puni — Bot cộng đồng Discord",
+  title: "Puni — Bot game thẻ bài TCG trên Discord",
   description:
-    "Puni: bot cộng đồng Discord tất cả trong một — chào mừng, log, automod, reaction, minigame và game thú cưng.",
+    "Puni: bot game thẻ bài TCG trên Discord — mở gói, sưu tầm thẻ, đấu hạng, chợ người chơi, economy toàn hệ thống và kết hôn.",
 };
 
 export default async function PublicLayout({ children }: { children: ReactNode }) {
@@ -38,8 +38,8 @@ export default async function PublicLayout({ children }: { children: ReactNode }
             {session ? (
               <>
                 <span className="who">{session.username}</span>
-                <Link href="/welcome" className="btn dark sm">
-                  Vào Puni
+                <Link href="/me" className="btn dark sm">
+                  Khu người chơi
                 </Link>
               </>
             ) : (
@@ -59,8 +59,8 @@ export default async function PublicLayout({ children }: { children: ReactNode }
                   Puni
                 </Link>
                 <p className="tagline">
-                  Bot cộng đồng Discord tất cả trong một — từ chào mừng, kiểm duyệt tới
-                  minigame và game thú cưng.
+                  Bot game thẻ bài TCG trên Discord — sưu tầm thẻ, đấu hạng, chợ người
+                  chơi, economy toàn hệ thống và kết hôn.
                 </p>
               </div>
               <div className="footer-cols">

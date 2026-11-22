@@ -13,6 +13,9 @@ export function createEconomyCommands(deps: {
   currencyName: string;
   gemsName: string;
   gems: GemsWallet;
+  /** Fired after a successful daily claim (couple gift, spec 6.25);
+   *  returns an extra line to append to the reply, or null. */
+  onDailyClaim?: (userId: string) => Promise<string | null>;
 }): CommandDef[] {
   const { economy, currencyName, gemsName, gems } = deps;
   /** Money display law: Coins and Gems ALWAYS appear together. */
@@ -60,8 +63,13 @@ export function createEconomyCommands(deps: {
       if (!claim) {
         return { text: "Bạn đã nhận daily hôm nay rồi — mai quay lại nhé!", ephemeral: true };
       }
+      const extra = deps.onDailyClaim
+        ? await deps.onDailyClaim(ctx.userId).catch(() => null)
+        : null;
       return {
-        text: `Bạn nhận **${fmt(claim.amount)}** (chuỗi ${claim.streak} ngày). Số dư: ${await pair(ctx.userId)}`,
+        text:
+          `Bạn nhận **${fmt(claim.amount)}** (chuỗi ${claim.streak} ngày). Số dư: ${await pair(ctx.userId)}` +
+          (extra ? `\n${extra}` : ""),
       };
     },
   };

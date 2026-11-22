@@ -1,44 +1,17 @@
 /**
- * Per-guild settings — one source of truth shared by Discord commands and
- * the dashboard (spec: "luật cấu hình hai nơi"). The database-backed
- * provider lands with the DB layer; this in-memory provider keeps the
- * exact same interface so callers never change.
+ * Per-guild settings. Since the pivot (spec 6.28) the bot is a pure
+ * game bot — the only per-guild settings left are the command prefix
+ * and per-module switches. The guild_settings table keeps its other
+ * columns in the DB, unused.
  */
 import type { CommandModule } from "@puni/shared";
-import {
-  normalizeCommunityConfig,
-  type CommunityConfig,
-} from "./community-config";
-import {
-  normalizeLogConfig,
-  normalizeAutomodConfig,
-  type LogConfig,
-  type AutomodConfig,
-} from "./moderation-config";
-import { normalizeAiChatConfig, type AiChatConfig } from "./ai-config";
-
-export interface ReactionOverride {
-  enabled?: boolean;
-  tagText?: string;
-  soloText?: string;
-  cooldownSec?: number;
-}
 
 export interface GuildSettings {
   guildId: string;
-  /** Prefix for this guild (spec 6.3). Default "!". */
+  /** Prefix for this guild. Default "!". */
   prefix: string;
   /** Per-module switches; missing = enabled. */
   modules: Partial<Record<CommandModule, boolean>>;
-  reactionOverrides: Record<string, ReactionOverride>;
-  /** Community features: welcome/goodbye/boost (spec 6.5). */
-  community: CommunityConfig;
-  /** Event logging, 5 toggleable groups (spec 6.6). */
-  logging: LogConfig;
-  /** Automod rules (spec 6.7). */
-  automod: AutomodConfig;
-  /** AI chat: cute @mention replies (spec: AI chat). */
-  aiChat: AiChatConfig;
 }
 
 export interface GuildSettingsProvider {
@@ -53,16 +26,7 @@ export class InMemoryGuildSettings implements GuildSettingsProvider {
   async get(guildId: string): Promise<GuildSettings> {
     let s = this.store.get(guildId);
     if (!s) {
-      s = {
-        guildId,
-        prefix: this.defaultPrefix,
-        modules: {},
-        reactionOverrides: {},
-        community: normalizeCommunityConfig(undefined),
-        logging: normalizeLogConfig(undefined),
-        automod: normalizeAutomodConfig(undefined),
-        aiChat: normalizeAiChatConfig(undefined),
-      };
+      s = { guildId, prefix: this.defaultPrefix, modules: {} };
       this.store.set(guildId, s);
     }
     return s;

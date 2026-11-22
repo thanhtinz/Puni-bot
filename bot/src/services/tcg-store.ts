@@ -21,6 +21,15 @@ import {
   type TcgRarity,
   type TcgSpecies,
 } from "./tcg";
+import {
+  eloDelta,
+  freshRankedProfile,
+  rankTierFor,
+  rolloverProfile,
+  type Duel,
+  type DuelStatus,
+  type RankedProfile,
+} from "./tcg-ranked";
 import { battleStatsFor, simulateCardBattle, type BattleCardInput } from "./tcg-battle";
 
 export interface TcgWallet {
@@ -103,6 +112,14 @@ export interface TcgStore {
   getPrefs(userId: string): Promise<Record<string, unknown>>;
   setPrefs(userId: string, prefs: Record<string, unknown>): Promise<void>;
   topCollectors(limit: number): Promise<{ userId: string; species: number; instances: number }[]>;
+  // Ranked + duels (spec 6.26)
+  getRankedProfile(userId: string): Promise<RankedProfile | null>;
+  saveRankedProfile(p: RankedProfile): Promise<void>;
+  listRankedCandidates(excludeUserId: string, limit: number): Promise<string[]>;
+  createDuel(challengerId: string, opponentId: string, wager: number): Promise<Duel>;
+  getDuel(id: number): Promise<Duel | null>;
+  pendingDuelFor(opponentId: string): Promise<Duel | null>;
+  resolveDuel(id: number, status: DuelStatus, winnerId?: string): Promise<void>;
 }
 
 export class InMemoryTcgStore implements TcgStore {
@@ -119,6 +136,8 @@ export class InMemoryTcgStore implements TcgStore {
   private listings: Listing[] = [];
   private trades: Trade[] = [];
   private achievements = new Map<string, string[]>();
+  private ranked = new Map<string, RankedProfile>();
+  private duels: Duel[] = [];
   private prefs = new Map<string, Record<string, unknown>>();
   private seq = 1;
 
@@ -237,6 +256,39 @@ export class InMemoryTcgStore implements TcgStore {
     list.push(id);
     this.achievements.set(userId, list);
   }
+  async getRankedProfile(userId: string) {
+    const p = this.ranked.get(userId);
+    return p ? { ...p } : null;
+  }
+  async saveRankedProfile(p: RankedProfile) { this.ranked.set(p.userId, { ...p }); }
+  async listRankedCandidates(excludeUserId: string, limit: number) {
+    const owners = new Set(this.decks.filter((d) => d.codes.length >= 5).map((d) => d.userId));
+    return [...owners].filter((u) => u !== excludeUserId).slice(0, limit);
+  }
+  async createDuel(challengerId: string, opponentId: string, wager: number) {
+    const d: Duel = {
+      id: this.duels.length + 1, challengerId, opponentId, wager,
+      status: "pending", winnerId: null, createdAt: new Date(), resolvedAt: null,
+    };
+    this.duels.push(d);
+    return { ...d };
+  }
+  async getDuel(id: number) {
+    const d = this.duels.find((x) => x.id === id);
+    return d ? { ...d } : null;
+  }
+  async pendingDuelFor(opponentId: string) {
+    const d = [...this.duels].reverse().find((x) => x.opponentId === opponentId && x.status === "pending");
+    return d ? { ...d } : null;
+  }
+  async resolveDuel(id: number, status: DuelStatus, winnerId?: string) {
+    const d = this.duels.find((x) => x.id === id);
+    if (d && d.status === "pending") {
+      d.status = status;
+      d.winnerId = winnerId ?? null;
+      d.resolvedAt = new Date();
+    }
+  }
   async getPrefs(userId: string) { return { ...(this.prefs.get(userId) ?? {}) }; }
   async setPrefs(userId: string, prefs: Record<string, unknown>) { this.prefs.set(userId, { ...prefs }); }
   async topCollectors(limit: number) {
@@ -274,6 +326,8 @@ export class TcgGameService {
       catalog: () => Promise<TcgSpecies[]>;
       config: () => Promise<TcgConfig>;
       economy: TcgEconomyHooks;
+      /** Membership perks resolver (spec 6.19 TCG benefits). */
+      memberPerks?: (userId: string) => Promise<import("./membership").EffectivePerks | null>;
       rng?: () => number;
       now?: () => Date;
     },
@@ -297,13 +351,24 @@ export class TcgGameService {
         return { kind: "error", message: "Banner Tân Thủ chỉ dành cho tài khoản dưới 30 lượt mở." };
       }
     }
-    const catalog = await this.deps.catalog();
+    const pullPerks = this.deps.memberPerks
+      ? await this.deps.memberPerks(userId).catch(() => null)
+      : null;
+    const catalogAll = await this.deps.catalog();
+    // Member-exclusive cards only enter the pool for members.
+    const catalog = pullPerks?.exclusivePets
+      ? catalogAll
+      : catalogAll.filter((s) => !s.memberExclusive);
     const pool = banner.poolSpecies.length
       ? catalog.filter((s) => banner.poolSpecies.includes(s.id))
       : catalog;
     if (pool.length === 0) return { kind: "error", message: "Danh mục thẻ đang trống." };
     const unitCost = banner.kind === "beginner" ? cfg.beginnerCostCoins : banner.costCoins || cfg.pullCostCoins;
-    const cost = unitCost * count;
+    let cost = unitCost * count;
+    // Member benefit: % off gacha pulls.
+    if (pullPerks && pullPerks.gachaDiscountPercent > 0) {
+      cost = Math.max(0, Math.floor((cost * (100 - pullPerks.gachaDiscountPercent)) / 100));
+    }
     if (cost > 0) {
       const ok = await this.deps.economy.debit(userId, cost, "tcg-gacha", `Mở thẻ banner ${banner.name}`);
       if (!ok) return { kind: "error", message: `Không đủ Coins — cần ${cost.toLocaleString("vi-VN")}.` };
@@ -350,7 +415,13 @@ export class TcgGameService {
     if (!premium && wallet.packsStandard <= 0) return { kind: "error", message: "Bạn không có Gói Thường nào." };
     await this.deps.store.adjustWallet(userId, premium ? { packsPremium: -1 } : { packsStandard: -1 });
     const cfg = await this.deps.config();
-    const catalog = await this.deps.catalog();
+    const packPerks = this.deps.memberPerks
+      ? await this.deps.memberPerks(userId).catch(() => null)
+      : null;
+    const catalogAll = await this.deps.catalog();
+    const catalog = packPerks?.exclusivePets
+      ? catalogAll
+      : catalogAll.filter((s) => !s.memberExclusive);
     const pity = await this.deps.store.getPity(userId, "standard");
     let state = { ...pity };
     const results: PullOutcome[] = [];
@@ -487,8 +558,15 @@ export class TcgGameService {
     }
     const result = simulateCardBattle(team, enemy, () => this.rng());
     const win = result.winner === "a";
-    const coins = win ? Math.round(120 + avgLevel * 15) : 25;
-    const xp = win ? 30 : 12;
+    // Member benefits: +% battle Coins and +% card XP.
+    const battlePerks = this.deps.memberPerks
+      ? await this.deps.memberPerks(userId).catch(() => null)
+      : null;
+    const coins = Math.round(
+      (win ? Math.round(120 + avgLevel * 15) : 25) *
+        (1 + (battlePerks?.battleBonusPercent ?? 0) / 100),
+    );
+    const xp = Math.round((win ? 30 : 12) * (1 + (battlePerks?.xpBonusPercent ?? 0) / 100));
     const leveledUp: string[] = [];
     for (const inst of teamInstances) {
       let level = inst.level;
@@ -511,6 +589,118 @@ export class TcgGameService {
       teamNames: team.map((c) => c.name),
       enemyNames: enemy.map((c) => c.name),
       leveledUp,
+    };
+  }
+
+  /** Build the 5-card battle team from a user's ACTIVE deck. */
+  async buildDeckTeam(userId: string): Promise<
+    | { kind: "ok"; team: BattleCardInput[]; deckName: string }
+    | { kind: "error"; message: string }
+  > {
+    const decks = await this.deps.store.listDecks(userId);
+    const active = decks.find((d) => d.isActive) ?? decks[0];
+    if (!active) return { kind: "error", message: "Chưa có bộ bài nào." };
+    if (active.codes.length < 5) {
+      return { kind: "error", message: `Bộ bài "${active.name}" cần ít nhất 5 thẻ để đấu.` };
+    }
+    const catalog = await this.deps.catalog();
+    const byId = new Map(catalog.map((s) => [s.id, s]));
+    const team: BattleCardInput[] = [];
+    for (const code of active.codes.slice(0, 5)) {
+      const inst = await this.deps.store.getInstance(code);
+      if (!inst || inst.userId !== userId) continue;
+      const sp = byId.get(inst.speciesId);
+      const stats = battleStatsFor(sp?.baseHp ?? 50, sp?.baseAtk ?? 50, inst.level, inst.enhance);
+      team.push({ code: inst.code, name: sp?.name ?? inst.speciesId, speciesId: inst.speciesId, ...stats });
+    }
+    if (team.length < 5) return { kind: "error", message: "Bộ bài đang dùng thiếu thẻ hợp lệ." };
+    return { kind: "ok", team, deckName: active.name };
+  }
+
+  /** Ensure a ranked profile exists with the season rolled over. */
+  async rankedProfile(userId: string): Promise<RankedProfile> {
+    const now = this.now();
+    const stored = await this.deps.store.getRankedProfile(userId);
+    const prof = rolloverProfile(stored ?? freshRankedProfile(userId, now), now);
+    if (!stored || stored.season !== prof.season || stored.mmr !== prof.mmr) {
+      await this.deps.store.saveRankedProfile(prof);
+    }
+    return prof;
+  }
+
+  /**
+   * Ranked match (spec 6.26): fight another player's active-deck
+   * defense team. Zero-sum Elo MMR; Coins by result with the member
+   * battle bonus applied.
+   */
+  async rankedBattle(userId: string): Promise<
+    | {
+        kind: "ok"; win: boolean; rounds: number; log: string[];
+        opponentId: string; coins: number; mmrDelta: number;
+        myMmr: number; tierName: string; tierUp: boolean;
+      }
+    | { kind: "error"; message: string }
+  > {
+    const mine = await this.buildDeckTeam(userId);
+    if (mine.kind === "error") {
+      return { kind: "error", message: mine.message.replace("để đấu", "để đấu hạng") };
+    }
+    const candidates = await this.deps.store.listRankedCandidates(userId, 25);
+    if (!candidates.length) {
+      return { kind: "error", message: "Chưa có đối thủ nào có bộ bài đủ 5 thẻ để đấu hạng. Hẹn bạn quay lại sau nhé." };
+    }
+    const opponentId = candidates[Math.floor(this.rng() * candidates.length)];
+    const theirs = await this.buildDeckTeam(opponentId);
+    if (theirs.kind === "error") {
+      return { kind: "error", message: "Đối thủ vừa đổi bộ bài — thử lại nhé." };
+    }
+    const myProf = await this.rankedProfile(userId);
+    const oppProf = await this.rankedProfile(opponentId);
+    const tierBefore = rankTierFor(myProf.mmr).id;
+    const result = simulateCardBattle(mine.team, theirs.team, () => this.rng());
+    const win = result.winner === "a";
+    const winnerProf = win ? myProf : oppProf;
+    const loserProf = win ? oppProf : myProf;
+    const delta = eloDelta(winnerProf.mmr, loserProf.mmr);
+    winnerProf.mmr += delta;
+    loserProf.mmr = Math.max(0, loserProf.mmr - delta);
+    winnerProf.wins += 1; winnerProf.seasonWins += 1;
+    loserProf.losses += 1; loserProf.seasonLosses += 1;
+    await this.deps.store.saveRankedProfile(winnerProf);
+    await this.deps.store.saveRankedProfile(loserProf);
+    const perks = this.deps.memberPerks
+      ? await this.deps.memberPerks(userId).catch(() => null)
+      : null;
+    const coins = Math.round((win ? 150 : 30) * (1 + (perks?.battleBonusPercent ?? 0) / 100));
+    await this.deps.economy.credit(userId, coins, "tcg-ranked", win ? "Thắng đấu hạng TCG" : "Đấu hạng TCG");
+    const myNew = win ? winnerProf : loserProf;
+    return {
+      kind: "ok", win, rounds: result.rounds, log: result.log.slice(-10),
+      opponentId, coins,
+      mmrDelta: win ? delta : -delta,
+      myMmr: myNew.mmr,
+      tierName: rankTierFor(myNew.mmr).name,
+      tierUp: rankTierFor(myNew.mmr).id !== tierBefore && win,
+    };
+  }
+
+  /** Head-to-head duel between two users' active decks (no MMR). */
+  async duelBattle(aId: string, bId: string): Promise<
+    | { kind: "ok"; winnerId: string; rounds: number; log: string[]; aNames: string[]; bNames: string[] }
+    | { kind: "error"; message: string }
+  > {
+    const a = await this.buildDeckTeam(aId);
+    if (a.kind === "error") return { kind: "error", message: `Người thách đấu: ${a.message}` };
+    const b = await this.buildDeckTeam(bId);
+    if (b.kind === "error") return { kind: "error", message: `Người được thách: ${b.message}` };
+    const result = simulateCardBattle(a.team, b.team, () => this.rng());
+    return {
+      kind: "ok",
+      winnerId: result.winner === "a" ? aId : bId,
+      rounds: result.rounds,
+      log: result.log.slice(-10),
+      aNames: a.team.map((c) => c.name),
+      bNames: b.team.map((c) => c.name),
     };
   }
 }

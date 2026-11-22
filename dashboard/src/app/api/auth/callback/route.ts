@@ -1,23 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { exchangeCode } from "@/lib/discord";
 import { SESSION_COOKIE, createSessionToken } from "@/lib/session";
-import { canManagePuni } from "@/lib/landing";
 
 /**
- * Post-login routing (spec 6.24, owner decisions 2026-11-21): users
- * who manage a server with Puni get the CHOICE screen (/welcome) —
- * server dashboard or player area; everyone else goes straight to
- * the player area /me.
+ * Post-login routing (spec 6.28 pivot, owner 2026-11-21 23:27):
+ * Puni is a pure game bot — login ALWAYS lands in the player area
+ * /me. There is no server dashboard anymore.
  */
-async function landingFor(guilds: { id: string; permissions: string }[]): Promise<string> {
-  const sessionLike = { guilds } as Parameters<typeof canManagePuni>[0];
-  try {
-    return (await canManagePuni(sessionLike)) ? "/welcome" : "/me";
-  } catch {
-    return "/me";
-  }
-}
-
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
@@ -37,7 +26,7 @@ export async function GET(req: NextRequest) {
       avatar: user.avatar,
       guilds,
     });
-    const res = NextResponse.redirect(new URL(await landingFor(guilds), url));
+    const res = NextResponse.redirect(new URL("/me", url));
     res.cookies.set(SESSION_COOKIE, token, {
       httpOnly: true,
       sameSite: "lax",

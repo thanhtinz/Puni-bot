@@ -134,6 +134,14 @@ export function IconSpark({ size = 19, style }: IconProps) {
   );
 }
 
+export function IconHeart({ size = 19, style }: IconProps) {
+  return (
+    <svg {...base(size)} style={style}>
+      <path d="M12 20.5S4 15.4 4 9.9C4 7 6.2 4.9 8.8 4.9c1.4 0 2.6.7 3.2 1.7.6-1 1.8-1.7 3.2-1.7 2.6 0 4.8 2.1 4.8 5 0 5.5-8 10.6-8 10.6Z" />
+    </svg>
+  );
+}
+
 export function IconShield({ size = 19, style }: IconProps) {
   return (
     <svg {...base(size)} style={style}>

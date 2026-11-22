@@ -1237,6 +1237,62 @@ Coins + XP cho cả đội thẻ (thua nhận ít hơn). Lệnh `cardbattle`
 
 **Bổ sung 6.25 (Tín lệnh 2026-11-21 23:04–23:10)**: (1) **Mua hội viên gộp vào khu người chơi**: trang /me/membership (tab Hội Viên) — xem gói của mình, thẻ gói, mua bằng QR cho chính tài khoản đang đăng nhập (không nhập Discord ID), lịch sử đơn của mình. Trang /membership công khai gỡ, chuyển hướng về /me/membership; menu/footer công khai bỏ link Hội viên. (2) **White label nằm trong quản lý server**: trang Dashboard server → Thương hiệu — biệt danh + ảnh đại diện riêng của bot CHỈ trong server đó (migration 0018: guild_settings.branding + branding_applied); bot tự áp dụng qua API Discord khi cấu hình đổi (so dấu vân tay, đồng bộ 10 phút + khi vào server), để trống là về mặc định. (3) **ĐÍNH CHÍNH 6.24b**: khu người chơi KHÔNG có mục quản lý server và ngược lại — hai khu không chèn link lẫn nhau; điểm nối duy nhất là trang chọn /welcome sau đăng nhập và nút "Vào Puni" ở trang chủ. (4) **Burger menu theo mẫu BNT Shop**: ngăn kéo trượt từ trái + nền mờ, đầu ngăn kéo chỉ có logo căn giữa, KHÔNG nút X — chạm ra ngoài hoặc chọn mục là đóng, đổi trang tự đóng.
 
+### 6.25 ĐÍNH CHÍNH LỚN 2026-11-21 23:20 — BỎ GAME PET, GAME CHỈ CÒN TCG
+
+Tín lệnh: "Bỏ săn thú, zoo đồ, lootbot như owo đi giờ mình chỉ tập trung game vào tcg". Hiệu lực ngay:
+
+- **Huỷ toàn bộ game pet kiểu OwO**: hunt/săn thú, zoo, battle pet, đội hình pet, lootbox + ngọc + weapon crate (mục 6.17 và các phần pet trong 6.16/6.24) — HẾT HIỆU LỰC. Các mẫu OwO (hunt/battle/lootbox/team) chỉ còn là lịch sử nghiên cứu.
+- **Game của Puni từ nay = TCG** (mục 6.23 + 6.24 + 6.26): sưu tầm 411 thẻ, gacha/banner/pity, bộ bài, battle thẻ, chợ, trade, đấu hạng, thách đấu, draft.
+- **Đã gỡ khỏi code**: Admin → Item, Admin → Shop trong game + API tương ứng + helper item/listing trong lib web (bảng game_items/game_shop_listings giữ nguyên trong DB ở trạng thái không dùng, theo tiền lệ bảng treo); Admin → Pet đổi tên **Loài thẻ**; landing + sổ dex bỏ mọi nhắc game thú cưng.
+- **Chuyển đổi các hệ phụ thuộc pet**:
+  - Hôn nhân (6.16.5): quà daily của vợ chồng đổi từ lootbox/weapon crate sang **1 Gói Thường TCG hoặc 20 Mảnh thẻ** (ngẫu nhiên).
+  - Quest ngày của game (6.16): các loại hunt/battle-pet/find-rarity đổi sang hành động TCG: mở thẻ (pull), battle thẻ, thắng battle thẻ, bán chợ, trade, burn, nâng cấp/cường hoá thẻ; thưởng cuối đổi sang Gói Thường + Gói Cao Cấp + Mảnh thẻ.
+  - Membership (6.19): quyền lợi pet/lootbox chuyển hết sang TCG — xem 6.19b.
+  - Thẻ profile game (mẫu 16:22): ô "đội hình" hiển thị **bộ bài đang dùng** của TCG.
+  - Sổ dex /me: chỉ tính theo thẻ đã sở hữu.
+  - Gems: giữ làm tiền cao cấp của TCG (mua Gói Cao Cấp về sau); vẫn hiển thị cặp Coins · Gems như luật hiển thị tiền.
+
+### 6.19b Quyền lợi hội viên cho TCG (Tín lệnh 2026-11-21 23:16 "Thêm lợi ích cho hội viên" — ĐÃ THI CÔNG)
+
+Mỗi gói có thêm 6 thông số (Admin → Membership chỉnh được từng gói): **giảm giá mở thẻ %** (0–90), **phí bán chợ %** (0–5, gốc 5 — tính theo gói của NGƯỜI BÁN), **thưởng battle thẻ + % Coins**, **XP thẻ + %**, **gói miễn phí thêm/ngày** (0–3), **số bộ bài +** (trường extraTeams nay hiểu là bộ bài). Mặc định: gói 1 — giảm 5%, phí 4%; gói 2 — giảm 10%, phí 3%, battle +10%, XP +10%, +1 gói/ngày, +1 bộ bài; gói 3 — giảm 20%, phí 0%, battle +25%, XP +25%, +1 gói/ngày, +2 bộ bài. Cộng dồn kiểu cũ: % giảm/phí lấy tốt nhất trong các gói ≤ gói của mình; battle/XP/giảm giá lấy theo gói của mình. **Thẻ độc quyền hội viên**: loài gắn cờ member_exclusive chỉ vào pool mở thẻ của hội viên còn hạn. Đã nối thật: TcgGameService (giảm giá pull, thưởng battle, lọc pool độc quyền ở cả pull lẫn mở gói), lệnh gacha free (cộng gói), market bot + chợ web (phí theo người bán), deck create/import (trần bộ bài). Trường extraLootboxPerDay giữ trong schema ở trạng thái không dùng.
+
+### 6.26 Các hình thức chơi TCG chuyên nghiệp (Tín lệnh 2026-11-21 23:16 "Tìm các hình thức chơi tcg để làm chuyên nghiệp luôn")
+
+Nghiên cứu từ Pokémon TCG (Standard/Expanded/GLC/Pauper/Singleton), Hearthstone (Ranked ladder, Arena draft, Tavern Brawl luật xoay vòng, giải Conquest), MTG Arena (Draft/Sealed), Master Duel (hạng theo mùa). Bộ hình thức của Puni — mọi hình thức dùng chung engine battle thẻ tất định + bộ bài của người chơi:
+
+1. **Đấu thường (Casual)** — battle thẻ với máy như hiện tại (6.24), không tính hạng. ĐÃ CÓ.
+2. **Đấu hạng (Ranked)** — ĐÃ THI CÔNG lõi: người chơi đấu với đội của người chơi khác (bản ghi bất đối xứng: dùng bộ bài đang dùng của đối thủ làm "đội phòng thủ", engine tất định theo seed trận). Điểm MMR ẩn bắt đầu 1000, thắng/thua theo công thức Elo (K=32, kỳ vọng theo chênh lệch MMR). Bậc hạng suy từ MMR: Đồng <1100 · Bạc 1100 · Vàng 1250 · Bạch kim 1450 · Kim cương 1700 · Cao thủ 2000+. Mùa 30 ngày: hết mùa MMR nén về 1000 một nửa khoảng cách, thưởng Coins theo bậc (Admin chỉnh sau). Lệnh `ranked` (đấu 1 trận hạng), `rank` (xem bậc + MMR + thắng/thua mùa này).
+3. **Thách đấu PvP (Duel)** — ĐÃ THI CÔNG lõi: `duel @người` gửi thách đấu (hết hạn 5 phút), đối thủ `duel accept`/`duel reject`; khi nhận, chạy battle đội đang dùng của hai bên bằng engine tất định; cược Coins tuỳ chọn (trừ 2 bên khi gửi/nhận, thắng ăn cả, huỷ thì hoàn). Không tính MMR.
+4. **Đấu trường Draft (Arena)** — KẾ HOẠCH: phí vào bằng Coins; chọn 1 trong 3 thẻ ×30 lượt để dựng bộ bài tạm 30 thẻ (không cần sở hữu); đấu bất đối xứng với người chơi Arena khác; thua 3 trận là kết thúc; thưởng theo số thắng (0–12): gói thẻ + Coins + Mảnh, thắng cao có Gói Cao Cấp.
+5. **Mở gói xây bộ (Sealed)** — KẾ HOẠCH: phí vào cao hơn Draft; mở 6 Gói Thường làm pool, tự chọn 30 thẻ trong pool dựng bộ; chạy như Arena; thẻ trong pool KHÔNG vào kho (chỉ dùng trong lượt Sealed).
+6. **Thử thách ngày (Daily Trial)** — KẾ HOẠCH: mỗi ngày một luật xây bộ xoay vòng kiểu Trainer Trials/Tavern Brawl: Đơn hệ (bộ bài chỉ 1 hệ — kiểu GLC), Độc bản (mỗi loài tối đa 1 bản — singleton), Bình dân (chỉ Common/Uncommon — kiểu Pauper), Song bản (mỗi loài đúng 2 bản). Đấu 3 trận với máy theo luật đó, thắng cả 3 nhận thưởng cố định; validateDeck mở rộng theo luật ngày.
+7. **Giải đấu (Tournament)** — KẾ HOẠCH (đợt sau): bracket 8 người đăng ký trong kênh, Bo3, format Conquest nhẹ (mỗi người 2 bộ bài, thắng phải thắng bằng cả 2 bộ), chủ server tạo giải bằng lệnh, thưởng từ quỹ phí đăng ký.
+
+Luật chung: bộ bài hợp lệ theo validateDeck hiện hành (30 thẻ, ≤3 bản/loài, ≥10 loài) trừ khi luật hình thức ghi khác; trận bất đối xứng luôn dùng seed tất định để tra cứu/tranh chấp được; mọi thưởng qua economy ledger có source riêng (tcg-ranked, tcg-duel, tcg-arena...).
+
+### 6.27 Hệ thống BỘ THẺ (sets) (Tín lệnh 2026-11-21 23:26 EST: "Tuxemon mới là một loại thôi nha — mình còn phát triển thêm nhiều bộ khác")
+
+Thẻ của Puni tổ chức theo **BỘ (set)**: mỗi loài/thẻ thuộc đúng một bộ. **Bộ Tuxemon (`tuxemon`) chỉ là bộ đầu tiên** — nền tảng phải sẵn sàng cho nhiều bộ khác (bộ gốc tự vẽ, bộ hợp tác...) mà không đổi cấu trúc.
+
+- **Dữ liệu**: bảng `game_sets` (id, name, description, sort, enabled) — migration `0020_tcg_sets.sql`; cột `game_species.set_id` mặc định `tuxemon`; seed bộ `tuxemon` "Bộ Tuxemon".
+- **Bot**: loài mang `setId` trong catalog; manifest web `tcg-cards.json` mỗi thẻ có trường `set`.
+- **Admin → Loài thẻ**: panel "Bộ thẻ" quản lý các bộ (thêm/sửa/xoá — không xoá được bộ còn loài), form loài có ô chọn bộ.
+- **Sẽ làm tiếp**: sổ dex /me gom theo bộ + tiến độ từng bộ; lọc chợ theo bộ; banner gắn bộ (gacha theo bộ); số thẻ trên ảnh render tính riêng theo từng bộ.
+
+### 6.28 ĐÍNH CHÍNH LỚN 2026-11-21 23:27 — ĐỔI HƯỚNG: BOT THUẦN TCG + ECONOMY + MARRY, BỎ HẲN QUẢN LÝ SERVER
+
+Nguyên văn Tín: *"Đổi hướng đi giờ tôi ko làm bot như dyno nữa ko quản lý sv nữa bot thuần tcg, economy, marry thôi"* và *"Login trên landing là vào khu vực người chơi thôi"* + *"Viết lại landingpage luôn"*.
+
+Quyết định này THAY mọi chốt trước trái ngược nó:
+
+- **Bot chỉ còn 3 trụ cột**: (1) game thẻ bài **TCG** (mục 6.23–6.27), (2) **Economy** toàn hệ thống (6.16.1: balance/daily/pay/ecotop + hội viên 6.19), (3) **Hôn nhân** (6.16.5 — ĐÃ THI CÔNG cùng đợt này: nhẫn 7 bậc mua bằng Coins, cầu hôn/đồng ý/từ chối, nâng cấp nhẫn, ly hôn, quà daily cặp đôi = Gói Thường hoặc 20 Mảnh thẻ cho cả hai khi cùng nhận daily trong ngày).
+- **HẾT HIỆU LỰC và ĐÃ GỠ KHỎI CODE** (bảng/cột DB liên quan giữ nguyên trạng không dùng, như tiền lệ farm/fishing): moderation + CASE (6.8), automod (6.7), hệ log (6.6), welcome/goodbye/boost (6.5), reaction GIF, AI trò chuyện (6.18), verify OAuth/PULL, white label/branding theo guild (6.25 phần branding), vote top.gg phía bot (6.22 — webhook web giữ ở trạng thái không dùng), minigame economy phụ và ma sói (chưa từng thi công — huỷ hẳn). Registry bot còn đúng **28 lệnh** (core 4 + economy 4 + pass/orders + marry + TCG 17).
+- **Dashboard quản lý server theo guild ĐÃ XOÁ TOÀN BỘ** (route group `(dash)`, trang chọn /welcome, API guilds, Admin → Server, Admin → AI). **Đăng nhập từ landing LUÔN vào thẳng khu người chơi /me** — không còn màn hình chọn, không còn link chéo.
+- **Landing page VIẾT LẠI** theo hướng bot game thuần: hero TCG, ba trụ cột Thẻ bài · Economy · Hôn nhân, số liệu thật (số lệnh từ catalog, 411 thẻ bộ Tuxemon, 7 bậc nhẫn).
+- **Admin panel của chủ bot giữ lại** các mục phục vụ game: Tổng quan, Vận hành (bật/tắt bot toàn cục), Economy, Hội viên, Vote (trạng thái treo), Người dùng, Cụm máy, Loài thẻ/Bộ thẻ, Trang web.
+- Guild settings phía bot rút còn **prefix + công tắc module**; các cột cấu hình server cũ nằm im trong DB.
+
+
 ## 7. LỘ TRÌNH TÁCH THEO GIAI ĐOẠN
 
 > **ĐÍNH CHÍNH LỚN (Tín chốt 2026-11-21 18:41 EST): BỎ HOÀN TOÀN HỆ THỐNG SHOP.** Puni từ nay là **bot cộng đồng thuần** — dữ liệu riêng biệt hoàn toàn, **không kết nối, không gọi API, không đụng chạm BNT Shop**. Theo đó: toàn bộ nội dung về Shop trong tài liệu này (mục 4 API `/api/bot/v1/`, 6.11, 6.12, 6.14, phần Shop của 6.15, luật ẩn Shop, reseller, Pass/ví/thanh toán theo server, board bán hàng) **HẾT HIỆU LỰC** và đã bị gỡ khỏi code ở đợt 2026-11-21 (xoá ShopApiClient, module "shop", `shop_enabled`, board store; migration 0007 xoá cột `shop_enabled` + bảng `board_state`; dashboard bỏ trang Reseller + panel Shop). GĐ1 (API phía Shop) giữ nguyên bên repo Shop nhưng bot này **không dùng nữa**. GĐ7 rút còn: web công khai + tuỳ biến thương hiệu theo server. Economy vẫn là tiền cộng đồng toàn cục của riêng Puni, không liên quan ví Shop nào.

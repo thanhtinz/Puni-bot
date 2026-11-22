@@ -27,7 +27,12 @@ export async function POST(req: Request) {
       priceAmount: Number.parseInt(String(form.get(`${p}amount`) ?? "0"), 10),
       dailyBonusPercent: Number.parseInt(String(form.get(`${p}bonus`) ?? "0"), 10),
       extraTeams: Number.parseInt(String(form.get(`${p}teams`) ?? "0"), 10),
-      extraLootboxPerDay: Number.parseInt(String(form.get(`${p}loot`) ?? "0"), 10),
+      extraLootboxPerDay: 0,
+      gachaDiscountPercent: Number.parseInt(String(form.get(`${p}gacha`) ?? "0"), 10),
+      marketFeePercent: Number.parseInt(String(form.get(`${p}fee`) ?? "5"), 10),
+      battleBonusPercent: Number.parseInt(String(form.get(`${p}battlebonus`) ?? "0"), 10),
+      xpBonusPercent: Number.parseInt(String(form.get(`${p}xpbonus`) ?? "0"), 10),
+      extraFreePacksPerDay: Number.parseInt(String(form.get(`${p}freepacks`) ?? "0"), 10),
       exclusivePets: form.get(`${p}pets`) != null,
       perks: String(form.get(`${p}perks`) ?? "")
         .split("\n")

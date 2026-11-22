@@ -15,24 +15,24 @@ test("reactions: exactly 69, kiss template matches the approved spec example", (
   assert.ok(getReaction("KISS"), "lookup is case-insensitive");
 });
 
-test("registry: core + reactions + economy assembled without collisions", () => {
+test("registry: game bot catalog assembled without collisions", () => {
   const settings = new InMemoryGuildSettings();
   const { registry } = buildBot({ settings });
-  // slash: 4 core + reaction + 4 economy + pass + orders + vote + 13 tcg + 3 case commands + 5 enforcement
-  assert.equal(registry.slashCommands().length, 34);
-  // prefix: 4 core + 69 reactions + 4 economy + pass + orders + vote + 13 tcg + 3 case commands + 5 enforcement
-  assert.equal(registry.prefixCommands().length, 102);
+  // slash = prefix = 4 core + 4 economy + pass + orders + marry + 17 tcg
+  assert.equal(registry.slashCommands().length, 28);
+  assert.equal(registry.prefixCommands().length, 28);
   assert.equal(registry.resolve("bal")?.name, "balance");
-  assert.equal(registry.resolve("kiss")?.module, "reaction");
+  assert.equal(registry.resolve("marry")?.name, "marry");
+  assert.equal(registry.resolve("kiss"), undefined); // reactions are gone (spec 6.28)
 });
 
 test("parsePrefixMessage: prefix required, mentions extracted", () => {
-  assert.deepEqual(parsePrefixMessage("!kiss <@123>", "!"), {
-    name: "kiss",
+  assert.deepEqual(parsePrefixMessage("!marry <@123>", "!"), {
+    name: "marry",
     args: ["<@123>"],
     mentions: ["123"],
   });
-  assert.equal(parsePrefixMessage("kiss <@123>", "!"), null);
+  assert.equal(parsePrefixMessage("marry <@123>", "!"), null);
   assert.equal(parsePrefixMessage("!", "!"), null);
   assert.equal(parsePrefixMessage("?ping", "!"), null);
   assert.equal(parsePrefixMessage("?ping", "?")?.name, "ping");
@@ -180,6 +180,6 @@ test("slash payload: every slash command is in the global registration", () => {
   const { registry } = buildBot({ settings });
   const payload = buildSlashPayload(registry);
   assert.equal(payload.length, registry.slashCommands().length);
-  const reaction = payload.find((p) => p.name === "reaction");
-  assert.ok(reaction, "grouped /reaction exists");
+  const marry = payload.find((p) => p.name === "marry");
+  assert.ok(marry, "/marry exists");
 });

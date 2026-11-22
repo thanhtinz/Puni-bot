@@ -1,6 +1,7 @@
 import type { Pool } from "pg";
 import { emptyPity, newInstanceCode, type CardInstance, type PityState, type TcgBanner, type TcgRarity } from "../services/tcg";
 import type { Deck, Listing, PullRecord, TcgStore, TcgWallet, Trade } from "../services/tcg-store";
+import type { Duel, DuelStatus, RankedProfile } from "../services/tcg-ranked";
 
 /** PostgreSQL TcgStore (spec 6.23, migration 0015). */
 export class PgTcgStore implements TcgStore {
@@ -352,6 +353,82 @@ export class PgTcgStore implements TcgStore {
       `INSERT INTO tcg_settings (user_id, prefs) VALUES ($1, $2::jsonb)
        ON CONFLICT (user_id) DO UPDATE SET prefs = EXCLUDED.prefs, updated_at = now()`,
       [userId, JSON.stringify(prefs)],
+    );
+  }
+
+  async getRankedProfile(userId: string): Promise<RankedProfile | null> {
+    const res = await this.pool.query(
+      `SELECT user_id, mmr, wins, losses, season, season_wins, season_losses
+       FROM tcg_ranked_profiles WHERE user_id = $1`, [userId],
+    );
+    const r = res.rows[0];
+    return r ? {
+      userId: r.user_id, mmr: r.mmr, wins: r.wins, losses: r.losses,
+      season: r.season, seasonWins: r.season_wins, seasonLosses: r.season_losses,
+    } : null;
+  }
+
+  async saveRankedProfile(p: RankedProfile): Promise<void> {
+    await this.pool.query(
+      `INSERT INTO tcg_ranked_profiles (user_id, mmr, wins, losses, season, season_wins, season_losses, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, now())
+       ON CONFLICT (user_id) DO UPDATE SET mmr = EXCLUDED.mmr, wins = EXCLUDED.wins,
+         losses = EXCLUDED.losses, season = EXCLUDED.season,
+         season_wins = EXCLUDED.season_wins, season_losses = EXCLUDED.season_losses,
+         updated_at = now()`,
+      [p.userId, p.mmr, p.wins, p.losses, p.season, p.seasonWins, p.seasonLosses],
+    );
+  }
+
+  async listRankedCandidates(excludeUserId: string, limit: number): Promise<string[]> {
+    const res = await this.pool.query(
+      `SELECT DISTINCT d.user_id FROM tcg_decks d
+       JOIN tcg_deck_cards dc ON dc.deck_id = d.id
+       WHERE d.user_id <> $1
+       GROUP BY d.id, d.user_id HAVING COUNT(dc.instance_code) >= 5
+       LIMIT $2`, [excludeUserId, limit],
+    );
+    return res.rows.map((r) => r.user_id as string);
+  }
+
+  async createDuel(challengerId: string, opponentId: string, wager: number): Promise<Duel> {
+    const res = await this.pool.query(
+      `INSERT INTO tcg_duels (challenger_id, opponent_id, wager) VALUES ($1, $2, $3)
+       RETURNING id::text AS id, created_at`, [challengerId, opponentId, wager],
+    );
+    const r = res.rows[0];
+    return {
+      id: Number.parseInt(r.id, 10), challengerId, opponentId, wager,
+      status: "pending", winnerId: null, createdAt: new Date(r.created_at), resolvedAt: null,
+    };
+  }
+
+  async getDuel(id: number): Promise<Duel | null> {
+    const res = await this.pool.query(
+      `SELECT id::text AS id, challenger_id, opponent_id, wager::text AS wager, status, winner_id, created_at, resolved_at
+       FROM tcg_duels WHERE id = $1`, [id],
+    );
+    const r = res.rows[0];
+    return r ? {
+      id: Number.parseInt(r.id, 10), challengerId: r.challenger_id, opponentId: r.opponent_id,
+      wager: Number.parseInt(r.wager, 10), status: r.status as DuelStatus, winnerId: r.winner_id,
+      createdAt: new Date(r.created_at), resolvedAt: r.resolved_at ? new Date(r.resolved_at) : null,
+    } : null;
+  }
+
+  async pendingDuelFor(opponentId: string): Promise<Duel | null> {
+    const res = await this.pool.query(
+      `SELECT id::text AS id FROM tcg_duels WHERE opponent_id = $1 AND status = 'pending'
+       ORDER BY created_at DESC LIMIT 1`, [opponentId],
+    );
+    return res.rows[0] ? this.getDuel(Number.parseInt(res.rows[0].id, 10)) : null;
+  }
+
+  async resolveDuel(id: number, status: DuelStatus, winnerId?: string): Promise<void> {
+    await this.pool.query(
+      `UPDATE tcg_duels SET status = $2, winner_id = $3, resolved_at = now()
+       WHERE id = $1 AND status = 'pending'`,
+      [id, status, winnerId ?? null],
     );
   }
 

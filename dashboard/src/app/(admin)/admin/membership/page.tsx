@@ -33,17 +33,33 @@ function TierSlot({ index, tier }: { index: number; tier?: MembershipTier }) {
       </div>
       <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
         <div className="field" style={{ margin: 0 }}>
-          <label htmlFor={`${p}teams`}>Đội hình + (game)</label>
+          <label htmlFor={`${p}teams`}>Bộ bài + (TCG)</label>
           <input id={`${p}teams`} name={`${p}teams`} type="number" min={0} max={5} defaultValue={tier?.extraTeams ?? 0} />
         </div>
         <div className="field" style={{ margin: 0 }}>
-          <label htmlFor={`${p}loot`}>Lootbox +/ngày (game)</label>
-          <input id={`${p}loot`} name={`${p}loot`} type="number" min={0} max={5} defaultValue={tier?.extraLootboxPerDay ?? 0} />
+          <label htmlFor={`${p}freepacks`}>Gói miễn phí +/ngày (TCG)</label>
+          <input id={`${p}freepacks`} name={`${p}freepacks`} type="number" min={0} max={3} defaultValue={tier?.extraFreePacksPerDay ?? 0} />
+        </div>
+        <div className="field" style={{ margin: 0 }}>
+          <label htmlFor={`${p}gacha`}>Giảm giá mở thẻ % (TCG)</label>
+          <input id={`${p}gacha`} name={`${p}gacha`} type="number" min={0} max={90} defaultValue={tier?.gachaDiscountPercent ?? 0} />
+        </div>
+        <div className="field" style={{ margin: 0 }}>
+          <label htmlFor={`${p}fee`}>Phí bán chợ % (TCG, gốc 5)</label>
+          <input id={`${p}fee`} name={`${p}fee`} type="number" min={0} max={5} defaultValue={tier?.marketFeePercent ?? 5} />
+        </div>
+        <div className="field" style={{ margin: 0 }}>
+          <label htmlFor={`${p}battlebonus`}>Thưởng battle thẻ + %</label>
+          <input id={`${p}battlebonus`} name={`${p}battlebonus`} type="number" min={0} max={100} defaultValue={tier?.battleBonusPercent ?? 0} />
+        </div>
+        <div className="field" style={{ margin: 0 }}>
+          <label htmlFor={`${p}xpbonus`}>XP thẻ + %</label>
+          <input id={`${p}xpbonus`} name={`${p}xpbonus`} type="number" min={0} max={100} defaultValue={tier?.xpBonusPercent ?? 0} />
         </div>
       </div>
       <label className="check" style={{ marginTop: 12 }}>
         <input type="checkbox" name={`${p}pets`} defaultChecked={tier?.exclusivePets ?? false} />
-        <span>Mở khoá pet độc quyền (game)</span>
+        <span>Mở khoá thẻ độc quyền hội viên (TCG)</span>
       </label>
       <div className="field" style={{ marginTop: 10 }}>
         <label htmlFor={`${p}perks`}>Quyền lợi hiển thị (mỗi dòng một ý)</label>

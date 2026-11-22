@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { adminGate } from "@/lib/current-session";
-import { listSpecies, type SpeciesRow } from "@/lib/db";
+import { listGameSets, listSpecies, type SpeciesRow } from "@/lib/db";
 import VerifyForm from "../verify-form";
 
 export const dynamic = "force-dynamic";
@@ -19,20 +19,80 @@ export default async function AdminPetsPage({
     return null;
   }
   const rows = await listSpecies().catch(() => null);
+  const sets = await listGameSets().catch(() => []);
   const editing: SpeciesRow | undefined = edit ? rows?.find((r) => r.id === edit) : undefined;
   const e = editing;
 
   return (
     <>
-      <h1>Quản lý Pet</h1>
+      <h1>Quản lý loài thẻ</h1>
       {saved ? <div className="notice ok">Đã lưu thay đổi pet.</div> : null}
       {err ? <div className="notice">Không thực hiện được: {err}</div> : null}
       <p style={{ maxWidth: 780, lineHeight: 1.6 }}>
         Kho loài của game nằm ở đây — game đọc thẳng từ bảng này, không hardcode
-        danh sách loài. Đã nhập sẵn 411 loài từ Tuxemon kèm ảnh sprite (dữ liệu
-        và hình ảnh của dự án Tuxemon, giấy phép CC-BY-SA — giữ credit khi dùng).
-        Bạn sửa tiếp tại trang này.
+        danh sách loài. Mỗi loài thuộc về đúng một BỘ thẻ; Tuxemon chỉ là bộ đầu
+        tiên, thêm bộ mới ở panel Bộ thẻ bên dưới. (Loài Tuxemon kèm ảnh sprite —
+        dữ liệu và hình ảnh của dự án Tuxemon, giấy phép CC-BY-SA, giữ credit khi dùng.)
       </p>
+
+      <div className="panel">
+        <h2>Bộ thẻ</h2>
+        {sets.length === 0 ? (
+          <p>Chưa có bộ nào (cần chạy migration 0020).</p>
+        ) : (
+          <table className="plain">
+            <thead>
+              <tr><th>Mã bộ</th><th>Tên bộ</th><th>Số loài</th><th>Thứ tự</th><th>Đang bật</th><th></th></tr>
+            </thead>
+            <tbody>
+              {sets.map((s) => (
+                <tr key={s.id}>
+                  <td><code>{s.id}</code></td>
+                  <td>{s.name}</td>
+                  <td>{s.species_count}</td>
+                  <td>{s.sort}</td>
+                  <td>{s.enabled ? "Có" : "Không"}</td>
+                  <td>
+                    <form action="/api/admin/game/sets" method="post" style={{ display: "inline" }}>
+                      <input type="hidden" name="action" value="delete" />
+                      <input type="hidden" name="id" value={s.id} />
+                      <button className="btn small danger" type="submit">Xoá</button>
+                    </form>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        <form action="/api/admin/game/sets" method="post" style={{ marginTop: 14 }}>
+          <input type="hidden" name="action" value="save" />
+          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+            <div className="field" style={{ margin: 0 }}>
+              <label htmlFor="set-id">Mã bộ (slug)</label>
+              <input id="set-id" name="id" type="text" required placeholder="bo-2" style={{ width: 150 }} />
+            </div>
+            <div className="field" style={{ margin: 0 }}>
+              <label htmlFor="set-name">Tên bộ</label>
+              <input id="set-name" name="name" type="text" required style={{ width: 220 }} />
+            </div>
+            <div className="field" style={{ margin: 0 }}>
+              <label htmlFor="set-sort">Thứ tự</label>
+              <input id="set-sort" name="sort" type="number" defaultValue={0} style={{ width: 90 }} />
+            </div>
+          </div>
+          <div className="field" style={{ marginTop: 10 }}>
+            <label htmlFor="set-desc">Mô tả</label>
+            <input id="set-desc" name="description" type="text" style={{ width: "100%" }} />
+          </div>
+          <label className="check">
+            <input type="checkbox" name="enabled" defaultChecked />
+            <span>Bật bộ này</span>
+          </label>
+          <div style={{ marginTop: 10 }}>
+            <button className="btn" type="submit">Lưu bộ thẻ</button>
+          </div>
+        </form>
+      </div>
 
       <div className="panel">
         <h2>{e ? `Sửa pet: ${e.name}` : "Thêm pet mới"}</h2>
@@ -50,6 +110,17 @@ export default async function AdminPetsPage({
             <div className="field" style={{ margin: 0 }}>
               <label htmlFor="types">Hệ (cách nhau dấu phẩy)</label>
               <input id="types" name="types" type="text" defaultValue={e?.types ?? ""} placeholder="Đất, Lửa" style={{ width: 200 }} />
+            </div>
+            <div className="field" style={{ margin: 0 }}>
+              <label htmlFor="set_id">Bộ thẻ</label>
+              <select id="set_id" name="set_id" defaultValue={e?.set_id ?? "tuxemon"}>
+                {sets.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+                {sets.length === 0 && <option value="tuxemon">Bộ Tuxemon</option>}
+              </select>
             </div>
             <div className="field" style={{ margin: 0 }}>
               <label htmlFor="rarity">Độ hiếm</label>

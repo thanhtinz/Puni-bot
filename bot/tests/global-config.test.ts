@@ -6,7 +6,6 @@ import {
   normalizeEconomyConfig,
   DEFAULT_ECONOMY_CONFIG,
 } from "../src/services/economy";
-import { shouldTriggerAiChat } from "../src/services/ai-chat";
 import { formatMoneyPair } from "../src/services/gems";
 
 test("normalize economy config: defaults for junk, clamps for extremes", () => {
@@ -54,16 +53,4 @@ test("economy service: a broken config source falls back to the snapshot", async
   );
   const d = await eco.claimDaily("u9", new Date("2026-03-01T10:00:00Z"));
   assert.deepEqual(d, { amount: 42, streak: 1 });
-});
-
-test("ai chat predicate: owner master switch blocks even a perfect trigger", () => {
-  const base = {
-    mentionsBot: true,
-    isCommand: false,
-    guildEnabled: true,
-    providerConfigured: true,
-  };
-  assert.equal(shouldTriggerAiChat(base), true);
-  assert.equal(shouldTriggerAiChat({ ...base, globalEnabled: true }), true);
-  assert.equal(shouldTriggerAiChat({ ...base, globalEnabled: false }), false);
 });
