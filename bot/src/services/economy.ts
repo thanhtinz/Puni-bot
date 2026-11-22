@@ -75,7 +75,7 @@ export interface LedgerEntry {
   userId: string;
   delta: number;
   balanceAfter: number;
-  /** e.g. "daily", "game", "cozy-farm", "admin", "transfer" */
+  /** e.g. "daily", "game", "game", "admin", "transfer" */
   source: string;
   note: string;
   createdAt: Date;

@@ -88,29 +88,6 @@ async function main(): Promise<void> {
     voteStore,
     voteConfigSource: botConfig ? () => botConfig.getVoteConfig() : undefined,
     voteBotIdSource: () => discordClient?.user?.id ?? process.env.DISCORD_CLIENT_ID ?? null,
-    fishingConfigSource: botConfig ? () => botConfig.getFishingConfig() : undefined,
-    fishNamesSource: pgPool
-      ? async (rarity: string, isMember: boolean) => {
-          const res = await pgPool!.query<{ name: string }>(
-            `SELECT name FROM game_fish
-             WHERE rarity = $1 AND enabled = true
-               AND (member_exclusive = false OR $2 = true)
-             ORDER BY random() LIMIT 12`,
-            [rarity, isMember],
-          );
-          return res.rows.map((r) => r.name);
-        }
-      : undefined,
-    fishingEarnedToday: pgPool
-      ? async (userId: string) => {
-          const res = await pgPool!.query<{ total: string }>(
-            `SELECT COALESCE(SUM(delta), 0)::text AS total FROM economy_ledger
-             WHERE user_id = $1 AND source = 'fishing' AND created_at >= date_trunc('day', now())`,
-            [userId],
-          );
-          return Number.parseInt(res.rows[0]?.total ?? "0", 10);
-        }
-      : undefined,
     membershipTiersSource: botConfig ? () => botConfig.getMembershipTiers() : undefined,
     economyConfig: botConfig ? await botConfig.getEconomyConfig() : undefined,
     economyConfigSource: botConfig ? () => botConfig.getEconomyConfig() : undefined,

@@ -40,7 +40,6 @@ export const DEFAULT_MEMBERSHIP_TIERS: MembershipTier[] = [
     perks: [
       "Daily nhận thêm +25% tiền",
       "Mở khoá pet độc quyền dành cho hội viên",
-      "Câu cá: trần tiền mỗi ngày x2, thời gian chờ giảm nửa",
       "Huy hiệu hội viên trong hồ sơ",
       "Role màu hội viên trong server chính của Puni",
     ],

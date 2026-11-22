@@ -4,14 +4,7 @@ import { createCoreCommands } from "./commands/core";
 import { createReactionCommands } from "./commands/reactions";
 import { createEconomyCommands } from "./commands/economy";
 import { createMembershipCommands } from "./commands/membership";
-import { createFishingCommands } from "./commands/fishing";
 import { createVoteCommands } from "./commands/vote";
-import {
-  DEFAULT_FISHING_CONFIG,
-  FishingService,
-  normalizeFishingConfig,
-  type FishingConfig,
-} from "./services/fishing";
 import {
   DEFAULT_MEMBERSHIP_TIERS,
   InMemoryMembershipStore,
@@ -64,15 +57,9 @@ export function buildBot(deps: {
   membershipTiersSource?: () => Promise<import("./services/membership").MembershipTier[]>;
   /** Membership order history store (spec 6.19) for `orders`. */
   membershipOrders?: import("./services/membership").MembershipOrderStore;
-  /** Live fishing config (Admin panel → Câu cá). */
-  fishingConfigSource?: () => Promise<FishingConfig>;
-  /** Names for caught fish, from the owner-managed item catalogue. */
-  fishNamesSource?: (rarity: string, isMember: boolean) => Promise<string[]>;
   voteStore?: import("./services/vote").VoteStore;
   voteConfigSource?: () => Promise<import("./services/vote").VoteConfig>;
   voteBotIdSource?: () => string | null;
-  /** Coins a user already earned from fishing today (daily cap). */
-  fishingEarnedToday?: (userId: string) => Promise<number>;
 }): BotDeps {
   const registry = new CommandRegistry();
   const economyConfig = deps.economyConfig ?? DEFAULT_ECONOMY_CONFIG;
@@ -111,38 +98,6 @@ export function buildBot(deps: {
       voteStore: deps.voteStore,
       voteConfigSource: deps.voteConfigSource,
       voteBotIdSource: deps.voteBotIdSource,
-      currencyName: economyConfig.currencyName,
-    }),
-    ...createFishingCommands({
-      fishing: new FishingService({
-        configSource:
-          deps.fishingConfigSource ?? (async () => normalizeFishingConfig(DEFAULT_FISHING_CONFIG)),
-        earnedToday:
-          deps.fishingEarnedToday ??
-          (async (userId: string) => {
-            const rows = await economy.ledgerFor(userId);
-            const start = new Date();
-            start.setHours(0, 0, 0, 0);
-            return rows
-              .filter((r) => r.source === "fishing" && r.createdAt >= start)
-              .reduce((s, r) => s + Math.max(0, r.delta), 0);
-          }),
-        credit: async (userId, amount, note) => {
-          await economy.credit(userId, amount, "fishing", note);
-        },
-        memberBoost: async (userId) => {
-          const rec = await membership.getActive(userId, new Date()).catch(() => null);
-          return rec
-            ? { cooldownFactor: 0.5, capFactor: 2 }
-            : { cooldownFactor: 1, capFactor: 1 };
-        },
-      }),
-      fishNamesSource: deps.fishNamesSource
-        ? async (rarity, userId) => {
-            const rec = await membership.getActive(userId, new Date()).catch(() => null);
-            return deps.fishNamesSource!(rarity, Boolean(rec));
-          }
-        : undefined,
       currencyName: economyConfig.currencyName,
     }),
     ...createModerationCommands({ cases }),

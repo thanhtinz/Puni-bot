@@ -85,7 +85,7 @@ export default function HomePage() {
             </h1>
             <p className="sub">
               Puni là bot cộng đồng Discord tất cả trong một: chào mừng, ghi log, kiểm duyệt
-              tự động, reaction vui nhộn, minigame và cả một thế giới game thú cưng & nông trại — để
+              tự động, reaction vui nhộn, minigame và cả một thế giới game thú cưng — để
               server của bạn vận hành gọn gàng mà vẫn đầy sức sống.
             </p>
             <div className="hero-cta">

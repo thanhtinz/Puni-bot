@@ -666,15 +666,5 @@
     "module": "economy",
     "slash": true,
     "prefix": true
-  },
-  {
-    "name": "fish",
-    "aliases": [
-      "cauca"
-    ],
-    "description": "Câu cá thư giãn — cá câu được tự bán lấy tiền",
-    "module": "games",
-    "slash": true,
-    "prefix": true
   }
 ]

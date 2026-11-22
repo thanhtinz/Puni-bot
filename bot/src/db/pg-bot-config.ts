@@ -61,20 +61,10 @@ export class PgBotConfig {
     return typeof raw === "string" && /^\d{5,25}$/.test(raw) ? raw : "";
   }
 
-  /** Fishing config (Admin panel → Câu cá). */
+  /** Vote config (Admin panel → Vote). */
   async getVoteConfig(): Promise<import("../services/vote").VoteConfig> {
     const { normalizeVoteConfig } = await import("../services/vote");
     return normalizeVoteConfig(await this.get("vote_config"));
-  }
-
-  async getFarmConfig(): Promise<import("../services/farm").FarmConfig> {
-    const { normalizeFarmConfig } = await import("../services/farm");
-    return normalizeFarmConfig(await this.get("farm_config"));
-  }
-
-  async getFishingConfig(): Promise<import("../services/fishing").FishingConfig> {
-    const { normalizeFishingConfig } = await import("../services/fishing");
-    return normalizeFishingConfig(await this.get("fishing_config"));
   }
 
   /** Global bot on/off switch (Admin panel → Vận hành). Default: on.

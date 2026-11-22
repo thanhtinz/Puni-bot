@@ -201,13 +201,3 @@ export function IconBag({ size = 19 }: IconProps) {
     </svg>
   );
 }
-
-export function IconFish({ size = 19 }: IconProps) {
-  return (
-    <svg {...base(size)} aria-hidden="true">
-      <path d="M3 12c2.8-3.8 6-5.7 9.5-5.7 3 0 5.7 1.4 8.5 5.7-2.8 4.3-5.5 5.7-8.5 5.7C9 17.7 5.8 15.8 3 12Z" />
-      <circle cx="16.6" cy="10.6" r="0.6" fill="currentColor" />
-      <path d="M3 12l-1.8-3.4M3 12l-1.8 3.4" />
-    </svg>
-  );
-}
