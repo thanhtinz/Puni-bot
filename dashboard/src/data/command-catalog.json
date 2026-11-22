@@ -634,5 +634,37 @@
     "module": "economy",
     "slash": true,
     "prefix": true
+  },
+  {
+    "name": "pass",
+    "aliases": [
+      "membership",
+      "hoivien"
+    ],
+    "description": "Xem gói hội viên Puni của bạn và các gói đang mở",
+    "module": "economy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "orders",
+    "aliases": [
+      "lichsu",
+      "donhang"
+    ],
+    "description": "Xem lịch sử mua gói hội viên của bạn",
+    "module": "economy",
+    "slash": true,
+    "prefix": true
+  },
+  {
+    "name": "fish",
+    "aliases": [
+      "cauca"
+    ],
+    "description": "Câu cá thư giãn — cá câu được tự bán lấy tiền",
+    "module": "games",
+    "slash": true,
+    "prefix": true
   }
 ]

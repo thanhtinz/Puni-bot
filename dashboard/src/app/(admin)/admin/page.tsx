@@ -1,6 +1,6 @@
 import { adminGate } from "@/lib/current-session";
-import { db, getEconomyChart, getEconomyStats, getHeartbeats, listConfiguredGuildIds } from "@/lib/db";
-import { IconActivity, IconChart, IconCoins, IconServer, IconUsers, IconWallet } from "@/components/icons";
+import { db, getEconomyChart, getEconomyStats, getHeartbeats, listConfiguredGuildIds, listMemberships } from "@/lib/db";
+import { IconActivity, IconChart, IconCoins, IconServer, IconSpark, IconUsers, IconWallet } from "@/components/icons";
 
 const SOURCE_LABELS: Record<string, string> = {
   daily: "Điểm danh (daily)",
@@ -38,6 +38,8 @@ export default async function AdminOverviewPage({
   ).length;
   const ecoStats = await getEconomyStats().catch(() => null);
   const ecoChart = await getEconomyChart().catch(() => null);
+  const memberships = await listMemberships().catch(() => null);
+  const activeMembers = (memberships ?? []).filter((m) => m.active).length;
   const fmt = (n: number) => n.toLocaleString("vi-VN");
   return (
     <>
@@ -84,6 +86,11 @@ export default async function AdminOverviewPage({
               <span className="stat-ico"><IconWallet /></span>
               <h3>{fmt(ecoStats.ledger24h)}</h3>
               <p>Giao dịch economy trong 24 giờ qua</p>
+            </div>
+            <div className="card">
+              <span className="stat-ico"><IconSpark /></span>
+              <h3>{activeMembers}</h3>
+              <p>Hội viên Membership còn hạn (xem ở mục Membership)</p>
             </div>
           </>
         ) : null}

@@ -347,3 +347,435 @@ export async function listRecentLedger(limit = 50): Promise<LedgerRow[] | null> 
     return null;
   }
 }
+
+export interface MembershipRow {
+  user_id: string;
+  tier_id: string;
+  started_at: string;
+  expires_at: string;
+  source: string;
+  note: string;
+  active: boolean;
+}
+
+/** All membership records, active first then by expiry (Admin panel). */
+export async function listMemberships(): Promise<MembershipRow[] | null> {
+  try {
+    const res = await db().query<MembershipRow>(
+      `SELECT user_id, tier_id, started_at::text AS started_at, expires_at::text AS expires_at,
+              source, note, (expires_at > now()) AS active
+       FROM memberships ORDER BY (expires_at > now()) DESC, expires_at DESC LIMIT 200`,
+    );
+    return res.rows;
+  } catch {
+    return null;
+  }
+}
+
+/** Grant/extend — same stacking rule as the bot's PgMembershipStore:
+ *  expiry grows from the later of now / current expiry. */
+export async function grantMembership(input: {
+  userId: string;
+  tierId: string;
+  days: number;
+  source: string;
+  note: string;
+}): Promise<void> {
+  await db().query(
+    `INSERT INTO memberships (user_id, tier_id, started_at, expires_at, source, note, updated_at)
+     VALUES ($1, $2, now(), now() + ($3 || ' days')::interval, $4, $5, now())
+     ON CONFLICT (user_id) DO UPDATE SET
+       tier_id = EXCLUDED.tier_id,
+       started_at = CASE WHEN memberships.tier_id = EXCLUDED.tier_id THEN memberships.started_at ELSE EXCLUDED.started_at END,
+       expires_at = GREATEST(memberships.expires_at, EXCLUDED.started_at) + ($3 || ' days')::interval,
+       source = EXCLUDED.source,
+       note = EXCLUDED.note,
+       updated_at = now()`,
+    [input.userId, input.tierId, String(input.days), input.source.slice(0, 40), input.note.slice(0, 200)],
+  );
+}
+
+export async function revokeMembership(userId: string): Promise<void> {
+  await db().query(`DELETE FROM memberships WHERE user_id = $1`, [userId]);
+}
+
+/** Lifetime totals for one user from the ledger (Admin → Người dùng). */
+export async function getUserEconomyTotals(
+  userId: string,
+): Promise<{ earned: number; spent: number; tx: number } | null> {
+  try {
+    const res = await db().query<{ earned: string; spent: string; tx: string }>(
+      `SELECT COALESCE(SUM(delta) FILTER (WHERE delta > 0), 0)::text AS earned,
+              COALESCE(-SUM(delta) FILTER (WHERE delta < 0), 0)::text AS spent,
+              COUNT(*)::text AS tx
+       FROM economy_ledger WHERE user_id = $1`,
+      [userId],
+    );
+    const r = res.rows[0];
+    return {
+      earned: Number.parseInt(r?.earned ?? "0", 10),
+      spent: Number.parseInt(r?.spent ?? "0", 10),
+      tx: Number.parseInt(r?.tx ?? "0", 10),
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function getUserMembership(userId: string): Promise<MembershipRow | null> {
+  try {
+    const res = await db().query<MembershipRow>(
+      `SELECT user_id, tier_id, started_at::text AS started_at, expires_at::text AS expires_at,
+              source, note, (expires_at > now()) AS active
+       FROM memberships WHERE user_id = $1`,
+      [userId],
+    );
+    return res.rows[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** bot_config keys + last-updated times (metadata only, never values). */
+export async function listBotConfigMeta(): Promise<{ key: string; updated_at: string }[] | null> {
+  try {
+    const res = await db().query<{ key: string; updated_at: string }>(
+      `SELECT key, updated_at::text AS updated_at FROM bot_config ORDER BY key`,
+    );
+    return res.rows;
+  } catch {
+    return null;
+  }
+}
+
+/* ---------------- Cozy World content (Admin-managed, spec 6.17) ---- */
+
+export interface SpeciesRow {
+  id: string;
+  name: string;
+  types: string;
+  rarity: string;
+  base_hp: number;
+  base_atk: number;
+  base_def: number;
+  base_spd: number;
+  description: string;
+  sprite_url: string;
+  member_exclusive: boolean;
+  enabled: boolean;
+}
+
+export async function listSpecies(): Promise<SpeciesRow[] | null> {
+  try {
+    const res = await db().query<SpeciesRow>(
+      `SELECT * FROM game_species ORDER BY name LIMIT 500`,
+    );
+    return res.rows;
+  } catch {
+    return null;
+  }
+}
+
+export async function upsertSpecies(s: SpeciesRow): Promise<void> {
+  await db().query(
+    `INSERT INTO game_species (id, name, types, rarity, base_hp, base_atk, base_def, base_spd, description, sprite_url, member_exclusive, enabled, updated_at)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12, now())
+     ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, types=EXCLUDED.types, rarity=EXCLUDED.rarity,
+       base_hp=EXCLUDED.base_hp, base_atk=EXCLUDED.base_atk, base_def=EXCLUDED.base_def, base_spd=EXCLUDED.base_spd,
+       description=EXCLUDED.description, sprite_url=EXCLUDED.sprite_url,
+       member_exclusive=EXCLUDED.member_exclusive, enabled=EXCLUDED.enabled, updated_at=now()`,
+    [s.id, s.name, s.types, s.rarity, s.base_hp, s.base_atk, s.base_def, s.base_spd, s.description, s.sprite_url, s.member_exclusive, s.enabled],
+  );
+}
+
+export async function deleteSpecies(id: string): Promise<void> {
+  await db().query(`DELETE FROM game_species WHERE id = $1`, [id]);
+}
+
+export async function setSpeciesEnabled(id: string, enabled: boolean): Promise<void> {
+  await db().query(`UPDATE game_species SET enabled = $2, updated_at = now() WHERE id = $1`, [id, enabled]);
+}
+
+export interface ItemRow {
+  id: string;
+  name: string;
+  category: string;
+  price_coins: string;
+  price_gems: string;
+  sell_price: string;
+  description: string;
+  icon_url: string;
+  enabled: boolean;
+}
+
+export const ITEM_CATEGORIES: { id: string; label: string }[] = [
+  { id: "seed", label: "Hạt giống" },
+  { id: "crop", label: "Nông sản" },
+  { id: "farm_tool", label: "Dụng cụ nông trại" },
+  { id: "fish", label: "Cá (câu cá)" },
+  { id: "consumable", label: "Tiêu hao" },
+  { id: "material", label: "Nguyên liệu" },
+  { id: "other", label: "Khác" },
+];
+
+export async function listItems(category?: string): Promise<ItemRow[] | null> {
+  try {
+    const res = category
+      ? await db().query<ItemRow>(
+          `SELECT id, name, category, price_coins::text AS price_coins, price_gems::text AS price_gems,
+                  sell_price::text AS sell_price, description, icon_url, enabled
+           FROM game_items WHERE category = $1 ORDER BY name LIMIT 500`,
+          [category],
+        )
+      : await db().query<ItemRow>(
+          `SELECT id, name, category, price_coins::text AS price_coins, price_gems::text AS price_gems,
+                  sell_price::text AS sell_price, description, icon_url, enabled
+           FROM game_items ORDER BY category, name LIMIT 500`,
+        );
+    return res.rows;
+  } catch {
+    return null;
+  }
+}
+
+export async function upsertItem(i: {
+  id: string; name: string; category: string;
+  priceCoins: number; priceGems: number; sellPrice: number;
+  description: string; iconUrl: string; enabled: boolean;
+}): Promise<void> {
+  await db().query(
+    `INSERT INTO game_items (id, name, category, price_coins, price_gems, sell_price, description, icon_url, enabled, updated_at)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9, now())
+     ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, category=EXCLUDED.category,
+       price_coins=EXCLUDED.price_coins, price_gems=EXCLUDED.price_gems, sell_price=EXCLUDED.sell_price,
+       description=EXCLUDED.description, icon_url=EXCLUDED.icon_url, enabled=EXCLUDED.enabled, updated_at=now()`,
+    [i.id, i.name, i.category, i.priceCoins, i.priceGems, i.sellPrice, i.description, i.iconUrl, i.enabled],
+  );
+}
+
+export async function deleteItem(id: string): Promise<void> {
+  await db().query(`DELETE FROM game_items WHERE id = $1`, [id]);
+}
+
+export async function setItemEnabled(id: string, enabled: boolean): Promise<void> {
+  await db().query(`UPDATE game_items SET enabled = $2, updated_at = now() WHERE id = $1`, [id, enabled]);
+}
+
+export interface ShopListingRow {
+  id: string;
+  item_id: string;
+  item_name: string;
+  item_price_coins: string;
+  item_price_gems: string;
+  price_coins: string | null;
+  price_gems: string | null;
+  stock: number | null;
+  sort: number;
+  enabled: boolean;
+}
+
+export async function listShopListings(): Promise<ShopListingRow[] | null> {
+  try {
+    const res = await db().query<ShopListingRow>(
+      `SELECT l.id::text AS id, l.item_id, i.name AS item_name,
+              i.price_coins::text AS item_price_coins, i.price_gems::text AS item_price_gems,
+              l.price_coins::text AS price_coins, l.price_gems::text AS price_gems,
+              l.stock, l.sort, l.enabled
+       FROM game_shop_listings l JOIN game_items i ON i.id = l.item_id
+       ORDER BY l.sort, i.name LIMIT 500`,
+    );
+    return res.rows;
+  } catch {
+    return null;
+  }
+}
+
+export async function upsertShopListing(input: {
+  itemId: string;
+  priceCoins: number | null;
+  priceGems: number | null;
+  stock: number | null;
+  sort: number;
+  enabled: boolean;
+}): Promise<void> {
+  await db().query(
+    `INSERT INTO game_shop_listings (item_id, price_coins, price_gems, stock, sort, enabled, updated_at)
+     VALUES ($1,$2,$3,$4,$5,$6, now())
+     ON CONFLICT (item_id) DO UPDATE SET price_coins=EXCLUDED.price_coins, price_gems=EXCLUDED.price_gems,
+       stock=EXCLUDED.stock, sort=EXCLUDED.sort, enabled=EXCLUDED.enabled, updated_at=now()`,
+    [input.itemId, input.priceCoins, input.priceGems, input.stock, input.sort, input.enabled],
+  );
+}
+
+export async function deleteShopListing(id: string): Promise<void> {
+  await db().query(`DELETE FROM game_shop_listings WHERE id = $1`, [id]);
+}
+
+export async function setShopListingEnabled(id: string, enabled: boolean): Promise<void> {
+  await db().query(`UPDATE game_shop_listings SET enabled = $2, updated_at = now() WHERE id = $1`, [id, enabled]);
+}
+
+/* ---------------- Membership orders (spec 6.19 purchase flow) ------ */
+
+export interface MembershipOrderRow {
+  code: string;
+  user_id: string;
+  tier_id: string;
+  tier_name: string;
+  amount: string;
+  days: number;
+  status: string;
+  created_at: string;
+  paid_at: string | null;
+  expired: boolean;
+}
+
+const ORDER_CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+
+export function newOrderCode(): string {
+  let suffix = "";
+  for (let i = 0; i < 6; i++) {
+    suffix += ORDER_CODE_ALPHABET[Math.floor(Math.random() * ORDER_CODE_ALPHABET.length)];
+  }
+  return `PUNI-${suffix}`;
+}
+
+/** Create a pending order. Refuses when the buyer already has 3+
+ *  pending orders (spam brake) — returns null in that case. */
+export async function createMembershipOrder(input: {
+  userId: string;
+  tierId: string;
+  tierName: string;
+  amount: number;
+  days: number;
+}): Promise<MembershipOrderRow | null> {
+  const client = await db().connect();
+  try {
+    await client.query("BEGIN");
+    const pending = await client.query<{ n: string }>(
+      `SELECT COUNT(*)::text AS n FROM membership_orders WHERE user_id = $1 AND status = 'pending'`,
+      [input.userId],
+    );
+    if (Number.parseInt(pending.rows[0]?.n ?? "0", 10) >= 3) {
+      await client.query("ROLLBACK");
+      return null;
+    }
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const code = newOrderCode();
+      try {
+        const res = await client.query<MembershipOrderRow>(
+          `INSERT INTO membership_orders (code, user_id, tier_id, tier_name, amount, days, status)
+           VALUES ($1, $2, $3, $4, $5, $6, 'pending')
+           RETURNING code, user_id, tier_id, tier_name, amount::text AS amount, days, status,
+                     created_at::text AS created_at, paid_at::text AS paid_at,
+                     false AS expired`,
+          [code, input.userId, input.tierId, input.tierName, input.amount, input.days],
+        );
+        await client.query("COMMIT");
+        return res.rows[0];
+      } catch (e) {
+        // Unique-code collision: retry with a fresh code.
+        if ((e as { code?: string }).code !== "23505") throw e;
+      }
+    }
+    await client.query("ROLLBACK");
+    return null;
+  } catch (e) {
+    await client.query("ROLLBACK").catch(() => undefined);
+    throw e;
+  } finally {
+    client.release();
+  }
+}
+
+export async function getMembershipOrder(code: string): Promise<MembershipOrderRow | null> {
+  try {
+    const res = await db().query<MembershipOrderRow>(
+      `SELECT code, user_id, tier_id, tier_name, amount::text AS amount, days, status,
+              created_at::text AS created_at, paid_at::text AS paid_at,
+              (status = 'pending' AND created_at < now() - interval '24 hours') AS expired
+       FROM membership_orders WHERE code = $1`,
+      [code],
+    );
+    return res.rows[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function listMembershipOrders(limit = 50): Promise<MembershipOrderRow[] | null> {
+  try {
+    const res = await db().query<MembershipOrderRow>(
+      `SELECT code, user_id, tier_id, tier_name, amount::text AS amount, days, status,
+              created_at::text AS created_at, paid_at::text AS paid_at,
+              (status = 'pending' AND created_at < now() - interval '24 hours') AS expired
+       FROM membership_orders ORDER BY created_at DESC LIMIT $1`,
+      [limit],
+    );
+    return res.rows;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Confirm payment for an order and grant the membership in ONE
+ * transaction. Idempotent: an already-paid order returns 'already'
+ * without granting twice. The grant mirrors the stacking rule of the
+ * bot's PgMembershipStore.
+ */
+export async function confirmMembershipOrder(
+  code: string,
+): Promise<{ result: "confirmed" | "already" | "not_found" | "cancelled" | "amount_guard"; userId?: string }> {
+  const client = await db().connect();
+  try {
+    await client.query("BEGIN");
+    const res = await client.query<{
+      user_id: string; tier_id: string; days: number; status: string;
+    }>(`SELECT user_id, tier_id, days, status FROM membership_orders WHERE code = $1 FOR UPDATE`, [code]);
+    const order = res.rows[0];
+    if (!order) {
+      await client.query("ROLLBACK");
+      return { result: "not_found" };
+    }
+    if (order.status === "paid") {
+      await client.query("COMMIT");
+      return { result: "already", userId: order.user_id };
+    }
+    if (order.status === "cancelled") {
+      await client.query("ROLLBACK");
+      return { result: "cancelled" };
+    }
+    await client.query(
+      `UPDATE membership_orders SET status = 'paid', paid_at = now() WHERE code = $1`,
+      [code],
+    );
+    await client.query(
+      `INSERT INTO memberships (user_id, tier_id, started_at, expires_at, source, note, updated_at)
+       VALUES ($1, $2, now(), now() + ($3 || ' days')::interval, 'order', $4, now())
+       ON CONFLICT (user_id) DO UPDATE SET
+         tier_id = EXCLUDED.tier_id,
+         started_at = CASE WHEN memberships.tier_id = EXCLUDED.tier_id THEN memberships.started_at ELSE EXCLUDED.started_at END,
+         expires_at = GREATEST(memberships.expires_at, EXCLUDED.started_at) + ($3 || ' days')::interval,
+         source = EXCLUDED.source,
+         note = EXCLUDED.note,
+         updated_at = now()`,
+      [order.user_id, order.tier_id, String(order.days), `Đơn ${code}`],
+    );
+    await client.query("COMMIT");
+    return { result: "confirmed", userId: order.user_id };
+  } catch (e) {
+    await client.query("ROLLBACK").catch(() => undefined);
+    throw e;
+  } finally {
+    client.release();
+  }
+}
+
+export async function cancelMembershipOrder(code: string): Promise<boolean> {
+  const res = await db().query(
+    `UPDATE membership_orders SET status = 'cancelled' WHERE code = $1 AND status = 'pending'`,
+    [code],
+  );
+  return (res.rowCount ?? 0) > 0;
+}

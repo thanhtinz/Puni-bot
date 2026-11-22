@@ -25,6 +25,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
             <nav>
               <Link href="/commands">Danh sách lệnh</Link>
               <Link href="/timestamps">Timestamps</Link>
+              <Link href="/membership">Hội viên</Link>
               {supportUrl ? (
                 <a href={supportUrl} target="_blank" rel="noreferrer">
                   Support
@@ -66,6 +67,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
                   <Link href="/">Trang chủ</Link>
                   <Link href="/commands">Danh sách lệnh</Link>
                   <Link href="/timestamps">Timestamps</Link>
+                  <Link href="/membership">Hội viên</Link>
                   <Link href="/status">Trạng thái</Link>
                 </div>
                 <div>

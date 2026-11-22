@@ -1,5 +1,6 @@
 import { adminGate } from "@/lib/current-session";
-import { getBotConfig, getUserEconomy, listRecentLedger, type LedgerRow } from "@/lib/db";
+import { getBotConfig, getUserEconomy, getUserEconomyTotals, getUserMembership, listRecentLedger, type LedgerRow } from "@/lib/db";
+import { normalizeMembershipTiers } from "@/lib/membership";
 import VerifyForm from "../verify-form";
 
 export const dynamic = "force-dynamic";
@@ -56,6 +57,16 @@ export default async function AdminUsersPage({
   const currencyName = ecoCfg?.currencyName || "Coins";
   const userId = (u ?? "").trim();
   const userEco = userId ? await getUserEconomy(userId).catch(() => null) : null;
+  const userTotals = userId ? await getUserEconomyTotals(userId).catch(() => null) : null;
+  const userMembership = userId ? await getUserMembership(userId).catch(() => null) : null;
+  const tiers = normalizeMembershipTiers(await getBotConfig("membership_tiers").catch(() => null));
+  const membershipLabel = userMembership
+    ? `${tiers.find((x) => x.id === userMembership.tier_id)?.name ?? userMembership.tier_id} — ${
+        userMembership.active
+          ? `còn hạn đến ${new Date(userMembership.expires_at).toLocaleDateString("vi-VN")}`
+          : `đã hết hạn ${new Date(userMembership.expires_at).toLocaleDateString("vi-VN")}`
+      }`
+    : "Không phải hội viên";
   const recent = userEco ? null : await listRecentLedger(50).catch(() => null);
 
   return (
@@ -85,6 +96,16 @@ export default async function AdminUsersPage({
               <strong>
                 {fmt(userEco.balance)} {currencyName}
               </strong>
+            </p>
+            {userTotals ? (
+              <p>
+                Tổng đã nhận: <strong>{fmt(userTotals.earned)} {currencyName}</strong> · Tổng đã
+                chi: <strong>{fmt(userTotals.spent)} {currencyName}</strong> · {fmt(userTotals.tx)}{" "}
+                giao dịch trong sổ cái
+              </p>
+            ) : null}
+            <p>
+              Hội viên: <strong>{membershipLabel}</strong>
             </p>
             <form action="/api/admin/users/adjust" method="post">
               <input type="hidden" name="user_id" value={userId} />

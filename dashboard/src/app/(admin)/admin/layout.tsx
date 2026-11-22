@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import "../../globals.css";
 import { currentSession } from "@/lib/current-session";
-import { IconActivity, IconChat, IconCoins, IconGrid, IconHome, IconServer, IconGlobe, IconUsers } from "@/components/icons";
+import { IconActivity, IconBag, IconChat, IconCoins, IconFish, IconGrid, IconHome, IconPaw, IconServer, IconGlobe, IconSpark, IconUsers } from "@/components/icons";
 import { isOwner } from "@/lib/session";
 
 export const metadata = { title: "Puni Admin" };
@@ -50,7 +50,10 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
               <Link href="/admin/economy" className="item">
                 <IconCoins /> Economy
               </Link>
-              <Link href="/admin/users" className="item">
+                            <Link href="/admin/membership" className="item">
+                <IconSpark /> Membership
+              </Link>
+<Link href="/admin/users" className="item">
                 <IconUsers /> Người dùng
               </Link>
               <Link href="/admin/servers" className="item">
@@ -61,6 +64,18 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
               </Link>
               <Link href="/admin/clusters" className="item">
                 <IconGrid /> Cluster &amp; Shard
+              </Link>
+              <Link href="/admin/pets" className="item">
+                <IconPaw /> Pet (Cozy World)
+              </Link>
+              <Link href="/admin/items" className="item">
+                <IconGrid /> Item & nông trại
+              </Link>
+              <Link href="/admin/game-shop" className="item">
+                <IconBag /> Shop trong game
+              </Link>
+              <Link href="/admin/fishing" className="item">
+                <IconFish /> Câu cá
               </Link>
               <Link href="/admin/website" className="item">
                 <IconGlobe /> Trang web

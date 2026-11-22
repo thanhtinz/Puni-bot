@@ -48,6 +48,18 @@ export class PgBotConfig {
     return raw !== false;
   }
 
+  /** Membership tier definitions (Admin panel → Membership). */
+  async getMembershipTiers(): Promise<import("../services/membership").MembershipTier[]> {
+    const { normalizeMembershipTiers } = await import("../services/membership");
+    return normalizeMembershipTiers(await this.get("membership_tiers"));
+  }
+
+  /** Fishing config (Admin panel → Câu cá). */
+  async getFishingConfig(): Promise<import("../services/fishing").FishingConfig> {
+    const { normalizeFishingConfig } = await import("../services/fishing");
+    return normalizeFishingConfig(await this.get("fishing_config"));
+  }
+
   /** Global bot on/off switch (Admin panel → Vận hành). Default: on.
    *  When off, the dispatcher answers every non-owner command with the
    *  maintenance message and AI chat stays silent. */

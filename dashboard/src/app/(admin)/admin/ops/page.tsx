@@ -1,5 +1,5 @@
 import { adminGate } from "@/lib/current-session";
-import { getBotConfig, getHeartbeats } from "@/lib/db";
+import { getBotConfig, getHeartbeats, listBotConfigMeta } from "@/lib/db";
 import VerifyForm from "../verify-form";
 import { IconActivity } from "@/components/icons";
 
@@ -10,6 +10,17 @@ interface RuntimeStatus {
   aiConfigured?: boolean;
   aiEnvModel?: string;
 }
+
+const CONFIG_LABELS: Record<string, string> = {
+  economy: "Thông số economy (tên tiền, daily, streak)",
+  ai_enabled: "Công tắc tổng AI trò chuyện",
+  ai_model: "Model AI",
+  ai_persona_extra: "Chỉ dẫn tính cách AI",
+  bot_enabled: "Công tắc tổng của bot",
+  maintenance_message: "Câu trả lời khi bảo trì",
+  membership_tiers: "Các gói Membership",
+  runtime_status: "Trạng thái bot tự báo (ghi bởi tiến trình bot)",
+};
 
 const DEFAULT_MAINTENANCE = "Puni đang bảo trì một chút, bạn quay lại sau nhé!";
 
@@ -42,6 +53,7 @@ export default async function AdminOpsPage({
     (await getBotConfig<string>("maintenance_message").catch(() => null)) || DEFAULT_MAINTENANCE;
   const runtime = await getBotConfig<RuntimeStatus>("runtime_status").catch(() => null);
   const heartbeats = await getHeartbeats().catch(() => null);
+  const configMeta = await listBotConfigMeta().catch(() => null);
   const alive = (heartbeats ?? []).filter(
     (h) => Date.now() - new Date(h.updated_at).getTime() < 30_000,
   ).length;
@@ -126,6 +138,34 @@ export default async function AdminOpsPage({
           ok={Boolean(process.env.ADMIN_PANEL_PASSWORD_SHA256 || process.env.OWNER_TOTP_SECRET)}
           hint="Mật khẩu / TOTP riêng của chủ bot"
         />
+      </div>
+
+      <div className="panel">
+        <h2>Cấu hình toàn cục hiện tại</h2>
+        <p>
+          Mọi cấu hình cấp hệ thống mà chủ bot đã lưu (chỉ hiện tên mục và lần sửa
+          gần nhất — giá trị nằm ở từng trang chuyên trách).
+        </p>
+        {configMeta && configMeta.length > 0 ? (
+          <table className="plain">
+            <thead>
+              <tr>
+                <th>Mục cấu hình</th>
+                <th>Sửa gần nhất</th>
+              </tr>
+            </thead>
+            <tbody>
+              {configMeta.map((c) => (
+                <tr key={c.key}>
+                  <td>{CONFIG_LABELS[c.key] ?? c.key}</td>
+                  <td>{new Date(c.updated_at).toLocaleString("vi-VN")}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>Chưa có cấu hình toàn cục nào được lưu.</p>
+        )}
       </div>
     </>
   );

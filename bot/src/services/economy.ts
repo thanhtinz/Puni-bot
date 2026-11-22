@@ -236,6 +236,10 @@ export class EconomyService {
     /** Live config source (Admin panel edits): consulted on every daily
      *  claim; the provider caches, so this stays cheap. */
     private configSource?: () => Promise<EconomyConfig>,
+    /** Membership daily bonus percent source (spec 6.19): consulted on
+     *  every daily claim; any failure means no bonus, never a failed
+     *  claim. */
+    private dailyBonusSource?: (userId: string) => Promise<number>,
   ) {}
 
   private async liveConfig(): Promise<EconomyConfig> {
@@ -275,14 +279,21 @@ export class EconomyService {
     at: Date = new Date(),
   ): Promise<{ amount: number; streak: number } | null> {
     const cfg = await this.liveConfig();
+    const bonusPct = this.dailyBonusSource
+      ? await this.dailyBonusSource(userId).catch(() => 0)
+      : 0;
+    const pct = Math.min(Math.max(Math.floor(bonusPct) || 0, 0), 300);
     const today = globalDayKey(at);
     return this.store.claimDaily({
       userId,
       today,
       yesterday: previousDayKey(today),
-      rewardFor: (streak) =>
-        cfg.dailyBase +
-        Math.min((streak - 1) * cfg.dailyStreakBonus, cfg.dailyStreakBonusCap),
+      rewardFor: (streak) => {
+        const base =
+          cfg.dailyBase +
+          Math.min((streak - 1) * cfg.dailyStreakBonus, cfg.dailyStreakBonusCap);
+        return base + Math.floor((base * pct) / 100);
+      },
     });
   }
 

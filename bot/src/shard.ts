@@ -33,14 +33,22 @@ async function main(): Promise<void> {
   let economyStore: EconomyStore | undefined;
   let caseStore: ModCaseStore | undefined;
   let botConfig: PgBotConfig | undefined;
+  let membershipStore: import("./services/membership").MembershipStore | undefined;
+  let membershipOrders: import("./services/membership").MembershipOrderStore | undefined;
+  let pgPool: Pool | undefined;
   if (config.databaseUrl) {
     const pool = new Pool({ connectionString: config.databaseUrl });
+    pgPool = pool;
     const applied = await runMigrations(pool, path.resolve(__dirname, "../../db/migrations"));
     if (applied.length) console.log(`[puni] migrations applied: ${applied.join(", ")}`);
     settings = new PgGuildSettings(pool, config.defaultPrefix);
     economyStore = new PgEconomyStore(pool);
     caseStore = new PgModCaseStore(pool);
     botConfig = new PgBotConfig(pool);
+    const { PgMembershipStore } = await import("./db/pg-membership-store");
+    membershipStore = new PgMembershipStore(pool);
+    const { PgMembershipOrderStore } = await import("./db/pg-membership-orders");
+    membershipOrders = new PgMembershipOrderStore(pool);
     console.log("[puni] state: PostgreSQL");
   } else {
     console.warn("[puni] DATABASE_URL not set — IN-MEMORY state, data will NOT survive restart");
@@ -71,6 +79,28 @@ async function main(): Promise<void> {
     settings,
     economyStore,
     caseStore,
+    membershipStore,
+    membershipOrders,
+    fishingConfigSource: botConfig ? () => botConfig.getFishingConfig() : undefined,
+    fishNamesSource: pgPool
+      ? async () => {
+          const res = await pgPool!.query<{ name: string }>(
+            "SELECT name FROM game_items WHERE category = 'fish' AND enabled = true LIMIT 200",
+          );
+          return res.rows.map((r) => r.name);
+        }
+      : undefined,
+    fishingEarnedToday: pgPool
+      ? async (userId: string) => {
+          const res = await pgPool!.query<{ total: string }>(
+            `SELECT COALESCE(SUM(delta), 0)::text AS total FROM economy_ledger
+             WHERE user_id = $1 AND source = 'fishing' AND created_at >= date_trunc('day', now())`,
+            [userId],
+          );
+          return Number.parseInt(res.rows[0]?.total ?? "0", 10);
+        }
+      : undefined,
+    membershipTiersSource: botConfig ? () => botConfig.getMembershipTiers() : undefined,
     economyConfig: botConfig ? await botConfig.getEconomyConfig() : undefined,
     economyConfigSource: botConfig ? () => botConfig.getEconomyConfig() : undefined,
   });

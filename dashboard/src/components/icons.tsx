@@ -179,3 +179,35 @@ export function IconLogout({ size = 19, style }: IconProps) {
     </svg>
   );
 }
+
+export function IconPaw({ size = 19 }: IconProps) {
+  return (
+    <svg {...base(size)} fill="currentColor" stroke="none" aria-hidden="true">
+      <ellipse cx="12" cy="15.5" rx="4.4" ry="3.6" />
+      <circle cx="4.6" cy="10.6" r="1.9" />
+      <circle cx="8.2" cy="6.9" r="2" />
+      <circle cx="12.6" cy="5.9" r="2" />
+      <circle cx="16.9" cy="7.6" r="1.9" />
+      <circle cx="19.6" cy="11.4" r="1.7" />
+    </svg>
+  );
+}
+
+export function IconBag({ size = 19 }: IconProps) {
+  return (
+    <svg {...base(size)} aria-hidden="true">
+      <path d="M5 8h14l-1.2 12.2a1.8 1.8 0 0 1-1.8 1.6H8a1.8 1.8 0 0 1-1.8-1.6L5 8Z" />
+      <path d="M8.5 10V6.5a3.5 3.5 0 0 1 7 0V10" />
+    </svg>
+  );
+}
+
+export function IconFish({ size = 19 }: IconProps) {
+  return (
+    <svg {...base(size)} aria-hidden="true">
+      <path d="M3 12c2.8-3.8 6-5.7 9.5-5.7 3 0 5.7 1.4 8.5 5.7-2.8 4.3-5.5 5.7-8.5 5.7C9 17.7 5.8 15.8 3 12Z" />
+      <circle cx="16.6" cy="10.6" r="0.6" fill="currentColor" />
+      <path d="M3 12l-1.8-3.4M3 12l-1.8 3.4" />
+    </svg>
+  );
+}

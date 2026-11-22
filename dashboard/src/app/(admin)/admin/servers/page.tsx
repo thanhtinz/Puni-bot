@@ -21,15 +21,17 @@ const MODULE_LABELS: Record<string, string> = {
 export default async function AdminServersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ verify?: string }>;
+  searchParams: Promise<{ verify?: string; q?: string }>;
 }) {
   const gate = await adminGate();
-  const { verify } = await searchParams;
+  const { verify, q } = await searchParams;
   if (!gate.ok) {
     if (gate.reason === "need-verify") return <VerifyForm error={verify === "failed"} />;
     return null;
   }
   const rows = await listGuildAdminRows().catch(() => []);
+  const query = (q ?? "").trim();
+  const shown = query ? rows.filter((r) => r.guild_id.includes(query)) : rows;
   return (
     <>
       <h1>Server đã cấu hình</h1>
@@ -38,8 +40,13 @@ export default async function AdminServersPage({
         chủ bot xem tổng quan — việc chỉnh cấu hình từng server do quản trị viên của
         server đó làm trong dashboard của họ.
       </p>
+      <form action="/admin/servers" method="get" style={{ display: "flex", gap: 10, marginBottom: 16, flexWrap: "wrap" }}>
+        <input name="q" type="text" placeholder="Lọc theo Guild ID…" defaultValue={query} style={{ minWidth: 280 }} />
+        <button className="btn" type="submit">Lọc</button>
+        {query ? <span style={{ alignSelf: "center" }}>{shown.length}/{rows.length} server khớp</span> : null}
+      </form>
       <div className="panel" style={{ maxWidth: 980 }}>
-        {rows.length === 0 ? (
+        {shown.length === 0 ? (
           <p>Chưa có server nào lưu cấu hình.</p>
         ) : (
           <table className="plain">
@@ -53,7 +60,7 @@ export default async function AdminServersPage({
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => {
+              {shown.map((r) => {
                 const off = Object.entries(r.modules ?? {})
                   .filter(([, v]) => v === false)
                   .map(([k]) => MODULE_LABELS[k] ?? k);
