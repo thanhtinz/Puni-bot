@@ -1,12 +1,13 @@
 /**
  * Profile card renderer (spec 6.39): draws the player's card after
- * the owner's sample (1290x860) — countryside scene band, big avatar
- * frame, name + ID, rank tier as "Lv" with an MMR progress bar,
- * a pinned info panel, Coins / Shards pills and the active deck's
- * first 5 cards in the team panel ("Chưa có đội hình" when empty).
- * SVG is composed here and rasterised with sharp; the Baloo 2 /
- * Be Vietnam Pro TTFs in src/assets/fonts are registered through a
- * bundled fontconfig so the render matches the site's typography.
+ * the owner's sample (1290x860) — countryside scene band with a big
+ * farmhouse, slanted name tab, big avatar frame, rank tier as "Lv"
+ * with an MMR progress bar, a pinned info panel, Coins / Shards
+ * pills and the active deck's first 5 cards in the ribboned team
+ * panel ("Chưa có đội hình" when empty). SVG is composed here and
+ * rasterised with sharp; the Baloo 2 / Be Vietnam Pro TTFs in
+ * src/assets/fonts are registered through a bundled fontconfig so
+ * the render matches the site's typography.
  */
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -21,9 +22,8 @@ if (!process.env.FONTCONFIG_FILE) {
 
 const W = 1290;
 const H = 860;
-const TEAL = "#336f7a";
-const TEAL_DARK = "#2b5f6a";
-const INK = "#0b0b0b";
+const TEAL = "#3d6b74";
+const INK = "#101010";
 
 const TIERS = [
   { name: "Đồng", min: 0 },
@@ -142,8 +142,9 @@ export async function renderProfileCard(data: ProfileCardData): Promise<Buffer> 
     ...data.team.map((c) => fetchImageDataUri(c.spriteUrl)),
   ]);
   const tier = tierOf(data.mmr);
-  const barW = 660;
-  const fillW = Math.round((barW - 10) * tier.progress);
+  const barW = 682;
+  const fillW = Math.round((barW - 8) * tier.progress);
+  const nameSize = data.username.length > 20 ? 44 : data.username.length > 13 ? 54 : 66;
 
   const birthday = data.birthday
     ? new Date(`${data.birthday}T00:00:00`).toLocaleDateString("vi-VN")
@@ -157,68 +158,70 @@ export async function renderProfileCard(data: ProfileCardData): Promise<Buffer> 
 
   const teamSvg = data.team.length
     ? data.team.map((c, i) => {
-        const x = 672 + i * 118;
+        const x = 670 + i * 112;
         const uri = teamUris[i];
-        const label = c.name.length > 11 ? `${c.name.slice(0, 10)}…` : c.name;
+        const label = c.name.length > 12 ? `${c.name.slice(0, 11)}…` : c.name;
         return `
           ${uri
-            ? `<image href="${uri}" x="${x}" y="618" width="104" height="146" preserveAspectRatio="xMidYMid slice" clip-path="url(#teamClip${i})"/>
-               <clipPath id="teamClip${i}"><rect x="${x}" y="618" width="104" height="146" rx="10"/></clipPath>`
-            : `<rect x="${x}" y="618" width="104" height="146" rx="10" fill="#d7dee8"/>`}
-          <rect x="${x}" y="618" width="104" height="146" rx="10" fill="none" stroke="${INK}" stroke-width="3"/>
-          <text x="${x + 52}" y="792" text-anchor="middle" font-family="Be Vietnam Pro" font-weight="700" font-size="15" fill="#ffffff">${esc(label)}</text>`;
+            ? `<image href="${uri}" x="${x}" y="640" width="100" height="138" preserveAspectRatio="xMidYMid slice" clip-path="url(#teamClip${i})"/>
+               <clipPath id="teamClip${i}"><rect x="${x}" y="640" width="100" height="138" rx="9"/></clipPath>`
+            : `<rect x="${x}" y="640" width="100" height="138" rx="9" fill="#d7dee8"/>`}
+          <rect x="${x}" y="640" width="100" height="138" rx="9" fill="none" stroke="${INK}" stroke-width="3"/>
+          <text x="${x + 50}" y="802" text-anchor="middle" font-family="Be Vietnam Pro" font-weight="700" font-size="15" fill="#ffffff">${esc(label)}</text>`;
       }).join("")
-    : `<text x="959" y="722" text-anchor="middle" font-family="Baloo 2" font-weight="800" font-size="42" fill="#ffffff">Chưa có đội hình</text>`;
+    : `<text x="959" y="712" text-anchor="middle" font-family="Baloo 2" font-weight="800" font-size="40" fill="#ffffff">Chưa có đội hình</text>`;
 
   const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <rect width="${W}" height="${H}" fill="${TEAL}"/>
-  <image href="${sceneUriA}" x="0" y="0" width="645" height="400"/>
-  <image href="${sceneUriB}" x="645" y="0" width="645" height="400"/>
-  <rect x="0" y="330" width="${W}" height="${H - 330}" fill="${TEAL}"/>
-  <rect x="345" y="192" width="540" height="150" rx="30" fill="${TEAL}"/>
+  <image href="${sceneUriA}" x="0" y="0" width="645" height="340"/>
+  <image href="${sceneUriB}" x="645" y="0" width="645" height="340"/>
+  <rect x="0" y="336" width="${W}" height="${H - 336}" fill="${TEAL}"/>
+
+  <!-- Slanted name tab (the sample's signature shape) -->
+  <path d="M362 188 L736 188 Q768 188 786 234 L820 316 Q828 340 804 340 L362 340 Z" fill="${TEAL}"/>
 
   <!-- Avatar frame -->
-  <rect x="22" y="32" width="330" height="330" rx="40" fill="${INK}"/>
+  <rect x="20" y="14" width="336" height="336" rx="38" fill="${INK}"/>
   ${avatarUri
-    ? `<image href="${avatarUri}" x="32" y="42" width="310" height="310" preserveAspectRatio="xMidYMid slice" clip-path="url(#avatarClip)"/>
-       <clipPath id="avatarClip"><rect x="32" y="42" width="310" height="310" rx="32"/></clipPath>`
-    : `<rect x="32" y="42" width="310" height="310" rx="32" fill="#d7dee8"/>
-       <text x="187" y="248" text-anchor="middle" font-family="Baloo 2" font-weight="800" font-size="150" fill="#7d8aa0">${esc((data.username || "?").slice(0, 1).toUpperCase())}</text>`}
+    ? `<image href="${avatarUri}" x="30" y="24" width="316" height="316" preserveAspectRatio="xMidYMid slice" clip-path="url(#avatarClip)"/>
+       <clipPath id="avatarClip"><rect x="30" y="24" width="316" height="316" rx="30"/></clipPath>`
+    : `<rect x="30" y="24" width="316" height="316" rx="30" fill="#d7dee8"/>`}
 
   <!-- Name / ID / rank -->
-  <text x="385" y="262" font-family="Baloo 2" font-weight="800" font-size="64" fill="#ffffff">${esc(data.username)}</text>
-  <text x="432" y="312" font-family="Be Vietnam Pro" font-weight="700" font-size="29" fill="#ffffff">Id: ${esc(data.userId)}</text>
-  <text x="375" y="398" font-family="Baloo 2" font-weight="800" font-size="42" fill="#ffffff">Lv: ${esc(tier.name)}</text>
-  <text x="1035" y="398" text-anchor="end" font-family="Be Vietnam Pro" font-weight="700" font-size="27" fill="#ffffff">EXP: ${fmt(data.mmr)} MMR</text>
-  <rect x="365" y="415" width="${barW}" height="36" rx="18" fill="#ccd6dd" stroke="${INK}" stroke-width="5"/>
-  ${fillW > 4 ? `<rect x="370" y="420" width="${fillW}" height="26" rx="13" fill="#ffd83d"/>` : ""}
+  <text x="392" y="260" font-family="Baloo 2" font-weight="800" font-size="${nameSize}" fill="#ffffff">${esc(data.username)}</text>
+  <text x="438" y="310" font-family="Be Vietnam Pro" font-weight="700" font-size="28" fill="#ffffff">Id: ${esc(data.userId)}</text>
+  <text x="372" y="384" font-family="Baloo 2" font-weight="800" font-size="44" fill="#ffffff">Lv: ${esc(tier.name)}</text>
+  <text x="1050" y="384" text-anchor="end" font-family="Be Vietnam Pro" font-weight="700" font-size="26" fill="#ffffff">EXP: ${fmt(data.mmr)} MMR</text>
+  <rect x="368" y="396" width="${barW}" height="24" rx="12" fill="#d9e1e7" stroke="${INK}" stroke-width="3.5"/>
+  ${fillW > 6 ? `<rect x="372" y="400" width="${fillW}" height="16" rx="8" fill="#ffd83d"/>` : ""}
 
   <!-- Info panel -->
-  <rect x="22" y="480" width="590" height="355" rx="28" fill="${TEAL_DARK}" stroke="${INK}" stroke-width="5"/>
-  <circle cx="588" cy="472" r="17" fill="#e5484d" stroke="${INK}" stroke-width="4"/>
-  <circle cx="600" cy="460" r="10" fill="#ff6b6f" stroke="${INK}" stroke-width="3"/>
+  <rect x="20" y="478" width="606" height="338" rx="26" fill="${TEAL}" stroke="${INK}" stroke-width="4"/>
+  <circle cx="601" cy="475" r="15" fill="#a31f1f"/>
+  <circle cx="595" cy="469" r="15" fill="#e0332e"/>
+  <circle cx="590" cy="464" r="5" fill="#ff9d97"/>
   ${infoRows.map(([label, value], i) => {
-    const y = 552 + i * 76;
+    const y = 550 + i * 78;
     return `
-      <text x="55" y="${y}" font-family="Be Vietnam Pro" font-weight="700" font-size="29" fill="#ffffff">${esc(label)}</text>
-      <text x="262" y="${y}" font-family="Be Vietnam Pro" font-weight="500" font-size="27" fill="#eaf6f8">${esc(value)}</text>
-      <line x1="55" y1="${y + 16}" x2="565" y2="${y + 16}" stroke="${INK}" stroke-width="3"/>`;
+      <text x="66" y="${y}" font-family="Be Vietnam Pro" font-weight="700" font-size="30" fill="#ffffff">${esc(label)}</text>
+      <text x="272" y="${y}" font-family="Be Vietnam Pro" font-weight="500" font-size="28" fill="#eef7f8">${esc(value)}</text>
+      <line x1="66" y1="${y + 15}" x2="556" y2="${y + 15}" stroke="${INK}" stroke-width="2.5"/>`;
   }).join("")}
 
   <!-- Currency pills -->
-  <rect x="650" y="480" width="300" height="80" rx="20" fill="${TEAL_DARK}" stroke="${INK}" stroke-width="5"/>
-  <circle cx="702" cy="520" r="27" fill="#ffc93d" stroke="#b97a0c" stroke-width="4"/>
-  <path d="M702 534 C702 522 696 518 688 514 C696 512 702 514 704 518 C706 512 714 510 720 514 C712 518 706 524 702 534 Z" fill="#35b558"/>
-  <text x="745" y="532" font-family="Be Vietnam Pro" font-weight="900" font-size="29" fill="#ffffff">${fmt(data.coins)}</text>
-  <rect x="968" y="480" width="300" height="80" rx="20" fill="${TEAL_DARK}" stroke="${INK}" stroke-width="5"/>
-  <path d="M1020 494 L1040 508 L1032 540 L1008 540 L1000 508 Z" fill="#b388ff" stroke="#5e35b1" stroke-width="3"/>
-  <path d="M1000 508 L1040 508 M1020 494 L1014 508 L1020 540 M1020 494 L1026 508 L1020 540" stroke="#5e35b1" stroke-width="2" fill="none"/>
-  <text x="1058" y="532" font-family="Be Vietnam Pro" font-weight="900" font-size="29" fill="#ffffff">${fmt(data.shards)}</text>
+  <rect x="648" y="486" width="302" height="64" rx="16" fill="${TEAL}" stroke="${INK}" stroke-width="3.5"/>
+  <circle cx="694" cy="518" r="23" fill="#ffc93d" stroke="#c47f0a" stroke-width="3.5"/>
+  <path d="M694 532 C694 521 688 517 681 513 C688 511 694 513 696 517 C698 511 706 509 712 513 C704 517 698 523 694 532 Z" fill="#35b558"/>
+  <text x="730" y="529" font-family="Be Vietnam Pro" font-weight="900" font-size="30" fill="#ffffff">${fmt(data.coins)}</text>
+  <rect x="968" y="486" width="302" height="64" rx="16" fill="${TEAL}" stroke="${INK}" stroke-width="3.5"/>
+  <path d="M1014 496 L1034 510 L1026 542 L1002 542 L994 510 Z" fill="#b388ff" stroke="#5e35b1" stroke-width="3"/>
+  <path d="M994 510 L1034 510 M1014 496 L1008 510 L1014 542 M1014 496 L1020 510 L1014 542" stroke="#5e35b1" stroke-width="2" fill="none"/>
+  <text x="1052" y="529" font-family="Be Vietnam Pro" font-weight="900" font-size="30" fill="#ffffff">${fmt(data.shards)}</text>
 
   <!-- Team panel -->
-  <rect x="650" y="585" width="618" height="250" rx="28" fill="${TEAL_DARK}" stroke="${INK}" stroke-width="5"/>
-  <path d="M692 568 L726 568 L726 640 L709 622 L692 640 Z" fill="#f2b134" stroke="${INK}" stroke-width="3"/>
+  <rect x="648" y="578" width="622" height="238" rx="26" fill="${TEAL}" stroke="${INK}" stroke-width="4"/>
+  <path d="M690 566 L732 566 L732 648 L711 627 L690 648 Z" fill="#f2b134" stroke="${INK}" stroke-width="3"/>
   ${teamSvg}
 </svg>`;
   return sharp(Buffer.from(svg)).png().toBuffer();

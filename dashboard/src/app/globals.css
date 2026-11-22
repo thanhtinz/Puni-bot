@@ -2177,8 +2177,8 @@ a.player-btn { display: inline-flex; align-items: center; text-decoration: none;
 .poke-hint, .poke-error { color: #8a5a12; background: #fff6e0; border: 1px solid #f0d48a; border-radius: 10px; padding: 8px 12px; font-size: 0.88rem; }
 .poke-error { color: #8f1d1d; background: #fdecec; border-color: #f2b1b1; }
 .poke-fight-btn { align-self: center; padding: 10px 34px; font-size: 1rem; }
-.poke-field { display: flex; flex-direction: column; gap: 10px; background: linear-gradient(180deg, #fdfdff, #eef4ff); border: 1px solid #d7e3fb; border-radius: 16px; padding: 14px; }
-.poke-side { display: flex; flex-direction: column; gap: 8px; }
+.poke-field { display: flex; flex-direction: column; gap: 10px; border: 1px solid #a9bce0; border-radius: 16px; padding: 14px; background-color: #6b5136; background-image: url("/poke-arena-bg-a.jpg"), url("/poke-arena-bg-b.jpg"); background-size: 50.5% 100%, 50.5% 100%; background-position: left top, right top; background-repeat: no-repeat; }
+.poke-side { display: flex; flex-direction: column; gap: 8px; background: rgba(243, 247, 255, 0.88); border-radius: 12px; padding: 10px 12px; backdrop-filter: blur(2px); }
 .poke-side-head { display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: #10254d; font-size: 0.85rem; }
 .poke-prizes { display: inline-flex; gap: 5px; }
 .poke-prize { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #b8c8ec; background: transparent; }

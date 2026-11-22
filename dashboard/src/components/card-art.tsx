@@ -6,6 +6,15 @@
  */
 const HOLO_RARITIES = new Set(["Epic", "Legendary", "Mythical", "Fabled"]);
 
+/** Remote artwork goes through the same-origin /api/img proxy so it
+ * always loads (some CDNs block hotlinking); local paths pass raw. */
+export function artSrc(src: string): string {
+  if (src.startsWith("http://") || src.startsWith("https://")) {
+    return `/api/img?u=${encodeURIComponent(src)}`;
+  }
+  return src;
+}
+
 export default function CardArt({
   src,
   alt,
@@ -20,7 +29,7 @@ export default function CardArt({
   const holo = rarity ? HOLO_RARITIES.has(rarity) : false;
   return (
     <span className={`card-art${holo ? " holo" : ""}${className ? ` ${className}` : ""}`}>
-      {src ? <img src={src} alt={alt} loading="lazy" draggable={false} /> : null}
+      {src ? <img src={artSrc(src)} alt={alt} loading="lazy" draggable={false} /> : null}
     </span>
   );
 }
