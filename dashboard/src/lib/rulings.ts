@@ -1,10 +1,12 @@
 /**
- * Rulings (spec 6.37) — owner-curated official rulings. A ruling
- * targets exactly one scope: a species, a set, or a game family
- * (prefix). Card detail pages show species rulings first, then set
- * rulings, then family rulings. No ruling is ever auto-generated:
- * TCGSDK exposes no rulings data (verified 2026-11-22), so every row
- * here was typed in the Admin panel from an official source.
+ * Rulings (spec 6.37) — official rulings. A ruling targets exactly one
+ * scope: a species, a set, or a game family (prefix); exactly one of
+ * species_id / set_id / game_prefix is set on any row. Card detail
+ * pages show species rulings first, then set rulings, then family
+ * rulings. Rows come from two origins: hand-entered in the Admin panel
+ * (APITCG and TCGSDK carry no rulings data at all — verified
+ * 2026-11-22), and Magic rulings synced from Scryfall bulk data by
+ * scripts/sync-rulings-scryfall.py (reserved sources in SYNC_SOURCES).
  */
 import { db } from "./db";
 import { shopGameOf } from "./shop";
@@ -54,7 +56,9 @@ export async function rulingsForSpecies(speciesId: string, setId: string): Promi
   try {
     const res = await db().query<RulingRow>(
       `SELECT ${COLS} FROM tcg_rulings
-       WHERE species_id = $1 OR set_id = $2 OR (game_prefix <> '' AND game_prefix = $3)
+       WHERE species_id = $1
+          OR (species_id IS NULL AND set_id = $2)
+          OR (species_id IS NULL AND set_id IS NULL AND game_prefix <> '' AND game_prefix = $3)
        ORDER BY CASE WHEN species_id = $1 THEN 0 WHEN set_id = $2 THEN 1 ELSE 2 END, id`,
       [speciesId, setId, family],
     );
@@ -64,14 +68,45 @@ export async function rulingsForSpecies(speciesId: string, setId: string): Promi
   }
 }
 
-export async function listRulingsAdmin(): Promise<Ruling[]> {
+/** Reserved source labels written by scripts/sync-rulings-scryfall.py.
+ *  Hand-entered rulings must never use them — re-syncs replace those rows. */
+export const SYNC_SOURCES = ["Scryfall · Wizards of the Coast", "Scryfall"] as const;
+
+export type RulingOrigin = "all" | "manual" | "scryfall";
+
+export async function listRulingsAdmin(origin: RulingOrigin = "all"): Promise<Ruling[]> {
   try {
+    const where =
+      origin === "scryfall"
+        ? `WHERE source = ANY($1::text[])`
+        : origin === "manual"
+          ? `WHERE source IS NULL OR NOT (source = ANY($1::text[]))`
+          : ``;
     const res = await db().query<RulingRow>(
-      `SELECT ${COLS} FROM tcg_rulings ORDER BY updated_at DESC, id DESC LIMIT 300`,
+      `SELECT ${COLS} FROM tcg_rulings ${where} ORDER BY updated_at DESC, id DESC LIMIT 300`,
+      origin === "all" ? [] : [[...SYNC_SOURCES]],
     );
     return res.rows.map(toRuling);
   } catch {
     return [];
+  }
+}
+
+export async function countRulings(origin: RulingOrigin): Promise<number> {
+  try {
+    const where =
+      origin === "scryfall"
+        ? `WHERE source = ANY($1::text[])`
+        : origin === "manual"
+          ? `WHERE source IS NULL OR NOT (source = ANY($1::text[]))`
+          : ``;
+    const res = await db().query<{ n: number }>(
+      `SELECT count(*)::int AS n FROM tcg_rulings ${where}`,
+      origin === "all" ? [] : [[...SYNC_SOURCES]],
+    );
+    return res.rows[0]?.n ?? 0;
+  } catch {
+    return 0;
   }
 }
 

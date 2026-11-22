@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { adminGate } from "@/lib/current-session";
 import { listGameSets } from "@/lib/db";
-import { listRulingsAdmin } from "@/lib/rulings";
+import { countRulings, listRulingsAdmin, type RulingOrigin } from "@/lib/rulings";
 import { SHOP_GAMES } from "@/lib/shop";
 import VerifyForm from "../verify-form";
 
@@ -12,17 +12,21 @@ const SCOPE_LABEL = { species: "Loài", set: "Bộ", game: "Game" } as const;
 export default async function AdminRulingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ saved?: string; err?: string; edit?: string; verify?: string }>;
+  searchParams: Promise<{ saved?: string; err?: string; edit?: string; verify?: string; origin?: string }>;
 }) {
   const gate = await adminGate();
-  const { saved, err, edit, verify } = await searchParams;
+  const { saved, err, edit, verify, origin: originRaw } = await searchParams;
   if (!gate.ok) {
     if (gate.reason === "need-verify") return <VerifyForm error={verify === "failed"} />;
     return null;
   }
-  const [rows, sets] = await Promise.all([
-    listRulingsAdmin().catch(() => []),
+  const origin: RulingOrigin = originRaw === "manual" || originRaw === "scryfall" ? originRaw : "all";
+  const [rows, sets, total, manualCount, scryfallCount] = await Promise.all([
+    listRulingsAdmin(origin).catch(() => []),
     listGameSets().catch(() => []),
+    countRulings("all").catch(() => 0),
+    countRulings("manual").catch(() => 0),
+    countRulings("scryfall").catch(() => 0),
   ]);
   const editing = edit ? rows.find((r) => r.id === Number.parseInt(edit, 10)) : undefined;
   const e = editing;
@@ -33,9 +37,17 @@ export default async function AdminRulingsPage({
       {saved ? <div className="notice ok">Đã lưu ruling.</div> : null}
       {err ? <div className="notice">Không thực hiện được: {err}</div> : null}
       <p style={{ maxWidth: 780, lineHeight: 1.6 }}>
-        Ruling do chủ bot nhập tay từ nguồn chính thức, gắn đúng một phạm vi:
-        một loài thẻ, một bộ, hoặc cả một game. Trang chi tiết thẻ hiện ruling
-        của loài trước, rồi của bộ, rồi của game.
+        Ruling gắn đúng một phạm vi: một loài thẻ, một bộ, hoặc cả một game.
+        Trang chi tiết thẻ hiện ruling của loài trước, rồi của bộ, rồi của
+        game. Ruling của Magic được đồng bộ tự động từ Scryfall (nguồn ghi
+        &ldquo;Scryfall&rdquo;) — đừng dùng hai nhãn nguồn đó cho ruling nhập
+        tay, vì mỗi lần đồng bộ lại sẽ thay toàn bộ dòng mang nhãn đó.
+      </p>
+      <p style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+        <Link className={origin === "all" ? "btn" : "btn secondary"} href="/admin/rulings">Tất cả ({total})</Link>
+        <Link className={origin === "manual" ? "btn" : "btn secondary"} href="/admin/rulings?origin=manual">Nhập tay ({manualCount})</Link>
+        <Link className={origin === "scryfall" ? "btn" : "btn secondary"} href="/admin/rulings?origin=scryfall">Đồng bộ Scryfall ({scryfallCount})</Link>
+        <span style={{ alignSelf: "center" }}>Đang hiện {rows.length} dòng mới nhất.</span>
       </p>
 
       <div className="panel">
