@@ -17,6 +17,8 @@ import {
   pickSpecies,
   rarityRank,
   rollRarity,
+  deckEdition,
+  speciesEdition,
   type CardInstance,
   type PityState,
   type TcgBanner,
@@ -340,10 +342,20 @@ export class TcgGameService {
       economy: TcgEconomyHooks;
       /** Membership perks resolver (spec 6.19 TCG benefits). */
       memberPerks?: (userId: string) => Promise<import("./membership").EffectivePerks | null>;
+      /** Daily-quest progress hook (spec 6.38) — fail-open. */
+      onAction?: (userId: string, action: string, n: number) => Promise<void>;
       rng?: () => number;
       now?: () => Date;
     },
   ) {}
+
+  private async act(userId: string, action: string, n = 1): Promise<void> {
+    try {
+      await this.deps.onAction?.(userId, action, n);
+    } catch {
+      /* quest progress must never break gameplay */
+    }
+  }
 
   private rng() { return this.deps.rng ? this.deps.rng() : Math.random(); }
   private now() { return this.deps.now ? this.deps.now() : new Date(); }
@@ -412,6 +424,7 @@ export class TcgGameService {
       results.push({ instance, species, rarity });
     }
     await this.deps.store.savePity(userId, bannerId, state);
+    await this.act(userId, "pull", results.length);
     return { kind: "ok", results, cost };
   }
 
@@ -450,6 +463,7 @@ export class TcgGameService {
       results.push({ instance, species, rarity });
     }
     await this.deps.store.savePity(userId, "standard", state);
+    await this.act(userId, "pull", results.length);
     return { kind: "ok", results };
   }
 
@@ -558,7 +572,10 @@ export class TcgGameService {
     }
     const avgLevel = teamInstances.reduce((s, i) => s + i.level, 0) / teamInstances.length;
     const enemy: BattleCardInput[] = [];
-    const pool = catalog.filter((s) => s.baseHp !== undefined || true);
+    // Edition split (spec 6.38): the rival team comes only from the
+    // same edition as the player's team — EN and JP never meet.
+    const myEdition = speciesEdition(team[0]!.speciesId);
+    const pool = catalog.filter((s) => speciesEdition(s.id) === myEdition);
     for (let i = 0; i < 5; i++) {
       const sp = pool[Math.floor(this.rng() * pool.length)] ?? pool[0];
       if (!sp) return { kind: "error", message: "Chưa có dữ liệu loài để tạo đối thủ." };
@@ -589,6 +606,8 @@ export class TcgGameService {
       await this.deps.store.updateInstance(inst.code, { xp: totalXp, level });
     }
     await this.deps.economy.credit(userId, coins, "tcg-battle", win ? "Thắng battle thẻ" : "Battle thẻ");
+    await this.act(userId, "battle_play", 1);
+    if (win) await this.act(userId, "battle_win", 1);
     return {
       kind: "ok",
       win,
@@ -659,10 +678,26 @@ export class TcgGameService {
     if (!candidates.length) {
       return { kind: "error", message: "Chưa có đối thủ nào có bộ bài đủ 5 thẻ để đấu hạng. Hẹn bạn quay lại sau nhé." };
     }
-    const opponentId = candidates[Math.floor(this.rng() * candidates.length)];
-    const theirs = await this.buildDeckTeam(opponentId);
-    if (theirs.kind === "error") {
-      return { kind: "error", message: "Đối thủ vừa đổi bộ bài — thử lại nhé." };
+    // Edition split (spec 6.38): ranked only pairs decks of the same
+    // edition — walk the shuffled candidates until one matches.
+    const myEdition = deckEdition(mine.team.map((c) => c.speciesId));
+    const shuffled = [...candidates];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(this.rng() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j]!, shuffled[i]!];
+    }
+    let opponentId: string | null = null;
+    let theirs: { team: BattleCardInput[] } | null = null;
+    for (const cand of shuffled) {
+      const t = await this.buildDeckTeam(cand);
+      if (t.kind === "error") continue;
+      if (deckEdition(t.team.map((c) => c.speciesId)) !== myEdition) continue;
+      opponentId = cand;
+      theirs = t;
+      break;
+    }
+    if (!opponentId || !theirs) {
+      return { kind: "error", message: "Chưa có đối thủ nào dùng cùng bản thẻ (Anh/Nhật) để đấu hạng. Hẹn bạn quay lại sau nhé." };
     }
     const myProf = await this.rankedProfile(userId);
     const oppProf = await this.rankedProfile(opponentId);
@@ -683,6 +718,8 @@ export class TcgGameService {
       : null;
     const coins = Math.round((win ? 150 : 30) * (1 + (perks?.battleBonusPercent ?? 0) / 100));
     await this.deps.economy.credit(userId, coins, "tcg-ranked", win ? "Thắng đấu hạng TCG" : "Đấu hạng TCG");
+    await this.act(userId, "battle_play", 1);
+    if (win) await this.act(userId, "battle_win", 1);
     const myNew = win ? winnerProf : loserProf;
     return {
       kind: "ok", win, rounds: result.rounds, log: result.log.slice(-10),
@@ -703,6 +740,10 @@ export class TcgGameService {
     if (a.kind === "error") return { kind: "error", message: `Người thách đấu: ${a.message}` };
     const b = await this.buildDeckTeam(bId);
     if (b.kind === "error") return { kind: "error", message: `Người được thách: ${b.message}` };
+    // Edition split (spec 6.38): duels also only pair the same edition.
+    if (deckEdition(a.team.map((c) => c.speciesId)) !== deckEdition(b.team.map((c) => c.speciesId))) {
+      return { kind: "error", message: "Hai bộ bài khác bản (Anh/Nhật) — bản tiếng Anh và bản Nhật đấu riêng, không đấu với nhau được." };
+    }
     const result = simulateCardBattle(a.team, b.team, () => this.rng());
     return {
       kind: "ok",

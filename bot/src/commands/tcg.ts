@@ -15,6 +15,7 @@ import {
   inBannerPool,
   enhanceCost,
   rarityRank,
+  speciesEdition,
   upgradeCost,
   validateDeck,
   type CardInstance,
@@ -27,9 +28,29 @@ import {
 } from "../services/tcg";
 import type { TcgGameService, TcgEconomyHooks } from "../services/tcg-store";
 import type { TcgStore } from "../services/tcg-store";
+import {
+  CHAIN_WINS,
+  DRAFT_ROUNDS,
+  ENTRY_FEE_COINS,
+  WIN_COINS,
+  speciesPower,
+  type FormatRun,
+  type TcgFormatsGame,
+} from "../services/tcg-formats";
+import {
+  QUEST_BONUS_COINS,
+  QUEST_BONUS_SHARDS,
+  type TcgQuestsGame,
+} from "../services/tcg-quests";
+import {
+  TcgSocialGame, roundName as socialRoundName,
+} from "../services/tcg-social";
 
 export interface TcgCommandDeps {
   game: TcgGameService;
+  formats: TcgFormatsGame;
+  quests: TcgQuestsGame;
+  social: TcgSocialGame;
   store: TcgStore;
   catalog: () => Promise<TcgSpecies[]>;
   config: () => Promise<TcgConfig>;
@@ -318,6 +339,14 @@ export function createTcgCommands(deps: TcgCommandDeps): CommandDef[] {
 /** Grouped TCG commands: gacha / card / deck / market / trade. */
 export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
   const now = () => (deps.now ? deps.now() : new Date());
+  /** Daily-quest progress hook (spec 6.38) — fail-open by design. */
+  const bump = async (userId: string, action: string, n = 1): Promise<void> => {
+    try {
+      await deps.quests.bump(userId, action, n);
+    } catch {
+      /* quests never break gameplay */
+    }
+  };
   const speciesMap = async () => {
     const map = new Map<string, TcgSpecies>();
     for (const s of await deps.catalog()) map.set(s.id, s);
@@ -502,6 +531,7 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
         if (wallet.shards < cost) return { text: `Cần ${cost} Mảnh thẻ để cường hoá (đang có ${wallet.shards}).` };
         await deps.store.adjustWallet(ctx.userId, { shards: -cost });
         await deps.store.updateInstance(inst.code, { enhance: inst.enhance + 1 });
+        await bump(ctx.userId, "enhance");
         return { text: `Đã cường hoá **${sp?.name ?? inst.speciesId}** lên +${inst.enhance + 1} (−${cost} Mảnh).` };
       }
       if (sub === "evolve") {
@@ -514,6 +544,7 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
         await deps.store.deleteInstance(inst.code);
         const next = await deps.store.createInstance(ctx.userId, sp.evolvesTo, "evolve");
         await deps.store.updateInstance(next.code, { level: inst.level });
+        await bump(ctx.userId, "evolve");
         const target = map.get(sp.evolvesTo);
         return { text: `Tiến hoá thành công: **${sp.name}** → **${target?.name ?? sp.evolvesTo}** (\`${next.code}\`, giữ cấp ${inst.level}).` };
       }
@@ -607,6 +638,19 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
         if (action === "add") {
           if (codes.includes(inst.code)) return { text: "Thẻ đã có trong bộ bài." };
           if (codes.length >= rules.size) return { text: `Bộ bài đã đủ ${rules.size} thẻ.` };
+          // Edition split (spec 6.38): one edition per deck — reject
+          // adding a card from the other edition.
+          if (codes.length) {
+            const insts0 = await deps.store.listInstances(ctx.userId);
+            const newEdition = speciesEdition(inst.speciesId);
+            const clash = codes.some((c) => {
+              const other = insts0.find((i) => i.code === c);
+              return other && speciesEdition(other.speciesId) !== newEdition;
+            });
+            if (clash) {
+              return { text: "Bộ bài này đang dùng một bản thẻ khác (Anh/Nhật) — hai bản đấu riêng, không trộn vào một bộ được." };
+            }
+          }
           codes.push(inst.code);
         } else if (action === "remove") {
           codes = codes.filter((c) => c !== inst.code);
@@ -614,6 +658,11 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
           return { text: `Dùng: \`deck edit ${d.id} add|remove <mã thẻ>\`` };
         }
         await deps.store.setDeckCards(d.id, codes);
+        if (codes.length === rules.size) {
+          const insts = await deps.store.listInstances(ctx.userId);
+          const speciesIds = codes.map((c) => insts.find((i) => i.code === c)?.speciesId ?? "?");
+          if (validateDeck(speciesIds, rules).length === 0) await bump(ctx.userId, "deck_build");
+        }
         return { text: `Bộ bài #${d.id} giờ có ${codes.length}/${rules.size} thẻ.` };
       }
       if (sub === "delete") {
@@ -692,6 +741,8 @@ export function createTcgGroupCommands(deps: TcgCommandDeps): CommandDef[] {
         await deps.economy.credit(l.sellerId, l.price - fee, "tcg-market", `Bán thẻ tin #${l.id} (đã trừ phí ${fmt(fee)})`);
         await deps.store.updateInstance(l.instanceCode, { userId: ctx.userId });
         await deps.store.closeListing(l.id, "sold", ctx.userId);
+        await bump(ctx.userId, "buy");
+        await bump(l.sellerId, "sell");
         const inst = await deps.store.getInstance(l.instanceCode);
         if (inst) {
           const soldSpecies = map.get(inst.speciesId);
@@ -936,5 +987,415 @@ const ranked: CommandDef = {
     },
   };
 
-return [gacha, card, deck, market, trade, cardbattle, ranked, rank, duel];
+  /* ------------ Battle formats (spec 6.38) ------------ */
+
+  const spLine = (map: Map<string, TcgSpecies>, id: string): string => {
+    const sp = map.get(id);
+    if (!sp) return id;
+    return `${sp.name} [${RARITY_TAG[sp.rarity] ?? sp.rarity} · sức mạnh ${fmt(speciesPower(sp))}]`;
+  };
+
+  const runScore = (run: FormatRun): string =>
+    `Thắng ${run.state.wins}/${CHAIN_WINS} · Thua ${run.state.losses}/2`;
+
+  const challenge: CommandDef = {
+    name: "challenge",
+    aliases: ["thuthach"],
+    description: "Thử thách ngày TCG: đấu đội NPC cố định của hôm nay, thắng nhận 200 Coins + 5 Mảnh (1 lần/ngày).",
+    module: "cozy",
+    permission: "everyone",
+    slash: true,
+    prefix: true,
+    cooldownSec: 10,
+    handler: async (ctx) => {
+      const out = await deps.formats.dailyChallenge(ctx.userId);
+      if (out.kind === "error") return { text: out.message };
+      const lines = [
+        `**Thử thách ngày** — Đội của bạn: ${out.teamNames.join(", ")}`,
+        `Đối thủ: ${out.enemyNames.join(", ")}`,
+        ...out.log,
+        out.win
+          ? out.rewardClaimed
+            ? `**Thắng sau ${out.rounds} hiệp!** +${fmt(out.coins)} ${deps.currencyName()} · +${out.shards} Mảnh thẻ`
+            : `**Thắng sau ${out.rounds} hiệp!** Phần thưởng hôm nay đã nhận rồi — mai quay lại nhé.`
+          : `**Thua sau ${out.rounds} hiệp.** Đội đối thủ hôm nay cố định — chỉnh lại bộ bài rồi thử lại, miễn phí cả ngày.`,
+      ];
+      return { text: lines.join("\n") };
+    },
+  };
+
+  const draftStatusText = async (run: FormatRun): Promise<string> => {
+    const map = await speciesMap();
+    const st = run.state;
+    if (st.phase === "draft") {
+      return [
+        `**Draft Arena** — vòng chọn ${st.round}/${DRAFT_ROUNDS} · ${runScore(run)}`,
+        ...st.offers.map((id, i) => `${i + 1}. ${spLine(map, id)}`),
+        "Chọn bằng `draft pick <số>`.",
+        st.roster.length
+          ? `Đã chọn: ${st.roster.map((id) => map.get(id)?.name ?? id).join(", ")}`
+          : "",
+      ].filter(Boolean).join("\n");
+    }
+    if (st.phase === "fight") {
+      return [
+        `**Draft Arena** — ${runScore(run)}`,
+        `Đội ra trận: ${st.field.map((id) => map.get(id)?.name ?? id).join(", ")}`,
+        "Đấu trận kế bằng `draft fight`.",
+      ].join("\n");
+    }
+    return `**Draft Arena** — lượt đã kết thúc: ${runScore(run)}. Bắt đầu lượt mới bằng \`draft start\`.`;
+  };
+
+  const draft: CommandDef = {
+    name: "draft",
+    aliases: ["draftarena"],
+    description: "Draft Arena: draft [start|pick <số>|fight|status] — chọn 1-trong-3 qua 8 vòng rồi đấu chuỗi 3 trận.",
+    module: "cozy",
+    permission: "everyone",
+    slash: true,
+    prefix: true,
+    cooldownSec: 5,
+    handler: async (ctx) => {
+      const sub = (ctx.args[0] ?? "status").toLowerCase();
+      if (sub === "start") {
+        const out = await deps.formats.startRun(ctx.userId, "draft");
+        if (out.kind === "error") return { text: out.message };
+        const head = out.resumed
+          ? "Đang có lượt Draft chạy dở — tiếp tục:"
+          : out.freeEntry
+            ? "Vào Draft Arena — lượt miễn phí hôm nay:"
+            : `Vào Draft Arena — đã trừ ${fmt(ENTRY_FEE_COINS)} ${deps.currencyName()} phí lượt:`;
+        return { text: `${head}\n${await draftStatusText(out.run)}` };
+      }
+      if (sub === "pick") {
+        const n = Number.parseInt(ctx.args[1] ?? "", 10);
+        const out = await deps.formats.draftPick(ctx.userId, n);
+        if (out.kind === "error") return { text: out.message };
+        return { text: await draftStatusText(out.run) };
+      }
+      if (sub === "fight") {
+        const out = await deps.formats.fightNext(ctx.userId, "draft");
+        if (out.kind === "error") return { text: out.message };
+        const lines = [
+          `**Draft Arena** — Đối thủ: ${out.enemyNames.join(", ")}`,
+          ...out.log,
+          out.win
+            ? `**Thắng trận sau ${out.rounds} hiệp!** +${fmt(out.coins)} ${deps.currencyName()}${out.shards ? ` · +${out.shards} Mảnh thẻ` : ""} · ${runScore(out.run)}`
+            : `**Thua trận sau ${out.rounds} hiệp.** ${runScore(out.run)}`,
+          out.runDone
+            ? "Lượt Draft kết thúc. Chơi tiếp bằng `draft start`."
+            : "Đấu tiếp bằng `draft fight`.",
+        ];
+        return { text: lines.join("\n") };
+      }
+      const run = await deps.formats.currentRun(ctx.userId, "draft");
+      if (!run) {
+        return { text: `Chưa có lượt Draft nào. Bắt đầu bằng \`draft start\` (mỗi ngày 1 lượt miễn phí, thêm ${fmt(ENTRY_FEE_COINS)} ${deps.currencyName()}/lượt; thắng trận nhận ${WIN_COINS.join("/")} ${deps.currencyName()}).` };
+      }
+      return { text: await draftStatusText(run) };
+    },
+  };
+
+  const sealedStatusText = async (run: FormatRun): Promise<string> => {
+    const map = await speciesMap();
+    const st = run.state;
+    if (st.phase === "done") {
+      return `**Sealed** — lượt đã kết thúc: ${runScore(run)}. Bắt đầu lượt mới bằng \`sealed start\`.`;
+    }
+    return [
+      `**Sealed** — ${runScore(run)} · Pool ${st.pool.length} lá`,
+      `Đội ra trận: ${st.field.map((id) => map.get(id)?.name ?? id).join(", ")}`,
+      "Đấu trận kế bằng `sealed fight`.",
+    ].join("\n");
+  };
+
+  const sealed: CommandDef = {
+    name: "sealed",
+    aliases: ["sealeddeck"],
+    description: "Sealed: sealed [start|fight|status] — mở pool 30 lá, 5 lá mạnh nhất ra trận đấu chuỗi 3 trận.",
+    module: "cozy",
+    permission: "everyone",
+    slash: true,
+    prefix: true,
+    cooldownSec: 5,
+    handler: async (ctx) => {
+      const sub = (ctx.args[0] ?? "status").toLowerCase();
+      if (sub === "start") {
+        const out = await deps.formats.startRun(ctx.userId, "sealed");
+        if (out.kind === "error") return { text: out.message };
+        const map = await speciesMap();
+        const poolLines = out.run.state.pool
+          .map((id) => map.get(id))
+          .filter((s): s is TcgSpecies => Boolean(s))
+          .sort((a, b) => speciesPower(b) - speciesPower(a))
+          .slice(0, 8)
+          .map((s) => spLine(map, s.id));
+        const head = out.resumed
+          ? "Đang có lượt Sealed chạy dở — tiếp tục:"
+          : out.freeEntry
+            ? "Mở pool Sealed — lượt miễn phí hôm nay. 8 lá mạnh nhất pool:"
+            : `Mở pool Sealed — đã trừ ${fmt(ENTRY_FEE_COINS)} ${deps.currencyName()} phí lượt. 8 lá mạnh nhất pool:`;
+        return { text: [head, ...poolLines, await sealedStatusText(out.run)].join("\n") };
+      }
+      if (sub === "fight") {
+        const out = await deps.formats.fightNext(ctx.userId, "sealed");
+        if (out.kind === "error") return { text: out.message };
+        const lines = [
+          `**Sealed** — Đối thủ: ${out.enemyNames.join(", ")}`,
+          ...out.log,
+          out.win
+            ? `**Thắng trận sau ${out.rounds} hiệp!** +${fmt(out.coins)} ${deps.currencyName()}${out.shards ? ` · +${out.shards} Mảnh thẻ` : ""} · ${runScore(out.run)}`
+            : `**Thua trận sau ${out.rounds} hiệp.** ${runScore(out.run)}`,
+          out.runDone
+            ? "Lượt Sealed kết thúc. Chơi tiếp bằng `sealed start`."
+            : "Đấu tiếp bằng `sealed fight`.",
+        ];
+        return { text: lines.join("\n") };
+      }
+      const run = await deps.formats.currentRun(ctx.userId, "sealed");
+      if (!run) {
+        return { text: `Chưa có lượt Sealed nào. Bắt đầu bằng \`sealed start\` (mỗi ngày 1 lượt miễn phí, thêm ${fmt(ENTRY_FEE_COINS)} ${deps.currencyName()}/lượt).` };
+      }
+      return { text: await sealedStatusText(run) };
+    },
+  };
+
+  const quest: CommandDef = {
+    name: "quest",
+    aliases: ["nhiemvu"],
+    description: "Nhiệm vụ ngày TCG: quest [claim] — 5 nhiệm vụ mỗi ngày, xong hết nhận thêm thưởng hoàn thành.",
+    module: "cozy",
+    permission: "everyone",
+    slash: true,
+    prefix: true,
+    cooldownSec: 5,
+    handler: async (ctx) => {
+      const sub = (ctx.args[0] ?? "view").toLowerCase();
+      if (sub === "claim") {
+        const view = await deps.quests.view(ctx.userId);
+        const ready = view.rows.filter((r) => r.done && !r.claimed);
+        if (!ready.length) return { text: "Chưa có nhiệm vụ nào xong để nhận thưởng — xem danh sách bằng `quest`." };
+        const lines: string[] = [];
+        let totalCoins = 0;
+        let totalShards = 0;
+        for (const r of ready) {
+          const out = await deps.quests.claim(ctx.userId, r.id);
+          if (out.kind !== "ok") continue;
+          totalCoins += out.coins + out.bonusCoins;
+          totalShards += out.shards + out.bonusShards;
+          lines.push(
+            `Đã nhận: **${r.name}**` +
+              (out.coins ? ` +${fmt(out.coins)} ${deps.currencyName()}` : "") +
+              (out.shards ? ` +${out.shards} Mảnh thẻ` : "") +
+              (out.bonusCoins || out.bonusShards
+                ? ` · Thưởng hoàn thành cả 5: +${fmt(out.bonusCoins)} ${deps.currencyName()} · +${out.bonusShards} Mảnh thẻ`
+                : ""),
+          );
+        }
+        if (!lines.length) return { text: "Chưa có nhiệm vụ nào xong để nhận thưởng — xem danh sách bằng `quest`." };
+        lines.push(`Tổng nhận: **${fmt(totalCoins)}** ${deps.currencyName()} · **${totalShards}** Mảnh thẻ`);
+        return { text: lines.join("\n") };
+      }
+      const view = await deps.quests.view(ctx.userId);
+      const lines = [
+        `**Nhiệm vụ ngày TCG** (${view.day}) — xong cả 5 nhận thêm **${fmt(QUEST_BONUS_COINS)}** ${deps.currencyName()} + **${QUEST_BONUS_SHARDS}** Mảnh thẻ${view.bonusClaimed ? " (đã nhận thưởng hoàn thành)" : ""}:`,
+        ...view.rows.map((r) =>
+          r.claimed
+            ? `[x] ~~${r.name}~~ — đã nhận`
+            : `${r.done ? "[v]" : "[ ]"} ${r.name} — ${r.progress}/${r.target}` +
+              (r.done ? " · xong, nhận bằng `quest claim`" : "") +
+              (r.coins ? ` · thưởng ${fmt(r.coins)} ${deps.currencyName()}` : "") +
+              (r.shards ? ` · thưởng ${r.shards} Mảnh thẻ` : ""),
+        ),
+      ];
+      return { text: lines.join("\n"), ephemeral: true };
+    },
+  };
+
+  const timeLeft = (endsAt: Date) => {
+    const ms = endsAt.getTime() - Date.now();
+    if (ms <= 0) return "đã hết giờ";
+    const mins = Math.floor(ms / 60000);
+    if (mins >= 60) return `còn ${Math.floor(mins / 60)}g${String(mins % 60).padStart(2, "0")}p`;
+    return `còn ${mins}p`;
+  };
+
+  const showcase: CommandDef = {
+    name: "showcase",
+    aliases: ["trungbay"],
+    description: "Xem trang trưng bày thẻ của mình hoặc người khác: showcase [@người dùng].",
+    module: "cozy",
+    permission: "everyone",
+    slash: true,
+    prefix: true,
+    cooldownSec: 5,
+    handler: async (ctx) => {
+      const target = ctx.mentions[0] ?? ctx.userId;
+      const view = await deps.social.showcaseView(ctx.userId, target);
+      if (view.state === "none") {
+        return {
+          text: target === ctx.userId
+            ? "Bạn chưa mở trang trưng bày — mở trang và ghim thẻ trên web, mục Trưng Bày."
+            : "Người đó chưa mở trang trưng bày.",
+          ephemeral: true,
+        };
+      }
+      if (view.state === "private") return { text: "Trang trưng bày này đang để riêng tư.", ephemeral: true };
+      const lines = [
+        `**Trang trưng bày** của <@${target}> — nền ${view.theme} · bố cục ${view.layout} · hiệu ứng ${view.effect}`,
+        ...(view.cards.length
+          ? view.cards.map((c, i) => `${i + 1}. ${RARITY_TAG[c.rarity]} **${c.name}** — Lv.${c.level}${c.enhance ? ` +${c.enhance}` : ""} · \`${c.code}\``)
+          : ["Chưa ghim thẻ nào."]),
+      ];
+      return { text: lines.join("\n") };
+    },
+  };
+
+  const auction: CommandDef = {
+    name: "auction",
+    aliases: ["daugia", "dg"],
+    description: "Đấu giá thẻ của người chơi: auction bid/buynow/create/cancel/my, tiền trả giá được ký quỹ.",
+    module: "cozy",
+    permission: "everyone",
+    slash: true,
+    prefix: true,
+    cooldownSec: 5,
+    handler: async (ctx) => {
+      const sub = (ctx.args[0] ?? "list").toLowerCase();
+      const coin = deps.currencyName();
+      if (sub === "list") {
+        const rows = await deps.social.listAuctions();
+        if (!rows.length) return { text: "Chưa có phiên đấu giá nào đang mở. Tạo phiên bằng `auction create <mã thẻ> <giá khởi điểm> <giờ>`." };
+        const lines = rows.map((a) =>
+          `#${a.id} ${RARITY_TAG[a.rarity]} **${a.name}** Lv.${a.level}${a.enhance ? ` +${a.enhance}` : ""} — ` +
+          (a.currentPrice != null ? `giá **${fmt(a.currentPrice)}** ${coin}` : `khởi điểm **${fmt(a.startPrice)}** ${coin}`) +
+          ` · ${a.bids} lượt trả · ${timeLeft(a.endsAt)}` +
+          (a.buyNowPrice != null ? ` · mua ngay ${fmt(a.buyNowPrice)}` : "") +
+          ` · của <@${a.sellerId}>`);
+        return { text: `**Đấu giá đang mở** (trả giá: \`auction bid <phiên> <giá>\`):\n${lines.join("\n")}` };
+      }
+      if (sub === "bid") {
+        const id = Number.parseInt(ctx.args[1] ?? "", 10);
+        const amount = Number.parseFloat(ctx.args[2] ?? "");
+        if (!Number.isFinite(id) || !Number.isFinite(amount)) return { text: "Cú pháp: `auction bid <phiên> <giá>`." };
+        const out = await deps.social.placeBid(ctx.userId, id, amount);
+        return { text: out.ok ? `Đã trả **${fmt(amount)}** ${coin} cho phiên #${id} — bạn đang giữ giá cao nhất.` : out.error };
+      }
+      if (sub === "buynow") {
+        const id = Number.parseInt(ctx.args[1] ?? "", 10);
+        if (!Number.isFinite(id)) return { text: "Cú pháp: `auction buynow <phiên>`." };
+        const out = await deps.social.buyNow(ctx.userId, id);
+        return { text: out.ok ? `Đã mua ngay thành công phiên #${id} — thẻ đã về kho của bạn.` : out.error };
+      }
+      if (sub === "create") {
+        const code = ctx.args[1] ?? "";
+        const start = Number.parseFloat(ctx.args[2] ?? "");
+        const hours = Number.parseInt(ctx.args[3] ?? "", 10);
+        const buyNow = ctx.args[4] ? Number.parseFloat(ctx.args[4]) : null;
+        if (!code || !Number.isFinite(start) || !Number.isFinite(hours)) {
+          return { text: "Cú pháp: `auction create <mã thẻ> <giá khởi điểm> <giờ: 1|6|24|72> [giá mua ngay]`." };
+        }
+        const out = await deps.social.createAuction(ctx.userId, code, start, hours, buyNow);
+        return { text: out.ok ? `Đã tạo phiên đấu giá **#${out.id}** (${hours} giờ).` : out.error };
+      }
+      if (sub === "cancel") {
+        const id = Number.parseInt(ctx.args[1] ?? "", 10);
+        if (!Number.isFinite(id)) return { text: "Cú pháp: `auction cancel <phiên>`." };
+        const out = await deps.social.cancelAuction(ctx.userId, id);
+        return { text: out.ok ? `Đã huỷ phiên #${id}.` : out.error };
+      }
+      if (sub === "my") {
+        const mine = await deps.social.myAuctions(ctx.userId);
+        const fmtRow = (a: (typeof mine.selling)[number]) =>
+          `#${a.id} **${a.name}** — ${a.status === "open" ? (a.currentPrice != null ? `${fmt(a.currentPrice)} ${coin}` : `khởi điểm ${fmt(a.startPrice)} ${coin}`) : a.status} · ${a.bids} lượt trả`;
+        const lines = [
+          "**Phiên của bạn:**",
+          ...(mine.selling.length ? mine.selling.map(fmtRow) : ["(chưa có)"]),
+          "**Phiên bạn đang trả giá:**",
+          ...(mine.bidding.length ? mine.bidding.map(fmtRow) : ["(chưa có)"]),
+        ];
+        return { text: lines.join("\n"), ephemeral: true };
+      }
+      return { text: "Cú pháp: `auction [list|bid|buynow|create|cancel|my]`." };
+    },
+  };
+
+  const tournament: CommandDef = {
+    name: "tournament",
+    aliases: ["giaidau", "giai"],
+    description: "Giải đấu thẻ 8/16 người: tournament join/play/my/detail/create, đấu bằng bộ bài đã đăng ký.",
+    module: "cozy",
+    permission: "everyone",
+    slash: true,
+    prefix: true,
+    cooldownSec: 5,
+    handler: async (ctx) => {
+      const sub = (ctx.args[0] ?? "list").toLowerCase();
+      const coin = deps.currencyName();
+      if (sub === "list") {
+        const rows = await deps.social.listTournaments(ctx.userId);
+        if (!rows.length) return { text: "Chưa có giải đấu nào. Tạo giải bằng `tournament create <8|16> <phí> <tên giải>`." };
+        const lines = rows.map((t) =>
+          `#${t.id} **${t.name}** — ${t.entrants}/${t.size} người · phí ${fmt(t.entryFee)} ${coin} · ${
+            t.status === "open" ? "đang mở đăng ký" : t.status === "running" ? "đang đấu" : t.status === "done" ? `xong, vô địch <@${t.championId}>` : t.status
+          }${t.edition ? ` · bản ${t.edition === "jp" ? "Nhật" : "tiếng Anh"}` : ""}${t.joined ? " · bạn đã đăng ký" : ""}`);
+        return { text: `**Giải đấu** (đăng ký: \`tournament join <giải>\`):\n${lines.join("\n")}` };
+      }
+      if (sub === "join") {
+        const id = Number.parseInt(ctx.args[1] ?? "", 10);
+        if (!Number.isFinite(id)) return { text: "Cú pháp: `tournament join <giải>`." };
+        const out = await deps.social.joinTournament(ctx.userId, id);
+        return { text: out.ok ? `Đã đăng ký giải #${id} bằng bộ bài đang dùng — đủ người là giải tự bắt đầu.` : out.error };
+      }
+      if (sub === "play") {
+        let matchId = Number.parseInt(ctx.args[1] ?? "", 10);
+        if (!Number.isFinite(matchId)) {
+          const mine = await deps.social.myMatches(ctx.userId);
+          if (!mine.length) return { text: "Bạn không có trận nào đang chờ đấu." };
+          matchId = mine[0].id;
+        }
+        const out = await deps.social.playMatch(ctx.userId, matchId);
+        if (!out.ok) return { text: out.error };
+        if (!out.winnerId) return { text: `Đã điểm danh trận #${matchId} — chờ đối thủ điểm danh là trận tự đánh.` };
+        const tail = (out.log ?? []).slice(-6).join("\n");
+        return {
+          text: `**Trận #${matchId} có kết quả:** <@${out.winnerId}> thắng!\n${tail ? `\`\`\`\n${tail}\n\`\`\`` : ""}`,
+        };
+      }
+      if (sub === "my") {
+        const mine = await deps.social.myMatches(ctx.userId);
+        if (!mine.length) return { text: "Bạn không có trận nào đang chờ đấu.", ephemeral: true };
+        const lines = mine.map((m) =>
+          `Trận #${m.id} — **${m.tournamentName}** · ${m.roundLabel} · gặp <@${m.p1Id === ctx.userId ? m.p2Id : m.p1Id}> · điểm danh bằng \`tournament play ${m.id}\``);
+        return { text: lines.join("\n"), ephemeral: true };
+      }
+      if (sub === "detail") {
+        const id = Number.parseInt(ctx.args[1] ?? "", 10);
+        if (!Number.isFinite(id)) return { text: "Cú pháp: `tournament detail <giải>`." };
+        const detail = await deps.social.tournamentDetail(id);
+        if (!detail) return { text: "Không tìm thấy giải đấu đó." };
+        const nameOf = (uid: string | null) => (uid ? `<@${uid}>` : "—");
+        const lines = [
+          `**${detail.t.name}** (#${detail.t.id}) — ${detail.entries.length}/${detail.t.size} người · phí ${fmt(detail.t.entryFee)} ${coin} · trạng thái ${detail.t.status}`,
+          ...detail.matches.map((m) =>
+            `${socialRoundName(m.round, detail.t.size)}: ${nameOf(m.p1Id)} vs ${nameOf(m.p2Id)}${m.winnerId ? ` → **${nameOf(m.winnerId)}** thắng` : ""}`),
+        ];
+        return { text: lines.join("\n") };
+      }
+      if (sub === "create") {
+        const size = Number.parseInt(ctx.args[1] ?? "", 10);
+        const fee = Number.parseFloat(ctx.args[2] ?? "");
+        const name = ctx.args.slice(3).join(" ");
+        if (!Number.isFinite(size) || !Number.isFinite(fee) || !name) {
+          return { text: "Cú pháp: `tournament create <8|16> <phí> <tên giải>`." };
+        }
+        const out = await deps.social.createTournament(ctx.userId, name, size, fee);
+        return { text: out.ok ? `Đã tạo giải **#${out.id}** — đăng ký bằng \`tournament join ${out.id}\`.` : out.error };
+      }
+      return { text: "Cú pháp: `tournament [list|join|play|my|detail|create]`." };
+    },
+  };
+
+return [gacha, card, deck, market, trade, cardbattle, ranked, rank, duel, challenge, draft, sealed, quest, showcase, auction, tournament];
 }

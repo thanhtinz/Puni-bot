@@ -42,6 +42,9 @@ async function main(): Promise<void> {
   let membershipOrders: import("./services/membership").MembershipOrderStore | undefined;
   let marriageStore: import("./services/marriage").MarriageStore | undefined;
   let tcgStore: import("./services/tcg-store").TcgStore | undefined;
+  let formatStore: import("./services/tcg-formats").FormatStore | undefined;
+  let questStore: import("./services/tcg-quests").QuestStore | undefined;
+  let socialStore: import("./services/tcg-social").SocialStore | undefined;
   let werewolfStore: import("./services/werewolf-store").WerewolfStore | undefined;
   let pgPool: Pool | undefined;
   if (config.databaseUrl) {
@@ -66,6 +69,12 @@ async function main(): Promise<void> {
     marriageStore = new PgMarriageStore(pool);
     const { PgTcgStore } = await import("./db/pg-tcg-store");
     tcgStore = new PgTcgStore(pool);
+    const { PgFormatStore } = await import("./db/pg-tcg-formats");
+    formatStore = new PgFormatStore(pool);
+    const { PgQuestStore } = await import("./db/pg-tcg-quests");
+    questStore = new PgQuestStore(pool);
+    const { PgSocialStore } = await import("./db/pg-tcg-social");
+    socialStore = new PgSocialStore(pool);
     const { PgWerewolfStore } = await import("./db/pg-werewolf");
     werewolfStore = new PgWerewolfStore(pool);
     console.log("[puni] state: PostgreSQL");
@@ -107,6 +116,9 @@ async function main(): Promise<void> {
     marriageStore,
     ringTiersSource: botConfig ? () => botConfig.getRingTiers() : undefined,
     tcgStore,
+    formatStore,
+    questStore,
+    socialStore,
     tcgCatalogSource: pgPool
       ? async () => {
           const res = await pgPool!.query<{ id: string; name: string; rarity: string; evolves_to: string | null; base_hp: number; base_atk: number; member_exclusive: boolean; set_id: string; price_usd: string | null; market_price_coins: string | null }>(

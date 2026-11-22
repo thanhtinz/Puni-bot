@@ -19,6 +19,21 @@ import { InMemoryGameSessionStore, type GameSessionStore } from "./services/game
 import { InMemoryChannelGameStore, type ChannelGameStore } from "./services/channel-games";
 import { createTcgCommands, createTcgGroupCommands } from "./commands/tcg";
 import { TcgGameService, InMemoryTcgStore, type TcgStore } from "./services/tcg-store";
+import {
+  InMemoryFormatStore,
+  TcgFormatsGame,
+  type FormatStore,
+} from "./services/tcg-formats";
+import {
+  InMemoryQuestStore,
+  TcgQuestsGame,
+  type QuestStore,
+} from "./services/tcg-quests";
+import {
+  InMemorySocialStore,
+  TcgSocialGame,
+  type SocialStore,
+} from "./services/tcg-social";
 import { DEFAULT_TCG_CONFIG, type TcgConfig, type TcgSpecies } from "./services/tcg";
 import {
   DEFAULT_MEMBERSHIP_TIERS,
@@ -77,6 +92,12 @@ export function buildBot(deps: {
   ringTiersSource?: () => Promise<RingTier[]>;
   /** TCG store (spec 6.23); in-memory when absent. */
   tcgStore?: TcgStore;
+  /** TCG format runs store (spec 6.38); in-memory when absent. */
+  formatStore?: FormatStore;
+  /** TCG daily quest store (spec 6.38); in-memory when absent. */
+  questStore?: QuestStore;
+  /** TCG social store: auctions/showcases/tournaments (spec 6.38). */
+  socialStore?: SocialStore;
   /** TCG species catalog (game_species); empty = TCG unavailable. */
   tcgCatalogSource?: () => Promise<TcgSpecies[]>;
   /** Live TCG config (Admin-editable later); defaults when absent. */
@@ -135,6 +156,13 @@ export function buildBot(deps: {
     const tiers = await tiersSource().catch(() => []);
     return effectivePerks(tiers, rec.tierId);
   };
+  const questsGame = new TcgQuestsGame({
+    store: tcgStore,
+    quests: deps.questStore ?? new InMemoryQuestStore(),
+    economy: tcgEconomy,
+  });
+  const questBump = (userId: string, action: string, n: number) =>
+    questsGame.bump(userId, action, n);
   const tcgDeps = {
     game: new TcgGameService({
       store: tcgStore,
@@ -142,6 +170,32 @@ export function buildBot(deps: {
       config: tcgConfig,
       economy: tcgEconomy,
       memberPerks,
+      onAction: questBump,
+    }),
+    formats: new TcgFormatsGame({
+      store: tcgStore,
+      formats: deps.formatStore ?? new InMemoryFormatStore(),
+      catalog: tcgCatalog,
+      config: tcgConfig,
+      economy: tcgEconomy,
+      onAction: questBump,
+    }),
+    quests: questsGame,
+    social: new TcgSocialGame({
+      social: deps.socialStore ?? new InMemorySocialStore(),
+      tcg: tcgStore,
+      economy: tcgEconomy,
+      speciesMap: async () => new Map((await tcgCatalog()).map((s) => [s.id, s] as const)),
+      feePercentFor: async (userId: string) => {
+        const perks = await memberPerks(userId);
+        return perks ? Math.min(5, perks.marketFeePercent) : 5;
+      },
+      deckRules: async () => {
+        const cfg = await tcgConfig();
+        return { size: cfg.deckSize, maxCopies: cfg.deckMaxCopies, minSpecies: cfg.deckMinSpecies };
+      },
+      pricePerUsd: async () => (await tcgConfig()).priceCoinsPerUsd,
+      onAction: questBump,
     }),
     store: tcgStore,
     catalog: tcgCatalog,

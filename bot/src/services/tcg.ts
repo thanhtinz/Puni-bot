@@ -271,6 +271,28 @@ export interface DeckRules {
   minSpecies: number;
 }
 
+/**
+ * Card edition (spec 6.38, Tín 2026-11-22): EN printings and JP
+ * printings battle separately because their printed stats differ.
+ * JP species ids always carry the "<family>jp-" prefix the TCGSDK
+ * importer writes (pkmjp-, opjp-, gunjp-), matching
+ * game_species.language = 'jp' row for row.
+ */
+export type CardEdition = "en" | "jp";
+export const speciesEdition = (speciesId: string): CardEdition =>
+  /^[a-z]+jp-/.test(speciesId) ? "jp" : "en";
+
+/** The edition of a whole deck: "mixed" when it spans both editions. */
+export function deckEdition(speciesIds: string[]): CardEdition | "mixed" {
+  let seen: CardEdition | null = null;
+  for (const id of speciesIds) {
+    const e = speciesEdition(id);
+    if (seen && seen !== e) return "mixed";
+    seen = e;
+  }
+  return seen ?? "en";
+}
+
 export function validateDeck(speciesIds: string[], rules: DeckRules): string[] {
   const errors: string[] = [];
   if (speciesIds.length !== rules.size) {
@@ -283,6 +305,9 @@ export function validateDeck(speciesIds: string[], rules: DeckRules): string[] {
   }
   if (counts.size < rules.minSpecies) {
     errors.push(`Bộ bài cần ít nhất ${rules.minSpecies} loài khác nhau (đang có ${counts.size}).`);
+  }
+  if (speciesIds.length > 0 && deckEdition(speciesIds) === "mixed") {
+    errors.push("Bộ bài trộn bản tiếng Anh và bản Nhật — hai bản đấu riêng, hãy dùng một bản duy nhất.");
   }
   return errors;
 }
